@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mdm?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+logging:
+  level:
+    root: info
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAT23F3XWNRKCFWFQZ
+      secret-key: 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
+    s3:
+      bucket: togeduck
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
