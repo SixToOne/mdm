@@ -37,4 +37,7 @@ public class Quiz extends BaseEntity {
 
 	private String solution;
 
+	public void setSolution(String solution) {
+		this.solution = solution;
+	}
 }
