@@ -29,7 +29,7 @@ public class Quiz extends BaseEntity {
 	private String example2;
 	private String example3;
 	private String example4;
-
-	private int answer;
+	private String answer;
+	private String solution;
 
 }
