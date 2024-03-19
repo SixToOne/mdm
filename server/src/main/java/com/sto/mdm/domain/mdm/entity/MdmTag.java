@@ -1,7 +1,6 @@
 package com.sto.mdm.domain.mdm.entity;
 
 import com.sto.mdm.domain.BaseEntity;
-import com.sto.mdm.domain.ip.entity.Ip;
 import com.sto.mdm.domain.tag.entity.Tag;
 
 import jakarta.persistence.Column;
@@ -35,4 +34,5 @@ public class MdmTag extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id")
 	private Tag tag;
+
 }

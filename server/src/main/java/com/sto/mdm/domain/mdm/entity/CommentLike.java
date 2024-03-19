@@ -32,7 +32,7 @@ public class CommentLike extends BaseEntity {
 	private Comment comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ip_id") 
+	@JoinColumn(name = "ip_id")
 	private Ip ip;
 
 }

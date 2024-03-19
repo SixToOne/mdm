@@ -20,29 +20,25 @@ public class SecurityConfig { // 스프링 시큐리티에 필요한 설정
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		// CSRF 설정 Disable
-		http
-			.csrf(AbstractHttpConfigurer::disable);
+		http.csrf(AbstractHttpConfigurer::disable);
 		// JWT 인증 방식 세팅
-		http
-			.formLogin(AbstractHttpConfigurer::disable)
+		http.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
-			.sessionManagement((sessionManagement) ->
-				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+			.sessionManagement(
+				(sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http
 			// .headers((headers) ->
 			// 	headers.frameOptions(
 			// 		HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-			.authorizeHttpRequests(authorizeRequests ->
-				authorizeRequests
-					.anyRequest().permitAll()
-			);
+			.authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
 
 		return http.build();
 	}
 
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
+		Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 

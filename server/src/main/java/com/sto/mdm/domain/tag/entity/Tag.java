@@ -20,7 +20,7 @@ public class Tag extends BaseEntity {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "tag_jd")
+	@Column(name = "tag_id")
 	private Long id;
 
 	private String name;
