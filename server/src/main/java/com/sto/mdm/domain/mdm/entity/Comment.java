@@ -27,14 +27,17 @@ public class Comment extends BaseEntity {
 	private Long id;
 
 	private String content;
+
 	private String nickname;
+
 	private String password;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "mdm_id")
 	private Mdm mdm;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "parent_id")
-	// private Comment parent;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent_id")
+	private Comment parent;
+
 }

@@ -23,4 +23,6 @@ public class Ip extends BaseEntity {
 	@Column(name = "ip_id")
 	private Long id;
 
+	private String ip;
+
 }
