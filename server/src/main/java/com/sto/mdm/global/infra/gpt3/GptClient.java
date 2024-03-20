@@ -34,12 +34,20 @@ public class GptClient {
 		return chatCompletions(model, system, user, temperature, top_p);
 	}
 
+	//키워드 추출
+	public String generateKeyword(String question) {
+		double temperature = 0.3;
+		double top_p = 1;
+		String system = "너는 문제를 읽고 키워드를 4개만 뽑아야해. 문제는 다음과 같아." + question;
+		String user = "문제에 대한 키워드 추출 4개만 부탁해.";
+		System.out.println("generateKeyword");
+		return chatCompletions(model, system, user, temperature, top_p);
+	}
+
 	public String chatCompletions(String model, String system, String message, double temperature, double top_p) {
 		try {
 			ChatRequest request = new ChatRequest(model, system, message, temperature, top_p);
-			ChatResponse response = restTemplate.postForObject(apiUrl, request,
-				ChatResponse.class);
-
+			ChatResponse response = restTemplate.postForObject(apiUrl, request, ChatResponse.class);
 			assert response != null;
 			if (response.getChoices() == null || response.getChoices().isEmpty()) {
 				throw new BaseException(ErrorCode.INTERNAL_SERVER_ERROR);

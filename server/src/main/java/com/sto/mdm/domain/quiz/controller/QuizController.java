@@ -26,4 +26,10 @@ public class QuizController {
 		return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), "success", null));
 	}
 
+	@PostMapping("/keyword")
+	ResponseEntity<BaseResponse<String>> postKeyword() {
+		quizService.getQuizKeyword();
+		return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), "success", null));
+	}
+
 }
