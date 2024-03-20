@@ -4,6 +4,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.sto.mdm.domain.BaseEntity;
+import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,4 +57,15 @@ public class Mdm extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private MdmType type;
 
+	public void setImages(String image1, String image2) {
+		this.image1 = image1;
+		this.image2 = image2;
+	}
+
+	public void update(MdmUpdateRequestDto mdmUpdateRequestDto) {
+		this.title = mdmUpdateRequestDto.title();
+		this.content = mdmUpdateRequestDto.content();
+		this.opinion1 = mdmUpdateRequestDto.opinion1();
+		this.opinion2 = mdmUpdateRequestDto.opinion2();
+	}
 }
