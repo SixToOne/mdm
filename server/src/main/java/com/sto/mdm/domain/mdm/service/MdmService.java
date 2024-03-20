@@ -64,11 +64,16 @@ public class MdmService {
 	@Transactional
 	public void updateMdm(Long mdmId, MdmUpdateRequestDto mdmUpdateRequestDto) {
 		mdmRepository.findById(mdmId)
-			.ifPresentOrElse(mdm -> {
-				mdm.update(mdmUpdateRequestDto);
-			}, () -> {
+			.ifPresentOrElse(mdm -> mdm.update(mdmUpdateRequestDto), () -> {
 				throw new BaseException(ErrorCode.MDM_NOT_FOUND);
 			});
+	}
+
+	@Transactional
+	public void deleteMdm(Long mdmId) {
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+		mdmRepository.delete(mdm);
 	}
 }
 
