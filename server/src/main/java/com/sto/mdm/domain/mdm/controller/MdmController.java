@@ -3,6 +3,7 @@ package com.sto.mdm.domain.mdm.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,6 +42,12 @@ public class MdmController {
 	ResponseEntity<BaseResponse<String>> patchMdm(@PathVariable Long mdmId,
 		@RequestBody MdmUpdateRequestDto mdmUpdateRequestDto) {
 		mdmService.updateMdm(mdmId, mdmUpdateRequestDto);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@DeleteMapping("/{mdmId}")
+	ResponseEntity<BaseResponse<String>> deleteMdm(@PathVariable Long mdmId) {
+		mdmService.deleteMdm(mdmId);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
 	}
 
