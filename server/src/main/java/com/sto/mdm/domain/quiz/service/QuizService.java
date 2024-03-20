@@ -53,7 +53,7 @@ public class QuizService {
 
 		for (QuizDto quizDto : quizzes) {
 			String question = quizzes.get(0).getQuestion();
-			String generateKeyword = gptService.generateKeyword(question);
+			String generateKeyword = gptService.generateSolutionKeyword(question);
 			StringTokenizer st = new StringTokenizer(generateKeyword, ", ");
 
 			int count = 4;
