@@ -40,7 +40,7 @@ const Quiz = () => {
             </div>
             {/* 보기별 정답율 4개 => 제출하기 버튼 누르고 나서 나타나도록 */}
 
-            {/* 제출하기 버튼 */}
+            {/* 제출하기 버튼 => onClick 시 QuizSolve 컴포넌트 보이게 */}
             <button className="py-1 px-32 mb-4 rounded-md bg-blue-500 text-stone-50 font-bold">
                 제출하기
             </button>

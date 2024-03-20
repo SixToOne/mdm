@@ -1,40 +1,69 @@
-import {
-    ArticleInput,
-    CompareInput,
-    ImageInput,
-    Toggle,
-    UserInput,
-} from '@/components/ArticleWrite';
-import TagInput from '@/components/ArticleWrite/TagInput';
+import { useState } from 'react';
+import { CompareInput, ImageInput, PasswordInput, TagInput, TextInput } from '@/components/Inputs';
 import Tags from '@/components/Tags';
+import Textarea from '@/components/Textarea';
+import Toggle from '@/components/Toggle';
 
 const ArticleWrite = () => {
+    const [isFinance, setIsFinance] = useState(false);
+    // const [tagName, setTagName] = useState("");
+
+    const handleFinanceToggle = () => {
+        setIsFinance(!isFinance);
+    };
+    // const handleTags = () => {
+    // setTagName();
+    // }
+
     return (
-        <section>
-            {/* 헤더 (뒤로가기 버튼 + 등록 버튼)_컴포넌트 가져오기 */}
+        <section className="w-4/5 mx-auto">
+            {/* 유머/금융 토글 */}
+            <Toggle
+                isContent={isFinance}
+                leftContent="유머"
+                rightContent="금융"
+                handleToggle={handleFinanceToggle}
+            />
 
-            {/* 토글(유머/금융) */}
-            <Toggle />
+            <span className="font-bold">제목 </span>
+            <span className={'font-bold text-sm ' + (isFinance ? 'text-red-700' : 'text-blue-500')}>
+                {isFinance ? '(필수)' : '(선택)'}
+            </span>
+            <TextInput placeholder="제목을 작성해주세요" />
 
-            {/* 제목 입력란_한줄 (필수/선택) */}
-            {/* 내용 입력란_여러줄 (필수/선택) */}
-            <ArticleInput></ArticleInput>
+            <span className="font-bold">내용 </span>
+            <span className={'font-bold text-sm ' + (isFinance ? 'text-red-700' : 'text-blue-500')}>
+                {isFinance ? '(필수)' : '(선택)'}
+            </span>
+            <Textarea placeholder="내용을 작성해주세요" />
 
-            {/* 이미지 첨부 미리보기_컴포넌트화 + 이미지 첨부 버튼_컴포넌트화 */}
-            <ImageInput />
+            <ImageInput placeholder="사진 추가" />
 
-            {/* 태그 작성란 */}
-            <TagInput />
-            {/* 태그 목록_컴포넌트 가져오기 */}
+            <p className="font-bold">태그</p>
+            <TagInput placeholder="" />
+            {/* 위 태그값 반영 */}
+            {/* <Tags value={} /> */}
             <Tags />
 
-            {/* 몇대몇 비교 대상 작성란 + 각각 이미지 첨부 버튼_컴포넌트화 */}
-            {/* 몇대몇 비교 대상 이미지 미리보기_컴포넌트화 & 이름 미리보기 */}
+            <p className="font-bold">몇대몇</p>
+            <p className="text-stone-400 text-xs">몇대몇 두 가지 선택지를 입력해주세요</p>
             <CompareInput />
 
-            {/* 닉네임 입력란_한줄_컴포넌트 내보내기 */}
-            {/* 비밀번호 입력란_한줄_컴포넌트 내보내기 */}
-            <UserInput></UserInput>
+            {/* 화면 폭에 꽉 차게 선 하나 그어줄 것 */}
+
+            <div className="flex justify-center mt-8 mb-2">
+                <span className="font-bold text-stone-400 mr-8">닉네임</span>
+                <span>
+                    <TextInput placeholder="" />
+                </span>
+            </div>
+
+            <div className="flex justify-center mt-2 mb-8">
+                <span className="font-bold text-stone-400 mr-8">비밀번호</span>
+                <span>
+                    <PasswordInput />
+                </span>
+            </div>
         </section>
     );
 };

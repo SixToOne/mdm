@@ -14,10 +14,7 @@ function App() {
                     <Route path="/quiz/*" element={<QuizDetail />} />
                     <Route path="/mdm/new" element={<ArticleWrite />} />
                 </Routes>
-                {/* 하단 바 */}
-                <div className="mt-auto border-2 border-stone-200">
-                    <BottomNav />
-                </div>
+                <BottomNav />
             </MainLayout>
         </>
     );
