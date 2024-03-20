@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://stg-yswa-kr-practice-db-master.mariadb.database.azure.com:3306/S10P23A504?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: S10P23A504@stg-yswa-kr-practice-db-master
-    password: ssafy
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: none
