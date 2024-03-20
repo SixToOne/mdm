@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mdm?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: root
-    password: 1234
+    password: ssafy
   jpa:
     hibernate:
       ddl-auto: update
@@ -42,4 +42,4 @@ openai:
   model: gpt-3.5-turbo
   api:
     url: https://api.openai.com/v1/chat/completions
-    key: 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
+    key: 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

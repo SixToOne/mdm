@@ -26,10 +26,10 @@ public class QuizController {
 		return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), "success", null));
 	}
 
+	//문제 키워드 추출
 	@PostMapping("/keyword")
 	ResponseEntity<BaseResponse<String>> postKeyword() {
 		quizService.getQuizKeyword();
 		return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), "success", null));
 	}
-
 }
