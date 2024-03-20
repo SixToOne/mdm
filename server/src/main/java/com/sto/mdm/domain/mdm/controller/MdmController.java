@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
+import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.service.MdmService;
 import com.sto.mdm.global.response.BaseResponse;
@@ -49,6 +51,11 @@ public class MdmController {
 	ResponseEntity<BaseResponse<String>> deleteMdm(@PathVariable Long mdmId) {
 		mdmService.deleteMdm(mdmId);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@GetMapping("/{mdmId}")
+	ResponseEntity<BaseResponse<MdmResponseDto>> getMdm(@PathVariable Long mdmId) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getMdm(mdmId)));
 	}
 
 }
