@@ -40,4 +40,16 @@ public class QuizDto {
 			.build();
 	}
 
+	public Quiz toEntity() {
+		return Quiz.builder()
+			.id(id)
+			.question(question)
+			.example1(example1)
+			.example2(example2)
+			.example3(example3)
+			.example4(example4)
+			.answer(answer)
+			.solution(solution)
+			.build();
+	}
 }
