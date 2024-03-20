@@ -1,12 +1,14 @@
 package com.sto.mdm.domain.mdm.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
+import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.entity.Mdm;
 import com.sto.mdm.domain.mdm.entity.MdmImage;
@@ -74,6 +76,40 @@ public class MdmService {
 		Mdm mdm = mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 		mdmRepository.delete(mdm);
+	}
+
+	public MdmResponseDto getMdm(Long mdmId) {
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		List<String> tags = mdmTagRepository.findByMdmId(mdmId)
+			.stream().map(MdmTag::getTag)
+			.map(Tag::getName)
+			.collect(Collectors.toList());
+		
+		List<String> images = mdmImageRepository.findByMdmId(mdmId)
+			.stream()
+			.map(MdmImage::getImage)
+			.collect(Collectors.toList());
+
+		return new MdmResponseDto(
+			mdm.getId(),
+			mdm.getTitle(),
+			mdm.getContent(),
+			mdm.getOpinion1(),
+			mdm.getOpinion2(),
+			mdm.getImage1(),
+			mdm.getImage2(),
+			mdm.getCount1(),
+			mdm.getCount2(),
+			mdm.getVote(),
+			mdm.getType(),
+			mdm.getNickname(),
+			mdm.getPassword(),
+			tags,
+			images
+		);
+
 	}
 }
 
