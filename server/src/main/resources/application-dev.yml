@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://stg-yswa-kr-practice-db-master.mariadb.database.azure.com:3306/S10P12A301?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
-    username: S10P12A301@stg-yswa-kr-practice-db-master.mariadb.database.azure.com
-    password: BG2SESN4XA
+    url: jdbc:mysql://stg-yswa-kr-practice-db-master.mariadb.database.azure.com:3306/S10P23A504?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    username: S10P23A504@stg-yswa-kr-practice-db-master
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: none
