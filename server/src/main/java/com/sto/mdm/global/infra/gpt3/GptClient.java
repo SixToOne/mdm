@@ -54,11 +54,9 @@ public class GptClient {
 
 	public String chatCompletions(String model, String system, String message, double temperature, double top_p) {
 		try {
-			log.info("에러가 어디서");
 			ChatRequest request = new ChatRequest(model, system, message, temperature, top_p);
 			ChatResponse response = restTemplate.postForObject(apiUrl, request, ChatResponse.class);
 			assert response != null;
-			log.info("response: " + response);
 			if (response.getChoices() == null || response.getChoices().isEmpty()) {
 				throw new BaseException(ErrorCode.INTERNAL_SERVER_ERROR);
 			}
