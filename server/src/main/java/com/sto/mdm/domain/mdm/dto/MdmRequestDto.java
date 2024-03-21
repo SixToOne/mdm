@@ -1,6 +1,7 @@
 package com.sto.mdm.domain.mdm.dto;
 
 import java.util.List;
+import java.util.Set;
 
 import com.sto.mdm.domain.mdm.entity.Mdm;
 import com.sto.mdm.domain.mdm.entity.MdmType;
@@ -13,7 +14,7 @@ public record MdmRequestDto(
 	MdmType type,
 	String nickname,
 	String password,
-	List<String> tags
+	Set<String> tags
 ) {
 	public Mdm toEntity() {
 		return Mdm.builder()
@@ -25,5 +26,9 @@ public record MdmRequestDto(
 			.nickname(nickname)
 			.password(password)
 			.build();
+	}
+
+	public void addTags(List<String> tags) {
+		this.tags.addAll(tags);
 	}
 }

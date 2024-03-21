@@ -1,5 +1,6 @@
 package com.sto.mdm.domain.mdm.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
 import com.sto.mdm.domain.tag.entity.Tag;
 import com.sto.mdm.domain.tag.repository.TagRepository;
+import com.sto.mdm.global.infra.gpt3.GptClient;
 import com.sto.mdm.global.response.BaseException;
 import com.sto.mdm.global.response.ErrorCode;
 import com.sto.mdm.global.util.S3Uploader;
@@ -40,6 +42,7 @@ public class MdmService {
 	private final S3Uploader s3Uploader;
 	private final MdmImageRepository mdmImageRepository;
 	private final CommentRepository commentRepository;
+	private final GptClient gptService;
 
 	@Transactional
 	public void createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
@@ -60,6 +63,9 @@ public class MdmService {
 				.mdm(mdm)
 				.image(imageUrl).build());
 		});
+
+		mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
+			.toList());
 
 		mdmRequestDto.tags().forEach(t -> {
 			Tag tag = tagRepository.findByName(t)
