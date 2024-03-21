@@ -1,5 +1,7 @@
 package com.sto.mdm.domain.quiz.dto;
 
+import java.util.List;
+
 import com.sto.mdm.domain.quiz.entity.Quiz;
 
 import lombok.AllArgsConstructor;
@@ -27,6 +29,9 @@ public class QuizDto {
 	private String answer;
 
 	private String solution;
+
+	private double rate;
+	private List<String> tags;
 
 	public static QuizDto of(Quiz quiz) {
 		return QuizDto.builder()
