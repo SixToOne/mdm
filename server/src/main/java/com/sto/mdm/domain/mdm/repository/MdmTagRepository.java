@@ -10,4 +10,5 @@ public interface MdmTagRepository extends JpaRepository<MdmTag, Long> {
 
 	List<MdmTag> findByMdmId(Long mdmId);
 
+	List<MdmTag> findByTagId(Long tagId);
 }
