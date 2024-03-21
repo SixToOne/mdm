@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sto.mdm.domain.mdm.dto.CommentDto;
+import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
@@ -56,6 +58,25 @@ public class MdmController {
 	@GetMapping("/{mdmId}")
 	ResponseEntity<BaseResponse<MdmResponseDto>> getMdm(@PathVariable Long mdmId) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getMdm(mdmId)));
+	}
+
+	@GetMapping("/{mdmId}/comments")
+	ResponseEntity<BaseResponse<CommentResponseDto>> getComments(@PathVariable Long mdmId) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getComments(mdmId)));
+	}
+
+	@PostMapping("/{mdmId}/comments")
+	ResponseEntity<BaseResponse<String>> postComment(@PathVariable Long mdmId,
+		@RequestBody CommentDto commentDto) {
+		mdmService.createComment(mdmId, commentDto);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@PostMapping("/{mdmId}/comments/{commentId}/reply")
+	ResponseEntity<BaseResponse<String>> postReply(@PathVariable Long mdmId, @PathVariable Long commentId,
+		@RequestBody CommentDto commentDto) {
+		mdmService.replyComment(mdmId, commentId, commentDto);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
 	}
 
 }
