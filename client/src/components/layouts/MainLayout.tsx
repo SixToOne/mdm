@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import BottomNav from '../BottomNav';
 
 interface MainLayoutProps {
     children: ReactNode;
@@ -10,7 +11,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <StyledMainLayout>
             <Header>ㅁㄷㅁ</Header>
             <Container>{children}</Container>
-            <Footer>home</Footer>
+            <Footer>
+                <BottomNav />
+            </Footer>
         </StyledMainLayout>
     );
 };
@@ -47,7 +50,7 @@ const Footer = styled.div`
     align-items: center;
     justify-content: center;
     border-top: 1px solid gray;
-    background-color: aliceblue;
+    // background-color: aliceblue;
 `;
 
 export default MainLayout;
