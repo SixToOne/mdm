@@ -7,12 +7,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sto.mdm.domain.mdm.dto.CommentDto;
+import com.sto.mdm.domain.mdm.dto.CommentReplyDto;
+import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
+import com.sto.mdm.domain.mdm.entity.Comment;
 import com.sto.mdm.domain.mdm.entity.Mdm;
 import com.sto.mdm.domain.mdm.entity.MdmImage;
 import com.sto.mdm.domain.mdm.entity.MdmTag;
+import com.sto.mdm.domain.mdm.repository.CommentRepository;
 import com.sto.mdm.domain.mdm.repository.MdmImageRepository;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
@@ -34,6 +39,7 @@ public class MdmService {
 	private final MdmTagRepository mdmTagRepository;
 	private final S3Uploader s3Uploader;
 	private final MdmImageRepository mdmImageRepository;
+	private final CommentRepository commentRepository;
 
 	@Transactional
 	public void createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
@@ -86,7 +92,7 @@ public class MdmService {
 			.stream().map(MdmTag::getTag)
 			.map(Tag::getName)
 			.collect(Collectors.toList());
-		
+
 		List<String> images = mdmImageRepository.findByMdmId(mdmId)
 			.stream()
 			.map(MdmImage::getImage)
@@ -110,6 +116,50 @@ public class MdmService {
 			images
 		);
 
+	}
+
+	public CommentResponseDto getComments(Long mdmId) {
+		mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId)
+			.stream().map(comment -> new CommentReplyDto(
+				comment.getId(),
+				comment.getContent(),
+				comment.getNickname(),
+				comment.getPassword(),
+				commentRepository.findByParentId(comment.getId())
+					.stream().map(c -> new CommentDto(
+						c.getId(),
+						c.getContent(),
+						c.getNickname(),
+						c.getPassword()
+					)).collect(Collectors.toList())
+			))
+			.collect(Collectors.toList()));
+	}
+
+	@Transactional
+	public void createComment(Long mdmId, CommentDto commentDto) {
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+		Comment comment = commentDto.toEntity();
+		comment.setMdm(mdm);
+		commentRepository.save(comment);
+	}
+
+	@Transactional
+	public void replyComment(Long mdmId, Long commentId, CommentDto commentDto) {
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		Comment comment = commentRepository.findById(commentId)
+			.orElseThrow(() -> new BaseException(ErrorCode.COMMENT_NOT_FOUND));
+
+		Comment reply = commentDto.toEntity();
+		reply.setParent(comment);
+
+		commentRepository.save(reply);
 	}
 }
 
