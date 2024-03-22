@@ -16,6 +16,7 @@ import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
 import com.sto.mdm.domain.quiz.dto.QuizConnectMdmDto;
 import com.sto.mdm.domain.quiz.dto.QuizDto;
 import com.sto.mdm.domain.quiz.dto.QuizTagDto;
+import com.sto.mdm.domain.quiz.dto.SolutionResponseDto;
 import com.sto.mdm.domain.quiz.dto.SubmitDto;
 import com.sto.mdm.domain.quiz.entity.Quiz;
 import com.sto.mdm.domain.quiz.entity.Submit;
@@ -116,5 +117,12 @@ public class QuizService {
 			.orElseThrow(() -> new BaseException(ErrorCode.QUIZ_NOT_FOUND));
 		Submit submit = submitDto.toEntity(quiz);
 		submitRepository.save(submit);
+	}
+
+	public SolutionResponseDto submitQuizSolution(long quizId) {
+		//quiz 해설
+		Quiz quiz = quizRepository.findById(quizId)
+			.orElseThrow(() -> new BaseException(ErrorCode.QUIZ_NOT_FOUND));
+		return new SolutionResponseDto(quiz.getSolution());
 	}
 }
