@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sto.mdm.domain.quiz.dto.QuizConnectMdmDto;
 import com.sto.mdm.domain.quiz.dto.QuizDto;
+import com.sto.mdm.domain.quiz.dto.SolutionResponseDto;
 import com.sto.mdm.domain.quiz.dto.SubmitDto;
 import com.sto.mdm.domain.quiz.service.QuizService;
 import com.sto.mdm.global.response.BaseResponse;
@@ -46,5 +47,13 @@ public class QuizController {
 	ResponseEntity<BaseResponse<String>> getQuizSubmit(@PathVariable int quizId, @RequestBody SubmitDto submitValue) {
 		quizService.submitQuizAnswer(quizId, submitValue);
 		return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), "success", null));
+	}
+
+	//퀴즈 해설
+	@GetMapping("/solution")
+	ResponseEntity<BaseResponse<SolutionResponseDto>> getQuizSolution(@PathVariable int quizId) {
+		quizService.submitQuizSolution(quizId);
+		return ResponseEntity.ok(
+			new BaseResponse<>(HttpStatus.OK.value(), "success", quizService.submitQuizSolution(quizId)));
 	}
 }
