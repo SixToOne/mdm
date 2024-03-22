@@ -1,30 +1,34 @@
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { Logo } from '@/components/icons';
 
 export default function BottomNav() {
     return (
-        <div className="w-full">
-            <nav className="flex justify-around">
-                {/* 첫번째 아이콘은 어디로 연결? */}
-                <button>
-                    <img src="/images/Menu.png" />
-                </button>
-                <Wrapper className="rounded-full p-6 border-4 bg-stone-50 border-stone-200">
-                    <Link to="/">
-                        <button>
-                            <img src="/images/Logo.png" />
-                        </button>
-                    </Link>
-                </Wrapper>
-                <button>
-                    <img src="/images/Search.png" />
-                </button>
-            </nav>
-        </div>
+        <StyledBottomNav>
+            <HomeButton>
+                <Logo />
+            </HomeButton>
+        </StyledBottomNav>
     );
 }
 
-const Wrapper = styled.div`
+const StyledBottomNav = styled.nav`
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+`;
+
+const HomeButton = styled.button`
     position: absolute;
-    bottom: 1px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    bottom: 12px;
+    padding: 18px;
+    border-radius: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    background-color: white;
 `;
