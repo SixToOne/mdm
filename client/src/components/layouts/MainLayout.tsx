@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
-import BottomNav from '../BottomNav';
+import Header from '@/components/Header';
+import BottomNav from '@/components/BottomNav';
 
 interface MainLayoutProps {
     children: ReactNode;
@@ -9,11 +10,9 @@ interface MainLayoutProps {
 const MainLayout = ({ children }: MainLayoutProps) => {
     return (
         <StyledMainLayout>
-            <Header>ㅁㄷㅁ</Header>
+            <Header />
             <Container>{children}</Container>
-            <Footer>
-                <BottomNav />
-            </Footer>
+            <BottomNav />
         </StyledMainLayout>
     );
 };
@@ -28,29 +27,6 @@ const Container = styled.div`
     height: calc(100% - 96px);
     padding: 18px 22px;
     overflow: scroll;
-`;
-
-const Header = styled.div`
-    position: sticky;
-    width: 100%;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid gray;
-    background-color: aliceblue;
-`;
-
-const Footer = styled.div`
-    position: sticky;
-    bottom: 0;
-    width: 100%;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top: 1px solid gray;
-    // background-color: aliceblue;
 `;
 
 export default MainLayout;
