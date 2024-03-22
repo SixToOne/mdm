@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sto.mdm.domain.mdm.entity.MdmTag;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
@@ -15,13 +16,13 @@ import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
 import com.sto.mdm.domain.quiz.dto.QuizConnectMdmDto;
 import com.sto.mdm.domain.quiz.dto.QuizDto;
 import com.sto.mdm.domain.quiz.dto.QuizTagDto;
+import com.sto.mdm.domain.quiz.dto.SubmitDto;
 import com.sto.mdm.domain.quiz.entity.Quiz;
 import com.sto.mdm.domain.quiz.entity.Submit;
 import com.sto.mdm.domain.quiz.repository.QuizRepository;
 import com.sto.mdm.domain.quiz.repository.QuizTagRepository;
 import com.sto.mdm.domain.quiz.repository.SubmitRepository;
 import com.sto.mdm.domain.tag.entity.Tag;
-import com.sto.mdm.domain.tag.repository.TagRepository;
 import com.sto.mdm.global.response.BaseException;
 import com.sto.mdm.global.response.ErrorCode;
 
@@ -38,7 +39,6 @@ public class QuizService {
 	private final SubmitRepository submitRepository;
 	private final MdmRepository mdmRepository;
 	private final MdmTagRepository mdmTagRepository;
-	private final TagRepository tagRepository;
 
 	public List<QuizConnectMdmDto> getQuizDetailConnectMdm(long quizId) {
 		// 퀴즈에 관한 연관 태그를 가져옴
@@ -107,5 +107,14 @@ public class QuizService {
 			.rate(rate)
 			.tags(tags)
 			.build();
+	}
+
+	@Transactional
+	public void submitQuizAnswer(long quizId, SubmitDto submitDto) {
+		//submit 제출
+		Quiz quiz = quizRepository.findById(quizId)
+			.orElseThrow(() -> new BaseException(ErrorCode.QUIZ_NOT_FOUND));
+		Submit submit = submitDto.toEntity(quiz);
+		submitRepository.save(submit);
 	}
 }
