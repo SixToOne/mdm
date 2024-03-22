@@ -58,21 +58,22 @@ public class QuizService {
 				mdmTagIds.add(mdmTag.getMdm().getId());
 			}
 		}
-		List<String> tags = new ArrayList<>();
-		for (Long id : tagIds) {
-			Tag tag = tagRepository.findById(id).orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
-			tags.add(tag.getName());
-		}
 		//MDM 아이디로 같은 게시물 찾기
 		List<QuizConnectMdmDto> relatedPosts = mdmRepository.findAllById(mdmTagIds)
 			.stream()
-			.map(mdm -> QuizConnectMdmDto.builder()
-				.title(mdm.getTitle())
-				.vote(mdm.getVote())
-				.tags(tags)
-				.build()
-			)
+			.map(mdm -> {
+				List<String> tagName = mdmTagRepository.findByMdmId(mdm.getId()).stream()
+					.map(MdmTag::getTag)
+					.map(Tag::getName)
+					.toList();
+				return QuizConnectMdmDto.builder()
+					.title(mdm.getTitle())
+					.vote(mdm.getVote())
+					.tags(tagName)
+					.build();
+			})
 			.toList();
+
 		//중복방지
 		List<QuizConnectMdmDto> uniqueRelatedPosts = new ArrayList<>(new HashSet<>(relatedPosts));
 		log.info(uniqueRelatedPosts.toString());

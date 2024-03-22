@@ -16,6 +16,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class QuizConnectMdmDto {
+	// private Long id;
 	private String title;
 	private double vote;
 	private List<String> tags;
@@ -24,7 +25,6 @@ public class QuizConnectMdmDto {
 		return QuizConnectMdmDto.builder()
 			.title(mdm.getTitle())
 			.vote(mdm.getVote())
-			// .tag(mdm)
 			.build();
 	}
 }
