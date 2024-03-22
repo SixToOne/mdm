@@ -2,6 +2,7 @@ package com.sto.mdm.domain.mdm.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,8 +62,8 @@ public class MdmController {
 	}
 
 	@GetMapping("/{mdmId}/comments")
-	ResponseEntity<BaseResponse<CommentResponseDto>> getComments(@PathVariable Long mdmId) {
-		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getComments(mdmId)));
+	ResponseEntity<BaseResponse<CommentResponseDto>> getComments(@PathVariable Long mdmId, Pageable pageable) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getComments(mdmId, pageable)));
 	}
 
 	@PostMapping("/{mdmId}/comments")
@@ -77,6 +78,13 @@ public class MdmController {
 		@RequestBody CommentDto commentDto) {
 		mdmService.replyComment(mdmId, commentId, commentDto);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@GetMapping("/{mdmId}/comments/{commentId}/reply")
+	ResponseEntity<BaseResponse<CommentResponseDto>> getReply(@PathVariable Long mdmId, @PathVariable Long commentId,
+		Pageable pageable) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success",
+			mdmService.getReplies(mdmId, commentId, pageable)));
 	}
 
 }

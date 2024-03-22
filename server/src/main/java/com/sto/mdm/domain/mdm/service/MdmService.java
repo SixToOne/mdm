@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -124,23 +125,19 @@ public class MdmService {
 
 	}
 
-	public CommentResponseDto getComments(Long mdmId) {
+	public CommentResponseDto getComments(Long mdmId, Pageable pageable) {
 		mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 
-		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId)
+		commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable);
+
+		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable).getContent()
 			.stream().map(comment -> new CommentReplyDto(
 				comment.getId(),
 				comment.getContent(),
 				comment.getNickname(),
 				comment.getPassword(),
-				commentRepository.findByParentId(comment.getId())
-					.stream().map(c -> new CommentDto(
-						c.getId(),
-						c.getContent(),
-						c.getNickname(),
-						c.getPassword()
-					)).collect(Collectors.toList())
+				0
 			))
 			.collect(Collectors.toList()));
 	}
@@ -166,6 +163,25 @@ public class MdmService {
 		reply.setParent(comment);
 
 		commentRepository.save(reply);
+	}
+
+	public CommentResponseDto getReplies(Long mdmId, Long commentId, Pageable pageable) {
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		Comment comment = commentRepository.findById(commentId)
+			.orElseThrow(() -> new BaseException(ErrorCode.COMMENT_NOT_FOUND));
+
+		return new CommentResponseDto(commentRepository.findByMdmIdAndParentId(mdmId, commentId, pageable).getContent()
+			.stream().map(c -> new CommentReplyDto(
+				c.getId(),
+				c.getContent(),
+				c.getNickname(),
+				c.getPassword(),
+				0
+			))
+			.collect(Collectors.toList()));
+
 	}
 }
 
