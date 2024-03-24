@@ -1,13 +1,36 @@
-// 태그 입력일 경우 input 안에 #이 맨 앞에 와야, 밖으로 입력값 빼내서 Tags로 넘겨줄 것, 입력란은 밑줄만 되어있음
 interface TagInputProps {
-    placeholder: string;
+    placeholder?: string;
+    setTagList: Dispatch<SetStateAction<string[]>>;
 }
 
-const TagInput = ({ placeholder }: TagInputProps) => {
+import { Dispatch, SetStateAction, useState } from 'react';
+
+const TagInput = ({ placeholder, setTagList }: TagInputProps) => {
+    const [tagInput, setTagInput] = useState<string>('');
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTagInput(e.target.value);
+    };
+
+    // 엔터 키 쳐야 태그로 등록되도록
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && tagInput.trim() !== '') {
+            setTagList((prevList) => [...prevList, tagInput.trim()]);
+            setTagInput('');
+        }
+    };
+
     return (
-        <div className="border-b-2">
-            <span className="font-bold"># </span>
-            <input type="text" placeholder={placeholder} />
+        <div className="py-2">
+            <span className="font-bold relative z-10 px-2"># </span>
+            <input
+                type="text"
+                placeholder={placeholder}
+                onChange={handleChange}
+                value={tagInput}
+                onKeyDown={handleKeyDown}
+                className="border-b-2 w-36 relative pl-6"
+            />
         </div>
     );
 };

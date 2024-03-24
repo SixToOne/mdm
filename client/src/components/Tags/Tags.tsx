@@ -1,16 +1,29 @@
-// interface TagProps {
-//     value: string;
-// }
+interface TagProps {
+    tags: string[];
+    isBlue?: boolean;
+    setTagList: Dispatch<SetStateAction<string[]>>;
+}
 
-// const Tags = ({ value }: TagProps) => {
-const Tags = () => {
+import { Dispatch, SetStateAction } from 'react';
+
+const Tags = ({ tags, isBlue, setTagList }: TagProps) => {
+    const removeTag = (index: number) => {
+        const removeTags = [...tags];
+        removeTags.splice(index, 1);
+        setTagList(removeTags);
+    };
+
     return (
         <span>
-            {/* 태그가 정해진 폭을 넘어가면 더보기에 자동으로 들어가도록 구현해보자 */}
-            {/* 만약 게시글 작성하는 페이지면 boolean 변수를 보내서 true면 스타일 className="bg-blue-500 text-stone-50" 로 변경 */}
-            <button className="mr-4 rounded-2xl border-2 border-stone-200 px-4 py-1">
-                {/* {value} */}
-            </button>
+            {tags?.map((tag, index) => (
+                <button
+                    key={index}
+                    className={`mr-4 rounded-2xl ${isBlue ? 'bg-PRIMARY text-LIGHT_BLACK' : 'border-2 border-BORDER_LIGHT'} px-4 py-1`}
+                >
+                    <span>{tag}</span>
+                    <span onClick={() => removeTag(index)}>x</span>
+                </button>
+            ))}
         </span>
     );
 };

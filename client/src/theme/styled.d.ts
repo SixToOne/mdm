@@ -9,5 +9,8 @@ declare module 'styled-components' {
         BORDER_LIGHT: string;
         DARK_BLACK: string;
         LIGHT_BLACK: string;
+        RED: string;
+        DARK_RED: string;
+        WHITE: string;
     }
 }
