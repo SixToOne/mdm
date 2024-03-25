@@ -120,7 +120,8 @@ public class MdmService {
 			mdm.getNickname(),
 			mdm.getPassword(),
 			tags,
-			images
+			images,
+			commentRepository.countByMdmId(mdmId)
 		);
 
 	}
