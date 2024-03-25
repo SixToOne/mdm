@@ -57,11 +57,11 @@ public class GptService {
 			QuizDto quizDto = quizzes.get(i);
 			String question = quizDto.getQuestion();
 			String generateKeyword = gptService.generateSolutionKeyword(question);
-			StringTokenizer st = new StringTokenizer(generateKeyword, ", ");
+			StringTokenizer st = new StringTokenizer(generateKeyword, ",");
 
 			int count = 4;
 			while (count-- > 0) {
-				String keyword = st.nextToken();
+				String keyword = st.nextToken().trim();
 				Tag tag = tagRepository.findByName(keyword)
 					.orElseGet(() -> tagRepository.save(Tag.builder().name(keyword).build()));
 				QuizTag quizTag = QuizTag.builder()
