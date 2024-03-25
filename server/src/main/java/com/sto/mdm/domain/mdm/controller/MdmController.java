@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
+import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
@@ -93,6 +94,11 @@ public class MdmController {
 	@GetMapping("/search")
 	ResponseEntity<BaseResponse<List<MdmSearchDto>>> searchMdm(@RequestParam String keyword) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.searchMdm(keyword)));
+
+	@GetMapping("/hot")
+	ResponseEntity<BaseResponse<HotMdmResponseDto>> getFunMdm() {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getHotMdm()));
+
 	}
 
 }
