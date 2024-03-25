@@ -7,11 +7,11 @@ interface ToggleProps {
 
 const Toggle = ({ isContent, leftContent, rightContent, handleToggle }: ToggleProps) => {
     return (
-        <div className="text-center my-4">
-            <span className="text-stone-300 font-bold">{leftContent}</span>
-            <span className="mb-4">
+        <div className="text-center my-4 flex justify-center">
+            <div className="relative text-stone-300 font-bold">{leftContent}</div>
+            <div className="mb-4 mx-2">
                 <div
-                    className="absolute w-12 h-6 flex items-center bg-gray-300 rounded-full cursor-pointer"
+                    className="relative w-12 h-6 flex items-center bg-gray-300 rounded-full cursor-pointer"
                     onClick={handleToggle}
                 >
                     <div
@@ -21,8 +21,8 @@ const Toggle = ({ isContent, leftContent, rightContent, handleToggle }: TogglePr
                         className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform left-0 transition-transform duration-300 ${isContent ? 'translate-x-full' : ''}`}
                     ></div>
                 </div>
-            </span>
-            <span className="text-blue-500 font-bold">{rightContent}</span>
+            </div>
+            <div className="relative text-blue-500 font-bold">{rightContent}</div>
         </div>
     );
 };

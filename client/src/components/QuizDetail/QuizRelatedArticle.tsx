@@ -1,6 +1,9 @@
-import Tags from './Tags';
+import { Tags } from '@/components/commons';
+import { useState } from 'react';
 
 const QuizRelatedArticle = () => {
+    const [tagList, setTagList] = useState<string[]>([]);
+
     return (
         <div className="my-4 w-80 px-12 text-left">
             <p className="font-bold mb-4">
@@ -15,7 +18,7 @@ const QuizRelatedArticle = () => {
             {/* <div className="whitespace-nowrap justify-between w-full my-4"> */}
             <div className="justify-between w-full my-4">
                 {/* 태그는 최대 3개까지, 더보기 버튼도 필요 */}
-                <Tags />
+                <Tags tags={tagList} setTagList={setTagList} />
             </div>
         </div>
     );
