@@ -5,6 +5,7 @@ interface TagProps {
 }
 
 import { Dispatch, SetStateAction } from 'react';
+import { DeleteTag } from '@/components/icons';
 
 const Tags = ({ tags, isBlue, setTagList }: TagProps) => {
     const removeTag = (index: number) => {
@@ -14,14 +15,18 @@ const Tags = ({ tags, isBlue, setTagList }: TagProps) => {
     };
 
     return (
-        <span>
+        <span className="flex flex-wrap">
             {tags?.map((tag, index) => (
                 <button
                     key={index}
-                    className={`mr-4 rounded-2xl ${isBlue ? 'bg-PRIMARY text-LIGHT_BLACK' : 'border-2 border-BORDER_LIGHT'} px-4 py-1`}
+                    className={`flex items-center relative mr-4 rounded-2xl ${isBlue ? 'bg-PRIMARY text-WHITE' : 'border-2 border-BORDER_LIGHT'} px-4 py-1`}
                 >
-                    <span>{tag}</span>
-                    <span onClick={() => removeTag(index)}>x</span>
+                    <div>{tag}</div>
+                    {isBlue && (
+                        <div className="ml-4 cursor:pointer" onClick={() => removeTag(index)}>
+                            <DeleteTag />
+                        </div>
+                    )}
                 </button>
             ))}
         </span>

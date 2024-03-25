@@ -18,7 +18,7 @@ const PasswordInput = ({ required }: PasswordInputProps) => {
                 required={required}
                 value={value}
                 onChange={handleChange}
-                className="rounded-md border-2 border-BORDER_LIGHT p-2"
+                className="rounded-md border-2 border-BORDER_LIGHT w-full p-2"
             />
         </div>
     );

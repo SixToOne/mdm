@@ -12,7 +12,6 @@ const TagInput = ({ placeholder, setTagList }: TagInputProps) => {
         setTagInput(e.target.value);
     };
 
-    // 엔터 키 쳐야 태그로 등록되도록
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && tagInput.trim() !== '') {
             setTagList((prevList) => [...prevList, tagInput.trim()]);

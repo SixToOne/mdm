@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { CompareInput, ImageInput, PasswordInput, TagInput, TextInput } from '@/components/Inputs';
-import Tags from '@/components/Tags';
-import Textarea from '@/components/Textarea';
-import Toggle from '@/components/Toggle';
+import { CompareInput, ImageInput, TagInput } from '@/components/Inputs';
+import { PasswordInput, Tags, Textarea, TextInput, Toggle } from '@/components/commons';
 
 const ArticleWrite = () => {
     const [isFinance, setIsFinance] = useState(false);
@@ -56,7 +54,6 @@ const ArticleWrite = () => {
                 <CompareInput compare="몇대몇" />
             </section>
 
-            {/* 메인 레이아웃 width가 있어서 화면 100%에 선이 그어지지가 않음 => how? */}
             <div className="border-t-2 mt-8"></div>
 
             <section>

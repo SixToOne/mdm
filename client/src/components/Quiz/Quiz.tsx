@@ -1,14 +1,22 @@
-import Tags from '@/components/Tags';
-import { useState } from 'react';
+interface QuizProps {
+    setSolved: Dispatch<SetStateAction<boolean>>;
+    solved: boolean;
+}
 
-const Quiz = () => {
+import { Tags } from '@/components/commons';
+import { Dispatch, SetStateAction, useState } from 'react';
+
+const Quiz = ({ solved, setSolved }: QuizProps) => {
     const [tagList, setTagList] = useState<string[]>([]);
+
+    const handleClick = () => {
+        setSolved(!solved);
+    };
 
     return (
         <div className="my-4">
             <div className="flex flex-col items-center">
                 <div className="justify-between w-auto my-4">
-                    {/* 태그 목록_컴포넌트화 */}
                     <Tags tags={tagList} setTagList={setTagList} />
                     {/* 정답 선택지의 정답률 */}
                     <span className="text-end">정답율 00%</span>
@@ -43,8 +51,10 @@ const Quiz = () => {
             </div>
             {/* 보기별 정답율 4개 => 제출하기 버튼 누르고 나서 나타나도록 */}
 
-            {/* 제출하기 버튼 => onClick 시 QuizSolve 컴포넌트 보이게 */}
-            <button className="py-1 px-32 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold">
+            <button
+                className={`py-1 px-32 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold ${solved ? 'hidden' : ''}`}
+                onClick={handleClick}
+            >
                 제출하기
             </button>
         </div>

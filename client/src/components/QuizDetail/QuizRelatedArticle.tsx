@@ -1,4 +1,4 @@
-import Tags from '@/components/Tags';
+import { Tags } from '@/components/commons';
 import { useState } from 'react';
 
 const QuizRelatedArticle = () => {
