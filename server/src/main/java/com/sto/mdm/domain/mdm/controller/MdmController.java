@@ -11,14 +11,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
+import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
+import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.service.MdmService;
 import com.sto.mdm.global.response.BaseResponse;
@@ -87,6 +90,17 @@ public class MdmController {
 		Pageable pageable) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success",
 			mdmService.getReplies(mdmId, commentId, pageable)));
+	}
+
+	//몇대몇 검색
+	@GetMapping("/search")
+	ResponseEntity<BaseResponse<List<MdmSearchDto>>> searchMdm(@RequestParam String keyword) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.searchMdm(keyword)));
+	}
+	@GetMapping("/hot")
+	ResponseEntity<BaseResponse<HotMdmResponseDto>> getFunMdm() {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getHotMdm()));
+
 	}
 
 	@PostMapping("/{mdmId}/comments/{commentId}/likes")

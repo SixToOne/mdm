@@ -1,6 +1,8 @@
 package com.sto.mdm.domain.mdm.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +16,10 @@ import com.sto.mdm.domain.ip.repository.IpRepository;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentReplyDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
+import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
+import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.entity.Comment;
 import com.sto.mdm.domain.mdm.entity.CommentLike;
@@ -188,6 +192,88 @@ public class MdmService {
 				0
 			))
 			.collect(Collectors.toList()));
+
+	}
+
+	public List<MdmSearchDto> searchMdm(String keyword) {
+		//태그명 찾기
+		List<Tag> tagList = tagRepository.findAllByName(keyword);
+		List<Long> mdmTagIds = null;
+
+		for (Tag tag : tagList) {
+			mdmTagIds = mdmTagRepository.findByTagId(tag.getId())
+				.stream().map(MdmTag::getMdm)
+				.map(Mdm::getId)
+				.toList();
+		}
+
+		assert mdmTagIds != null;
+		ArrayList<Long> hashSetIds = new ArrayList<>(new HashSet<>(mdmTagIds));
+
+		return mdmRepository.findAllById(hashSetIds).stream()
+			.map(mdm -> {
+				//mdm 관련 tag 찾기
+				List<String> tags = mdmTagRepository.findByMdmId(mdm.getId()).stream()
+					.map(MdmTag::getTag)
+					.map(Tag::getName)
+					.toList();
+
+				List<String> images = mdmImageRepository.findByMdmId(mdm.getId()).stream()
+					.map(MdmImage::getImage)
+					.toList();
+
+				return new MdmSearchDto(
+					mdm.getOpinion1(),
+					mdm.getOpinion2(),
+					mdm.getCount1(),
+					mdm.getCount2(),
+					mdm.getVote(),
+					mdm.getType(),
+					mdm.getNickname(),
+					tags,
+					mdm.getCreatedAt(),
+					images
+				);
+			})
+			.toList();
+	}
+
+	public HotMdmResponseDto getHotMdm() {
+		List<Mdm> allMdm=mdmRepository.findHotMdm();
+		List<MdmResponseDto> result=new ArrayList<>();
+
+		for(Mdm cur: allMdm){
+			List<String> tags = mdmTagRepository.findByMdmId(cur.getId())
+				.stream().map(MdmTag::getTag)
+				.map(Tag::getName)
+				.collect(Collectors.toList());
+
+			List<String> images = mdmImageRepository.findByMdmId(cur.getId())
+				.stream()
+				.map(MdmImage::getImage)
+				.collect(Collectors.toList());
+
+			result.add(new MdmResponseDto(
+				cur.getId(),
+				cur.getTitle(),
+				cur.getContent(),
+				cur.getOpinion1(),
+				cur.getOpinion2(),
+				cur.getImage1(),
+				cur.getImage2(),
+				cur.getCount1(),
+				cur.getCount2(),
+				cur.getVote(),
+				cur.getType(),
+				cur.getNickname(),
+				cur.getPassword(),
+				tags,
+				images,
+				commentRepository.countByMdmId(cur.getId())
+			));
+		}
+
+		return new HotMdmResponseDto(result);
 
 	}
 
