@@ -1,5 +1,6 @@
 package com.sto.mdm.domain.mdm.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentReplyDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
+import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
@@ -182,6 +184,43 @@ public class MdmService {
 			))
 			.collect(Collectors.toList()));
 
+	}
+
+	public HotMdmResponseDto getHotMdm() {
+		List<Mdm> allMdm=mdmRepository.findHotMdm();
+		List<MdmResponseDto> result=new ArrayList<>();
+
+		for(Mdm cur: allMdm){
+			List<String> tags = mdmTagRepository.findByMdmId(cur.getId())
+				.stream().map(MdmTag::getTag)
+				.map(Tag::getName)
+				.collect(Collectors.toList());
+
+			List<String> images = mdmImageRepository.findByMdmId(cur.getId())
+				.stream()
+				.map(MdmImage::getImage)
+				.collect(Collectors.toList());
+
+			result.add(new MdmResponseDto(
+				cur.getId(),
+				cur.getTitle(),
+				cur.getContent(),
+				cur.getOpinion1(),
+				cur.getOpinion2(),
+				cur.getImage1(),
+				cur.getImage2(),
+				cur.getCount1(),
+				cur.getCount2(),
+				cur.getVote(),
+				cur.getType(),
+				cur.getNickname(),
+				cur.getPassword(),
+				tags,
+				images
+			));
+		}
+
+		return new HotMdmResponseDto(result);
 	}
 }
 
