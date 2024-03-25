@@ -22,7 +22,9 @@ import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.service.MdmService;
 import com.sto.mdm.global.response.BaseResponse;
+import com.sto.mdm.global.util.IpUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -85,6 +87,13 @@ public class MdmController {
 		Pageable pageable) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success",
 			mdmService.getReplies(mdmId, commentId, pageable)));
+	}
+
+	@PostMapping("/{mdmId}/comments/{commentId}/likes")
+	ResponseEntity<BaseResponse<String>> likeComment(HttpServletRequest request, @PathVariable Long mdmId,
+		@PathVariable Long commentId) {
+		mdmService.likeComment(mdmId, commentId, IpUtil.getClientIP(request));
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
 	}
 
 }
