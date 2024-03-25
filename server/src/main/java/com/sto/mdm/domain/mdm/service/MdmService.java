@@ -76,6 +76,7 @@ public class MdmService {
 		});
 
 		mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
+			.map(String::trim)
 			.toList());
 
 		mdmRequestDto.tags().forEach(t -> {
@@ -239,10 +240,10 @@ public class MdmService {
 	}
 
 	public HotMdmResponseDto getHotMdm() {
-		List<Mdm> allMdm=mdmRepository.findHotMdm();
-		List<MdmResponseDto> result=new ArrayList<>();
+		List<Mdm> allMdm = mdmRepository.findHotMdm();
+		List<MdmResponseDto> result = new ArrayList<>();
 
-		for(Mdm cur: allMdm){
+		for (Mdm cur : allMdm) {
 			List<String> tags = mdmTagRepository.findByMdmId(cur.getId())
 				.stream().map(MdmTag::getTag)
 				.map(Tag::getName)

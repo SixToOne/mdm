@@ -38,7 +38,8 @@ public class GptClient {
 	public String generateSolutionKeyword(String question) {
 		double temperature = 0.3;
 		double top_p = 1;
-		String system = "너는 문제를 읽고 키워드를 4개만 뽑아야해. 키워드 형식은 00, 00, 00, 00 이렇게 부탁해. 문제는 다음과 같아." + question;
+		String system =
+			"너는 문제를 읽고 키워드를 4개만 뽑아야해. 띄어쓰기 대신에 _ 를 이용해. 키워드 형식은 00,00,00,00 이렇게 부탁해. 문제는 다음과 같아." + question;
 		String user = "문제에 대한 키워드 추출 4개만 부탁해.";
 		return chatCompletions(model, system, user, temperature, top_p);
 	}
@@ -47,7 +48,7 @@ public class GptClient {
 	public String generateMdmKeyword(String mdm) {
 		double temperature = 0.3;
 		double top_p = 1;
-		String system = "너는 게시글을 읽고 키워드를 4개만 뽑아야해. 키워드 형식은 00, 00, 00, 00 이렇게 부탁해. 게시글은 다음과 같아." + mdm;
+		String system = "너는 게시글을 읽고 키워드를 4개만 뽑아야해. 띄어쓰기 대신에 _ 를 이용해. 키워드 형식은 00,00,00,00 이렇게 부탁해. 게시글은 다음과 같아." + mdm;
 		String user = "게시글에 대한 키워드 추출 4개만 부탁해.";
 		return chatCompletions(model, system, user, temperature, top_p);
 	}
