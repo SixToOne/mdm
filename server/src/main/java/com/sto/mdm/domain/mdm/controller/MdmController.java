@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
+import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
@@ -85,6 +86,11 @@ public class MdmController {
 		Pageable pageable) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success",
 			mdmService.getReplies(mdmId, commentId, pageable)));
+	}
+
+	@GetMapping("/hot")
+	ResponseEntity<BaseResponse<HotMdmResponseDto>> getFunMdm() {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getHotMdm()));
 	}
 
 }
