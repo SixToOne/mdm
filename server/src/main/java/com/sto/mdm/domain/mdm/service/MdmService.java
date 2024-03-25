@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sto.mdm.domain.ip.entity.Ip;
+import com.sto.mdm.domain.ip.repository.IpRepository;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentReplyDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
@@ -20,9 +22,11 @@ import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.entity.Comment;
+import com.sto.mdm.domain.mdm.entity.CommentLike;
 import com.sto.mdm.domain.mdm.entity.Mdm;
 import com.sto.mdm.domain.mdm.entity.MdmImage;
 import com.sto.mdm.domain.mdm.entity.MdmTag;
+import com.sto.mdm.domain.mdm.repository.CommentLikeRepository;
 import com.sto.mdm.domain.mdm.repository.CommentRepository;
 import com.sto.mdm.domain.mdm.repository.MdmImageRepository;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
@@ -48,6 +52,8 @@ public class MdmService {
 	private final MdmImageRepository mdmImageRepository;
 	private final CommentRepository commentRepository;
 	private final GptClient gptService;
+	private final CommentLikeRepository commentLikeRepository;
+	private final IpRepository ipRepository;
 
 	@Transactional
 	public void createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
@@ -269,6 +275,25 @@ public class MdmService {
 
 		return new HotMdmResponseDto(result);
 
+	}
+
+	@Transactional
+	public void likeComment(Long mdmId, Long commentId, String ip) {
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		Comment comment = commentRepository.findById(commentId)
+			.orElseThrow(() -> new BaseException(ErrorCode.COMMENT_NOT_FOUND));
+
+		commentLikeRepository.findByCommentIdAndIpId(commentId, mdmId)
+			.ifPresentOrElse(commentLikeRepository::delete, () -> {
+				Ip savedIp = ipRepository.findByIp(ip)
+					.orElseGet(() -> ipRepository.save(Ip.builder().ip(ip).build()));
+				commentLikeRepository.save(CommentLike.builder()
+					.comment(comment)
+					.ip(savedIp)
+					.build());
+			});
 	}
 }
 
