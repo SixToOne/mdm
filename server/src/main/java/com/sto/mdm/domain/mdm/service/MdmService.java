@@ -230,6 +230,7 @@ public class MdmService {
 				);
 			})
 			.toList();
+	}
 
 	public HotMdmResponseDto getHotMdm() {
 		List<Mdm> allMdm=mdmRepository.findHotMdm();
@@ -261,7 +262,8 @@ public class MdmService {
 				cur.getNickname(),
 				cur.getPassword(),
 				tags,
-				images
+				images,
+				commentRepository.countByMdmId(cur.getId())
 			));
 		}
 

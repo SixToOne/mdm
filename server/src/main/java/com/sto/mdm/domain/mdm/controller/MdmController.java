@@ -94,7 +94,7 @@ public class MdmController {
 	@GetMapping("/search")
 	ResponseEntity<BaseResponse<List<MdmSearchDto>>> searchMdm(@RequestParam String keyword) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.searchMdm(keyword)));
-
+	}
 	@GetMapping("/hot")
 	ResponseEntity<BaseResponse<HotMdmResponseDto>> getFunMdm() {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getHotMdm()));
