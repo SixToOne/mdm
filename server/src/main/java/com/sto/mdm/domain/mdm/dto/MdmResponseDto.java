@@ -20,7 +20,8 @@ public record MdmResponseDto(
 	String nickname,
 	String password,
 	List<String> tags,
-	List<String> images
+	List<String> images,
+	long commentCount
 
 ) {
 }
