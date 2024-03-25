@@ -1,6 +1,8 @@
 package com.sto.mdm.domain.mdm.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ import com.sto.mdm.domain.mdm.dto.CommentReplyDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
+import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.entity.Comment;
 import com.sto.mdm.domain.mdm.entity.Mdm;
@@ -182,6 +185,49 @@ public class MdmService {
 			))
 			.collect(Collectors.toList()));
 
+	}
+
+	public List<MdmSearchDto> searchMdm(String keyword) {
+		//태그명 찾기
+		List<Tag> tagList = tagRepository.findAllByName(keyword);
+		List<Long> mdmTagIds = null;
+
+		for (Tag tag : tagList) {
+			mdmTagIds = mdmTagRepository.findByTagId(tag.getId())
+				.stream().map(MdmTag::getMdm)
+				.map(Mdm::getId)
+				.toList();
+		}
+
+		assert mdmTagIds != null;
+		ArrayList<Long> hashSetIds = new ArrayList<>(new HashSet<>(mdmTagIds));
+
+		return mdmRepository.findAllById(hashSetIds).stream()
+			.map(mdm -> {
+				//mdm 관련 tag 찾기
+				List<String> tags = mdmTagRepository.findByMdmId(mdm.getId()).stream()
+					.map(MdmTag::getTag)
+					.map(Tag::getName)
+					.toList();
+
+				List<String> images = mdmImageRepository.findByMdmId(mdm.getId()).stream()
+					.map(MdmImage::getImage)
+					.toList();
+
+				return new MdmSearchDto(
+					mdm.getOpinion1(),
+					mdm.getOpinion2(),
+					mdm.getCount1(),
+					mdm.getCount2(),
+					mdm.getVote(),
+					mdm.getType(),
+					mdm.getNickname(),
+					tags,
+					mdm.getCreatedAt(),
+					images
+				);
+			})
+			.toList();
 	}
 }
 
