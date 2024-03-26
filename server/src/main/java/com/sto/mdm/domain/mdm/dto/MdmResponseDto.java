@@ -1,5 +1,6 @@
 package com.sto.mdm.domain.mdm.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.sto.mdm.domain.mdm.entity.MdmType;
@@ -21,7 +22,8 @@ public record MdmResponseDto(
 	String password,
 	List<String> tags,
 	List<String> images,
-	long commentCount
+	long commentCount,
+	LocalDateTime createdAt
 
 ) {
 }

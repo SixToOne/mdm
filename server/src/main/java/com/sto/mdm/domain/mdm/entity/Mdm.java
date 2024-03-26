@@ -1,5 +1,6 @@
 package com.sto.mdm.domain.mdm.entity;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -56,6 +57,9 @@ public class Mdm extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private MdmType type;
+
+	@Formula("(SELECT COUNT(*) FROM comment c WHERE c.mdm_id = mdm_id and c.deleted = false)")
+	private int commentCount;
 
 	public void setImages(String image1, String image2) {
 		this.image1 = image1;
