@@ -131,7 +131,8 @@ public class MdmService {
 			mdm.getPassword(),
 			tags,
 			images,
-			commentRepository.countByMdmId(mdmId)
+			mdm.getCommentCount(),
+			mdm.getCreatedAt()
 		);
 
 	}
@@ -254,7 +255,8 @@ public class MdmService {
 				cur.getPassword(),
 				tags,
 				images,
-				commentRepository.countByMdmId(cur.getId())
+				cur.getCommentCount(),
+				cur.getCreatedAt()
 			));
 		}
 
