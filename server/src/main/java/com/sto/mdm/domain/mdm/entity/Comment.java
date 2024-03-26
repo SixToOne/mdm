@@ -1,5 +1,6 @@
 package com.sto.mdm.domain.mdm.entity;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -48,4 +49,7 @@ public class Comment extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
 	private Comment parent;
+
+	@Formula("(SELECT COUNT(*) FROM comment_like cl WHERE cl.comment_id = comment_id and cl.deleted = false)")
+	private int likeCount;
 }
