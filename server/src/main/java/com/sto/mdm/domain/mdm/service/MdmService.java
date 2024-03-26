@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sto.mdm.domain.ip.entity.Ip;
 import com.sto.mdm.domain.ip.repository.IpRepository;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
-import com.sto.mdm.domain.mdm.dto.CommentReplyDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
@@ -143,15 +142,7 @@ public class MdmService {
 
 		commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable);
 
-		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable).getContent()
-			.stream().map(comment -> new CommentReplyDto(
-				comment.getId(),
-				comment.getContent(),
-				comment.getNickname(),
-				comment.getPassword(),
-				0
-			))
-			.collect(Collectors.toList()));
+		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable).getContent());
 	}
 
 	@Transactional
@@ -184,15 +175,8 @@ public class MdmService {
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new BaseException(ErrorCode.COMMENT_NOT_FOUND));
 
-		return new CommentResponseDto(commentRepository.findByMdmIdAndParentId(mdmId, commentId, pageable).getContent()
-			.stream().map(c -> new CommentReplyDto(
-				c.getId(),
-				c.getContent(),
-				c.getNickname(),
-				c.getPassword(),
-				0
-			))
-			.collect(Collectors.toList()));
+		return new CommentResponseDto(
+			commentRepository.findByMdmIdAndParentId(commentId, pageable).getContent());
 
 	}
 
@@ -295,6 +279,13 @@ public class MdmService {
 					.ip(savedIp)
 					.build());
 			});
+	}
+
+	public CommentResponseDto getTop3Comments(Long mdmId) {
+		mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		return new CommentResponseDto(commentRepository.findByTop3Comments(mdmId));
 	}
 }
 

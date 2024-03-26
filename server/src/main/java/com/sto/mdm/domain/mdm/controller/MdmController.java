@@ -71,6 +71,11 @@ public class MdmController {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getComments(mdmId, pageable)));
 	}
 
+	@GetMapping("/{mdmId}/comments/top3")
+	ResponseEntity<BaseResponse<CommentResponseDto>> getTop3Comments(@PathVariable Long mdmId) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getTop3Comments(mdmId)));
+	}
+
 	@PostMapping("/{mdmId}/comments")
 	ResponseEntity<BaseResponse<String>> postComment(@PathVariable Long mdmId,
 		@RequestBody CommentDto commentDto) {
@@ -97,6 +102,7 @@ public class MdmController {
 	ResponseEntity<BaseResponse<List<MdmSearchDto>>> searchMdm(@RequestParam String keyword) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.searchMdm(keyword)));
 	}
+
 	@GetMapping("/hot")
 	ResponseEntity<BaseResponse<HotMdmResponseDto>> getFunMdm() {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getHotMdm()));
