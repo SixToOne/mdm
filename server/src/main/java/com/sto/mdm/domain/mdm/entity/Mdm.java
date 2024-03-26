@@ -72,4 +72,10 @@ public class Mdm extends BaseEntity {
 		this.opinion1 = mdmUpdateRequestDto.opinion1();
 		this.opinion2 = mdmUpdateRequestDto.opinion2();
 	}
+
+	public void vote(int count1, int count2) {
+		this.count1 = count1;
+		this.count2 = count2;
+		this.vote = count1 + count2;
+	}
 }
