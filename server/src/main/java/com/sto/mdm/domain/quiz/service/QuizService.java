@@ -2,6 +2,7 @@ package com.sto.mdm.domain.quiz.service;
 
 import static java.util.stream.Collectors.*;
 
+import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sto.mdm.domain.mdm.entity.MdmTag;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
+import com.sto.mdm.domain.quiz.dto.FeedResponseDto;
 import com.sto.mdm.domain.quiz.dto.QuizConnectMdmDto;
 import com.sto.mdm.domain.quiz.dto.QuizDto;
 import com.sto.mdm.domain.quiz.dto.QuizTagDto;
@@ -124,5 +126,15 @@ public class QuizService {
 		Quiz quiz = quizRepository.findById(quizId)
 			.orElseThrow(() -> new BaseException(ErrorCode.QUIZ_NOT_FOUND));
 		return new SolutionResponseDto(quiz.getSolution());
+	}
+
+	public FeedResponseDto getFeed(Pageable pageable){
+		List<Quiz> quizzes=quizRepository.findAll(pageable).getContent();
+		List<QuizDto> result=new ArrayList<>();
+		for(Quiz cur:quizzes){
+			result.add(getQuizDetail(cur.getId()));
+		}
+
+		return new FeedResponseDto(result);
 	}
 }
