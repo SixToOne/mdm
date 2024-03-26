@@ -4,6 +4,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.sto.mdm.domain.BaseEntity;
+import com.sto.mdm.domain.ip.entity.Ip;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,5 +40,9 @@ public class Vote extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "mdm_id")
 	private Mdm mdm;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ip_id")
+	private Ip ip;
 
 }

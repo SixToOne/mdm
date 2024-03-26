@@ -23,6 +23,7 @@ import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
+import com.sto.mdm.domain.mdm.dto.VoteDto;
 import com.sto.mdm.domain.mdm.service.MdmService;
 import com.sto.mdm.global.response.BaseResponse;
 import com.sto.mdm.global.util.IpUtil;
@@ -113,6 +114,13 @@ public class MdmController {
 	ResponseEntity<BaseResponse<String>> likeComment(HttpServletRequest request, @PathVariable Long mdmId,
 		@PathVariable Long commentId) {
 		mdmService.likeComment(mdmId, commentId, IpUtil.getClientIP(request));
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@PostMapping("/{mdmId}/vote")
+	ResponseEntity<BaseResponse<String>> voteMdm(HttpServletRequest request, @PathVariable Long mdmId,
+		@RequestBody VoteDto voteDto) {
+		mdmService.voteMdm(IpUtil.getClientIP(request), mdmId, voteDto);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
 	}
 

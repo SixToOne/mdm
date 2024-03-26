@@ -20,16 +20,19 @@ import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
+import com.sto.mdm.domain.mdm.dto.VoteDto;
 import com.sto.mdm.domain.mdm.entity.Comment;
 import com.sto.mdm.domain.mdm.entity.CommentLike;
 import com.sto.mdm.domain.mdm.entity.Mdm;
 import com.sto.mdm.domain.mdm.entity.MdmImage;
 import com.sto.mdm.domain.mdm.entity.MdmTag;
+import com.sto.mdm.domain.mdm.entity.Vote;
 import com.sto.mdm.domain.mdm.repository.CommentLikeRepository;
 import com.sto.mdm.domain.mdm.repository.CommentRepository;
 import com.sto.mdm.domain.mdm.repository.MdmImageRepository;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
+import com.sto.mdm.domain.mdm.repository.VoteRepository;
 import com.sto.mdm.domain.tag.entity.Tag;
 import com.sto.mdm.domain.tag.repository.TagRepository;
 import com.sto.mdm.global.infra.gpt3.GptClient;
@@ -53,6 +56,7 @@ public class MdmService {
 	private final GptClient gptService;
 	private final CommentLikeRepository commentLikeRepository;
 	private final IpRepository ipRepository;
+	private final VoteRepository voteIpRepository;
 
 	@Transactional
 	public void createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
@@ -288,6 +292,28 @@ public class MdmService {
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 
 		return new CommentResponseDto(commentRepository.findByTop3Comments(mdmId));
+	}
+
+	@Transactional
+	public void voteMdm(String clientIP, Long mdmId, VoteDto voteDto) {
+
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+		voteIpRepository.findByMdmIdAndIp(mdmId, clientIP)
+			.ifPresentOrElse(vote -> {
+				throw new BaseException(ErrorCode.ALREADY_VOTED);
+			}, () -> {
+				Ip ip = ipRepository.findByIp(clientIP)
+					.orElseGet(() -> ipRepository.save(Ip.builder().ip(clientIP).build()));
+				voteIpRepository.save(Vote.builder()
+					.mdm(mdm)
+					.ip(ip)
+					.count1(voteDto.count1())
+					.count2(voteDto.count2())
+					.build());
+			});
+		mdm.vote(voteDto.count1(), voteDto.count2());
+
 	}
 }
 
