@@ -8,7 +8,6 @@ export const postNewMDM = async (formData: FormData) => {
         console.log(res.data);
         return res.data;
     } catch (error) {
-        alert('필수 입력란을 모두 기입해주세요.');
         console.log(error);
     }
 };

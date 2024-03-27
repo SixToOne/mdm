@@ -11,7 +11,6 @@ import { ImageAdd, Delete } from '@/components/icons';
 
 const ImageInput = ({ placeholder, previewList, setPreviewList, onChange }: ImageInputProps) => {
     const inputFile = useRef<HTMLInputElement>(null);
-    // const [previewList, setPreviewList] = useState<string[]>([]);
 
     const handleClick = () => {
         if (inputFile.current) {
@@ -22,21 +21,7 @@ const ImageInput = ({ placeholder, previewList, setPreviewList, onChange }: Imag
     const handleDeleteClick = (id: number) => {
         const newList = previewList.filter((_, index) => index !== id);
         setPreviewList(newList);
-
-        // const removeFile = [...previewList];
-        // removeFile.splice(id, 1);
-        // setPreviewList(removeFile);
     };
-
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const files = e.target.files;
-    //     if (files) {
-    //         const list = Array.from(files);
-    //         const urls = list.map((file) => URL.createObjectURL(file));
-    //         console.log(urls);
-    //         setPreviewList((prevList) => [...prevList, ...urls]);
-    //     }
-    // };
 
     return (
         <div className="my-2 flex justify-center">

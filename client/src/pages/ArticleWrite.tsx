@@ -103,11 +103,17 @@ const ArticleWrite = () => {
             formData.append(`images[${index}]`, image);
         });
 
+        console.log(formData);
         const res = await postNewMDM(formData);
-        console.log(res);
+        if (res) {
+            console.log(res);
+        }
         const id = res?.id;
-        console.log('id', id); // 왜 undefined가 뜨지??
-        navigate(`/mdm/${id}`);
+        if (id) {
+            navigate(`/mdm/${id}`);
+        } else {
+            alert('필수 입력란을 모두 기입해주세요.');
+        }
     };
 
     return (

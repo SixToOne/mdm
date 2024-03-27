@@ -2,9 +2,10 @@ import MdmCard from '@/components/MdmCard';
 import { Quiz } from '@/components/Quiz';
 import { LeftCard, RightCard } from '@/components/icons';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
-    const [solved, setSolved] = useState(false);
+    const [solved, setSolved] = useState<number[]>([]);
     // const [feeds, setFeeds] = useState([]);
 
     return (
@@ -25,12 +26,31 @@ const Home = () => {
             </p>
             <p className="font-bold my-4">타임라인</p>
 
-            {/* 추후 피드 api로 바꿔서 무한스크롤로 늘어놓기 */}
+            {/* 추후 피드 api로 바꿔서 늘어놓기 */}
             {/* 컴포넌트 클릭 시 해당 상세로 이동하도록 */}
+            <Link to="/quiz/1">
+                <div className="text-end">| 자세히 |</div>
+            </Link>
             <Quiz solved={solved} setSolved={setSolved} quizId={1} />
+
+            <Link to="/quiz/2">
+                <div className="text-end">| 자세히 |</div>
+            </Link>
             <Quiz solved={solved} setSolved={setSolved} quizId={2} />
+
+            <Link to="/quiz/3">
+                <div className="text-end">| 자세히 |</div>
+            </Link>
             <Quiz solved={solved} setSolved={setSolved} quizId={3} />
+
+            <Link to="/quiz/4">
+                <div className="text-end">| 자세히 |</div>
+            </Link>
             <Quiz solved={solved} setSolved={setSolved} quizId={4} />
+
+            <Link to="/quiz/5">
+                <div className="text-end">| 자세히 |</div>
+            </Link>
             <Quiz solved={solved} setSolved={setSolved} quizId={5} />
         </div>
     );

@@ -5,7 +5,7 @@ export interface IQuiz {
     example2: string;
     example3: string;
     example4: string;
-    answer: number;
+    answer: string;
     rate: number;
     tags: string[];
 }

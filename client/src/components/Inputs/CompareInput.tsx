@@ -37,22 +37,24 @@ const CompareInput = ({
         setSecondFile('');
     };
 
-    // const handleFirstFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = e.target.files;
-    //     if (file) {
-    //         const files = Array.from(file);
-    //         const url = URL.createObjectURL(files[0]);
-    //         setFirstFile(url);
-    //     }
-    // };
-    // const handleSecondFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = e.target.files;
-    //     if (file) {
-    //         const files = Array.from(file);
-    //         const url = URL.createObjectURL(files[0]);
-    //         setSecondFile(url);
-    //     }
-    // };
+    const handleFirstFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files;
+        if (file) {
+            const files = Array.from(file);
+            const url = URL.createObjectURL(files[0]);
+            setFirstFile(url);
+            onChange(e, 'first');
+        }
+    };
+    const handleSecondFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files;
+        if (file) {
+            const files = Array.from(file);
+            const url = URL.createObjectURL(files[0]);
+            setSecondFile(url);
+            onChange(e, 'second');
+        }
+    };
 
     return (
         <section>
@@ -63,6 +65,7 @@ const CompareInput = ({
                     onChange={(e) => handleValueChange(e, 'opinion1')}
                     placeholder="첫 번째 선택지를 입력해주세요"
                     className="w-4/5 border-2 border-BORDER_LIGHT rounded-md p-2"
+                    required
                 />
                 <button
                     onClick={() => {
@@ -78,7 +81,7 @@ const CompareInput = ({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => onChange(e, 'first')}
+                    onChange={handleFirstFileChange}
                 />
             </div>
             <div className="flex justify-between my-2">
@@ -88,6 +91,7 @@ const CompareInput = ({
                     onChange={(e) => handleValueChange(e, 'opinion2')}
                     placeholder="두 번째 선택지를 입력해주세요"
                     className="w-4/5 border-2 border-BORDER_LIGHT rounded-md p-2"
+                    required
                 />
                 <button
                     onClick={() => {
@@ -103,7 +107,7 @@ const CompareInput = ({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => onChange(e, 'second')}
+                    onChange={handleSecondFileChange}
                 />
             </div>
 
