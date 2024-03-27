@@ -60,7 +60,7 @@ public class MdmService {
 	private final VoteRepository voteIpRepository;
 
 	@Transactional
-	public void createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
+	public Long createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
 		List<MultipartFile> images) {
 
 		Mdm mdm = mdmRequestDto.toEntity();
@@ -70,7 +70,7 @@ public class MdmService {
 
 		mdm.setImages(imageUrl1, imageUrl2);
 
-		mdmRepository.save(mdm);
+		Mdm save = mdmRepository.save(mdm);
 		if (images != null) {
 			images.forEach(image -> {
 				String imageUrl = s3Uploader.saveFile(image);
@@ -89,6 +89,8 @@ public class MdmService {
 				.orElseGet(() -> tagRepository.save(Tag.builder().name(t).build()));
 			mdmTagRepository.save(MdmTag.builder().mdm(mdm).tag(tag).build());
 		});
+
+		return save.getId();
 
 	}
 
