@@ -28,7 +28,7 @@ const TagInput = ({ placeholder, setTagList }: TagInputProps) => {
                 onChange={handleChange}
                 value={tagInput}
                 onKeyDown={handleKeyDown}
-                className="border-b-2 w-36 relative pl-6"
+                className="border-b-2 w-36 relative"
             />
         </div>
     );

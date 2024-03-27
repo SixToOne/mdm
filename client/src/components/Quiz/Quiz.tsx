@@ -1,62 +1,128 @@
+export interface RegistForm {
+    correct: boolean;
+}
+
 interface QuizProps {
-    setSolved: Dispatch<SetStateAction<boolean>>;
-    solved: boolean;
+    solved: number[];
+    setSolved: Dispatch<SetStateAction<number[]>>;
+    quizId: number | undefined;
 }
 
 import { Tags } from '@/components/commons';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { getQuiz } from '@/apis/get-quiz';
+import { IQuiz } from '@/apis/types/quiz';
+import { postAnswer } from '@/apis/post-answer';
 
-const Quiz = ({ solved, setSolved }: QuizProps) => {
+const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
+    const [quizData, setQuizData] = useState<IQuiz | null>(null);
     const [tagList, setTagList] = useState<string[]>([]);
+    const [select, setSelect] = useState<number | null>(null);
+    const [selectedExample, setSelectedExample] = useState<string>('');
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const [submit, setSubmit] = useState<boolean>(false);
 
-    const handleClick = () => {
-        setSolved(!solved);
+    // quizId가 변할 때만 함수 실행 = useEffect
+    useEffect(() => {
+        const getQuizData = async () => {
+            try {
+                if (quizId) {
+                    const quiz = await getQuiz(quizId);
+                    if (quiz) {
+                        setQuizData(quiz);
+                        setTagList(quiz.tags);
+                    } else {
+                        setQuizData(null);
+                    }
+                    setIsCorrect(null);
+                    setSubmit(false);
+                }
+            } catch (error) {
+                console.error();
+            }
+        };
+        getQuizData();
+    }, [quizId]);
+
+    const handleSelect = (which: number, example: string) => {
+        setSelect(which);
+        setSelectedExample(example);
+    };
+
+    const handleSubmit = async () => {
+        if (!quizId || selectedExample === '') {
+            return;
+        }
+        try {
+            const isCorrect = selectedExample === quizData?.answer;
+            console.log(selectedExample, quizData?.answer);
+            setSubmit(true);
+            setSolved((prev) => [...prev, quizId]);
+            setIsCorrect(isCorrect);
+            await postAnswer(quizId, { correct: isCorrect });
+        } catch {
+            console.error();
+        }
     };
 
     return (
-        <div className="my-4">
+        <div className="my-4 rounded-md border-2 border-BORDER_LIGHT">
             <div className="flex flex-col items-center">
-                <div className="justify-between w-auto my-4">
-                    <Tags tags={tagList} setTagList={setTagList} />
-                    {/* 정답 선택지의 정답률 */}
-                    <span className="text-end">정답율 00%</span>
-                </div>
-
-                {/* 퀴즈 제목 */}
-                <div className="flex w-80 text-left mb-4">
-                    <p className="font-bold">
-                        사람은 밥을 먹지 않고 최대 며칠까지 잠만 잘 수 있을까? 동면하고싶다
-                    </p>
+                <div className="flex justify-between w-full px-4 my-4 flex-wrap">
+                    <span className="flex flex-wrap">
+                        <Tags tags={tagList} setTagList={setTagList} />
+                    </span>
                 </div>
             </div>
-            {/* 퀴즈 보기 버튼 4개 => 4번 반복해서 내용만 갈아치워서 보여주기, 보기 번호는 따로 뽑아놨다가 인덱스 맞춰서 표기? */}
-            {/* 누르면 선택된 하이라이트 효과, 제출하기 버튼 누르고 나면 정답일 경우 녹색 오답일 경우 정답선택지를 빨간색으로 텍스트 효과 */}
+            <div className="text-end">
+                <div className="mr-4 mb-4">정답률 {quizData?.rate}%</div>
+            </div>
+            <div className="flex flex-col items-center">
+                <div className="w-full px-4 mb-4 text-start">
+                    <p className="font-bold">{quizData?.question}</p>
+                </div>
+            </div>
+
+            {/* 보기별 정답률은 API에 없는 상태 */}
+
             <div className="flex flex-col items-center pb-4">
-                <button className="w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between">
-                    <span>1. 보기 내용</span>
-                    <span>00%</span>
+                <button
+                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 1 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example1 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example1 ? 'text-RED' : ''}`}
+                    onClick={() => handleSelect(1, quizData?.example1 || '')}
+                >
+                    <span>① {quizData?.example1}</span>
+                    {submit && <span>25%</span>}
                 </button>
-                <button className="w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between">
-                    <span>1. 보기 내용</span>
-                    <span>00%</span>
+                <button
+                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 2 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example2 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example2 ? 'text-RED' : ''} `}
+                    onClick={() => handleSelect(2, quizData?.example2 || '')}
+                >
+                    <span>② {quizData?.example2}</span>
+                    {submit && <span>25%</span>}
                 </button>
-                <button className="w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between">
-                    <span>1. 보기 내용</span>
-                    <span>00%</span>
+                <button
+                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 3 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example3 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example3 ? 'text-RED' : ''}`}
+                    onClick={() => handleSelect(3, quizData?.example3 || '')}
+                >
+                    <span>③ {quizData?.example3}</span>
+                    {submit && <span>25%</span>}
                 </button>
-                <button className="w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between">
-                    <span>1. 보기 내용</span>
-                    <span>00%</span>
+                <button
+                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 4 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example4 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example4 ? 'text-RED' : ''}`}
+                    onClick={() => handleSelect(4, quizData?.example4 || '')}
+                >
+                    <span>④ {quizData?.example4}</span>
+                    {submit && <span>25%</span>}
                 </button>
             </div>
-            {/* 보기별 정답율 4개 => 제출하기 버튼 누르고 나서 나타나도록 */}
-
-            <button
-                className={`py-1 px-32 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold ${solved ? 'hidden' : ''}`}
-                onClick={handleClick}
-            >
-                제출하기
-            </button>
+            <div className="flex flex-col items-center">
+                <button
+                    className={`py-1 px-32 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold ${submit && solved.includes(quizId || 0) ? 'hidden' : ''}`}
+                    onClick={handleSubmit}
+                >
+                    제출하기
+                </button>
+            </div>
         </div>
     );
 };

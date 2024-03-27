@@ -1,14 +1,16 @@
 interface PasswordInputProps {
     required: boolean;
+    value: string;
+    onChange: (value: string) => void;
 }
 
-import { useState } from 'react';
+// import { useState } from 'react';
 
-const PasswordInput = ({ required }: PasswordInputProps) => {
-    const [value, setValue] = useState('');
+const PasswordInput = ({ required, value, onChange }: PasswordInputProps) => {
+    // const [value, setValue] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value);
+        onChange(e.target.value);
     };
 
     return (

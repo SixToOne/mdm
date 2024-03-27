@@ -1,14 +1,16 @@
 interface ImageInputProps {
     placeholder: string;
+    previewList: string[];
+    setPreviewList: React.Dispatch<React.SetStateAction<string[]>>;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import styled from 'styled-components';
 import { ImageAdd, Delete } from '@/components/icons';
 
-const ImageInput = ({ placeholder }: ImageInputProps) => {
+const ImageInput = ({ placeholder, previewList, setPreviewList, onChange }: ImageInputProps) => {
     const inputFile = useRef<HTMLInputElement>(null);
-    const [previewList, setPreviewList] = useState<string[]>([]);
 
     const handleClick = () => {
         if (inputFile.current) {
@@ -17,18 +19,8 @@ const ImageInput = ({ placeholder }: ImageInputProps) => {
     };
 
     const handleDeleteClick = (id: number) => {
-        const removeFile = [...previewList];
-        removeFile.splice(id, 1);
-        setPreviewList(removeFile);
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files) {
-            const list = Array.from(files);
-            const urls = list.map((file) => URL.createObjectURL(file));
-            setPreviewList((prevList) => [...prevList, ...urls]);
-        }
+        const newList = previewList.filter((_, index) => index !== id);
+        setPreviewList(newList);
     };
 
     return (
@@ -71,7 +63,7 @@ const ImageInput = ({ placeholder }: ImageInputProps) => {
                     multiple
                     placeholder={placeholder}
                     className="hidden"
-                    onChange={handleChange}
+                    onChange={(e) => onChange(e)}
                 />
             </div>
         </div>

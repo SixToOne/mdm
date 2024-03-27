@@ -1,15 +1,22 @@
 interface CompareInputProps {
     compare: string;
+    opinion1: string;
+    opinion2: string;
+    handleValueChange: (e: React.ChangeEvent<HTMLInputElement>, key: string) => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
 }
 
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { FileAdd, Delete } from '@/components/icons';
 
-const CompareInput = ({ compare }: CompareInputProps) => {
-    const [firstValue, setFirstValue] = useState<string>('');
-    const [secondValue, setSecondValue] = useState<string>('');
-
+const CompareInput = ({
+    compare,
+    opinion1,
+    opinion2,
+    handleValueChange,
+    onChange,
+}: CompareInputProps) => {
     const firstInputFile = useRef<HTMLInputElement>(null);
     const secondInputFile = useRef<HTMLInputElement>(null);
 
@@ -30,19 +37,13 @@ const CompareInput = ({ compare }: CompareInputProps) => {
         setSecondFile('');
     };
 
-    const handleFirstValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFirstValue(e.target.value);
-    };
-    const handleSecondValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSecondValue(e.target.value);
-    };
-
     const handleFirstFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files;
         if (file) {
             const files = Array.from(file);
             const url = URL.createObjectURL(files[0]);
             setFirstFile(url);
+            onChange(e, 'first');
         }
     };
     const handleSecondFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,18 +52,20 @@ const CompareInput = ({ compare }: CompareInputProps) => {
             const files = Array.from(file);
             const url = URL.createObjectURL(files[0]);
             setSecondFile(url);
+            onChange(e, 'second');
         }
     };
 
     return (
         <section>
-            <div className="flex justify-between my-2">
-                <div className="font-bold mr-2 py-2">1</div>
+            <div className="flex justify-between my-4">
+                <div className="font-bold mr-2 my-2">1</div>
                 <input
                     type="text"
-                    onChange={handleFirstValueChange}
+                    onChange={(e) => handleValueChange(e, 'opinion1')}
                     placeholder="첫 번째 선택지를 입력해주세요"
                     className="w-4/5 border-2 border-BORDER_LIGHT rounded-md p-2"
+                    required
                 />
                 <button
                     onClick={() => {
@@ -82,12 +85,13 @@ const CompareInput = ({ compare }: CompareInputProps) => {
                 />
             </div>
             <div className="flex justify-between my-2">
-                <div className="font-bold mr-2 py-2">2</div>
+                <div className="font-bold mr-2 my-2">2</div>
                 <input
                     type="text"
-                    onChange={handleSecondValueChange}
+                    onChange={(e) => handleValueChange(e, 'opinion2')}
                     placeholder="두 번째 선택지를 입력해주세요"
                     className="w-4/5 border-2 border-BORDER_LIGHT rounded-md p-2"
+                    required
                 />
                 <button
                     onClick={() => {
@@ -108,7 +112,7 @@ const CompareInput = ({ compare }: CompareInputProps) => {
             </div>
 
             <div>
-                <p className="font-bold my-2">{compare} 미리보기</p>
+                <p className="font-bold my-4">{compare} 미리보기</p>
                 <table className="flex justify-around my-2">
                     <tbody>
                         <tr>
@@ -152,12 +156,12 @@ const CompareInput = ({ compare }: CompareInputProps) => {
                         <tr className="text-center">
                             <td className="w-1/2">
                                 <div className="w-[130px] min-h-[30px] border-2 border-BORDER_LIGHT rounded-md mx-2">
-                                    {firstValue}
+                                    {opinion1}
                                 </div>
                             </td>
                             <td className="w-1/2">
                                 <div className="w-[130px] min-h-[30px] border-2 border-BORDER_LIGHT rounded-md mx-2">
-                                    {secondValue}
+                                    {opinion2}
                                 </div>
                             </td>
                         </tr>
