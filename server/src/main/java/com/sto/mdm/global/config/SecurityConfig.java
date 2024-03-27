@@ -1,5 +1,7 @@
 package com.sto.mdm.global.config;
 
+import java.util.Collections;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,9 +35,21 @@ public class SecurityConfig { // 스프링 시큐리티에 필요한 설정
 			// .headers((headers) ->
 			// 	headers.frameOptions(
 			// 		HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
 
 		return http.build();
+	}
+
+	CorsConfigurationSource corsConfigurationSource() {
+		return request -> {
+			CorsConfiguration config = new CorsConfiguration();
+			config.setAllowedHeaders(Collections.singletonList("*"));
+			config.setAllowedMethods(Collections.singletonList("*"));
+			config.setAllowedOriginPatterns(Collections.singletonList("**")); //
+			config.setAllowCredentials(true);
+			return config;
+		};
 	}
 
 	@Bean
