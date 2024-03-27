@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import Header from '@/components/Header';
-import BottomNav from '@/components/BottomNav';
 
 interface MainLayoutProps {
     children: ReactNode;
@@ -12,7 +11,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <StyledMainLayout>
             <Header />
             <Container>{children}</Container>
-            <BottomNav />
         </StyledMainLayout>
     );
 };

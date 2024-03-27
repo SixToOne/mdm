@@ -19,7 +19,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/quiz/*" element={<QuizDetail />} />
-                    <Route path="/mdm/new" element={<ArticleWrite />} />
+                    <Route path="/write" element={<ArticleWrite />} />
                     <Route path="/mdm/:id" element={<MDM />} />
                 </Routes>
             </MainLayout>
