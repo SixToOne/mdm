@@ -14,23 +14,25 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sto.mdm.domain.ip.entity.Ip;
 import com.sto.mdm.domain.ip.repository.IpRepository;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
-import com.sto.mdm.domain.mdm.dto.CommentReplyDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
+import com.sto.mdm.domain.mdm.dto.VoteDto;
 import com.sto.mdm.domain.mdm.entity.Comment;
 import com.sto.mdm.domain.mdm.entity.CommentLike;
 import com.sto.mdm.domain.mdm.entity.Mdm;
 import com.sto.mdm.domain.mdm.entity.MdmImage;
 import com.sto.mdm.domain.mdm.entity.MdmTag;
+import com.sto.mdm.domain.mdm.entity.Vote;
 import com.sto.mdm.domain.mdm.repository.CommentLikeRepository;
 import com.sto.mdm.domain.mdm.repository.CommentRepository;
 import com.sto.mdm.domain.mdm.repository.MdmImageRepository;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
+import com.sto.mdm.domain.mdm.repository.VoteRepository;
 import com.sto.mdm.domain.tag.entity.Tag;
 import com.sto.mdm.domain.tag.repository.TagRepository;
 import com.sto.mdm.global.infra.gpt3.GptClient;
@@ -54,6 +56,7 @@ public class MdmService {
 	private final GptClient gptService;
 	private final CommentLikeRepository commentLikeRepository;
 	private final IpRepository ipRepository;
+	private final VoteRepository voteIpRepository;
 
 	@Transactional
 	public void createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
@@ -102,9 +105,11 @@ public class MdmService {
 		mdmRepository.delete(mdm);
 	}
 
+	@Transactional
 	public MdmResponseDto getMdm(Long mdmId) {
 		Mdm mdm = mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+		mdm.view();
 
 		List<String> tags = mdmTagRepository.findByMdmId(mdmId)
 			.stream().map(MdmTag::getTag)
@@ -127,12 +132,14 @@ public class MdmService {
 			mdm.getCount1(),
 			mdm.getCount2(),
 			mdm.getVote(),
+			mdm.getViews(),
 			mdm.getType(),
 			mdm.getNickname(),
 			mdm.getPassword(),
 			tags,
 			images,
-			commentRepository.countByMdmId(mdmId)
+			mdm.getCommentCount(),
+			mdm.getCreatedAt()
 		);
 
 	}
@@ -143,15 +150,7 @@ public class MdmService {
 
 		commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable);
 
-		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable).getContent()
-			.stream().map(comment -> new CommentReplyDto(
-				comment.getId(),
-				comment.getContent(),
-				comment.getNickname(),
-				comment.getPassword(),
-				0
-			))
-			.collect(Collectors.toList()));
+		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable).getContent());
 	}
 
 	@Transactional
@@ -184,15 +183,8 @@ public class MdmService {
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new BaseException(ErrorCode.COMMENT_NOT_FOUND));
 
-		return new CommentResponseDto(commentRepository.findByMdmIdAndParentId(mdmId, commentId, pageable).getContent()
-			.stream().map(c -> new CommentReplyDto(
-				c.getId(),
-				c.getContent(),
-				c.getNickname(),
-				c.getPassword(),
-				0
-			))
-			.collect(Collectors.toList()));
+		return new CommentResponseDto(
+			commentRepository.findByMdmIdAndParentId(commentId, pageable).getContent());
 
 	}
 
@@ -265,12 +257,14 @@ public class MdmService {
 				cur.getCount1(),
 				cur.getCount2(),
 				cur.getVote(),
+				cur.getViews(),
 				cur.getType(),
 				cur.getNickname(),
 				cur.getPassword(),
 				tags,
 				images,
-				commentRepository.countByMdmId(cur.getId())
+				cur.getCommentCount(),
+				cur.getCreatedAt()
 			));
 		}
 
@@ -295,6 +289,35 @@ public class MdmService {
 					.ip(savedIp)
 					.build());
 			});
+	}
+
+	public CommentResponseDto getTop3Comments(Long mdmId) {
+		mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		return new CommentResponseDto(commentRepository.findByTop3Comments(mdmId));
+	}
+
+	@Transactional
+	public void voteMdm(String clientIP, Long mdmId, VoteDto voteDto) {
+
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+		voteIpRepository.findByMdmIdAndIp(mdmId, clientIP)
+			.ifPresentOrElse(vote -> {
+				throw new BaseException(ErrorCode.ALREADY_VOTED);
+			}, () -> {
+				Ip ip = ipRepository.findByIp(clientIP)
+					.orElseGet(() -> ipRepository.save(Ip.builder().ip(clientIP).build()));
+				voteIpRepository.save(Vote.builder()
+					.mdm(mdm)
+					.ip(ip)
+					.count1(voteDto.count1())
+					.count2(voteDto.count2())
+					.build());
+			});
+		mdm.vote(voteDto.count1(), voteDto.count2());
+
 	}
 }
 

@@ -2,6 +2,7 @@ package com.sto.mdm.domain.quiz.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/gpt")
+@RequestMapping("/gpt")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @Slf4j
 public class GptController {

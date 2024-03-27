@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,7 @@ import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
+import com.sto.mdm.domain.mdm.dto.VoteDto;
 import com.sto.mdm.domain.mdm.service.MdmService;
 import com.sto.mdm.global.response.BaseResponse;
 import com.sto.mdm.global.util.IpUtil;
@@ -31,7 +33,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/mdms")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RequestMapping("/mdms")
 @RequiredArgsConstructor
 public class MdmController {
 
@@ -71,6 +74,11 @@ public class MdmController {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getComments(mdmId, pageable)));
 	}
 
+	@GetMapping("/{mdmId}/comments/top3")
+	ResponseEntity<BaseResponse<CommentResponseDto>> getTop3Comments(@PathVariable Long mdmId) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getTop3Comments(mdmId)));
+	}
+
 	@PostMapping("/{mdmId}/comments")
 	ResponseEntity<BaseResponse<String>> postComment(@PathVariable Long mdmId,
 		@RequestBody CommentDto commentDto) {
@@ -97,6 +105,7 @@ public class MdmController {
 	ResponseEntity<BaseResponse<List<MdmSearchDto>>> searchMdm(@RequestParam String keyword) {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.searchMdm(keyword)));
 	}
+
 	@GetMapping("/hot")
 	ResponseEntity<BaseResponse<HotMdmResponseDto>> getFunMdm() {
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getHotMdm()));
@@ -107,6 +116,13 @@ public class MdmController {
 	ResponseEntity<BaseResponse<String>> likeComment(HttpServletRequest request, @PathVariable Long mdmId,
 		@PathVariable Long commentId) {
 		mdmService.likeComment(mdmId, commentId, IpUtil.getClientIP(request));
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@PostMapping("/{mdmId}/vote")
+	ResponseEntity<BaseResponse<String>> voteMdm(HttpServletRequest request, @PathVariable Long mdmId,
+		@RequestBody VoteDto voteDto) {
+		mdmService.voteMdm(IpUtil.getClientIP(request), mdmId, voteDto);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
 	}
 

@@ -1,5 +1,6 @@
 package com.sto.mdm.domain.mdm.entity;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -50,12 +51,17 @@ public class Mdm extends BaseEntity {
 
 	private int vote;
 
+	private int views;
+
 	private String nickname;
 
 	private String password;
 
 	@Enumerated(EnumType.STRING)
 	private MdmType type;
+
+	@Formula("(SELECT COUNT(*) FROM comment c WHERE c.mdm_id = mdm_id and c.deleted = false)")
+	private int commentCount;
 
 	public void setImages(String image1, String image2) {
 		this.image1 = image1;
@@ -67,5 +73,15 @@ public class Mdm extends BaseEntity {
 		this.content = mdmUpdateRequestDto.content();
 		this.opinion1 = mdmUpdateRequestDto.opinion1();
 		this.opinion2 = mdmUpdateRequestDto.opinion2();
+	}
+
+	public void vote(int count1, int count2) {
+		this.count1 = count1;
+		this.count2 = count2;
+		this.vote = count1 + count2;
+	}
+
+	public void view() {
+		this.views += 1;
 	}
 }
