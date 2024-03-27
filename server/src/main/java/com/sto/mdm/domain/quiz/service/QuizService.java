@@ -2,12 +2,12 @@ package com.sto.mdm.domain.quiz.service;
 
 import static java.util.stream.Collectors.*;
 
-import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +21,13 @@ import com.sto.mdm.domain.quiz.dto.QuizTagDto;
 import com.sto.mdm.domain.quiz.dto.SolutionResponseDto;
 import com.sto.mdm.domain.quiz.dto.SubmitDto;
 import com.sto.mdm.domain.quiz.entity.Quiz;
+import com.sto.mdm.domain.quiz.entity.QuizTag;
 import com.sto.mdm.domain.quiz.entity.Submit;
 import com.sto.mdm.domain.quiz.repository.QuizRepository;
 import com.sto.mdm.domain.quiz.repository.QuizTagRepository;
 import com.sto.mdm.domain.quiz.repository.SubmitRepository;
 import com.sto.mdm.domain.tag.entity.Tag;
+import com.sto.mdm.domain.tag.repository.TagRepository;
 import com.sto.mdm.global.response.BaseException;
 import com.sto.mdm.global.response.ErrorCode;
 
@@ -42,6 +44,7 @@ public class QuizService {
 	private final SubmitRepository submitRepository;
 	private final MdmRepository mdmRepository;
 	private final MdmTagRepository mdmTagRepository;
+	private final TagRepository tagRepository;
 
 	public List<QuizConnectMdmDto> getQuizDetailConnectMdm(long quizId) {
 		// 퀴즈에 관한 연관 태그를 가져옴
@@ -128,13 +131,56 @@ public class QuizService {
 		return new SolutionResponseDto(quiz.getSolution());
 	}
 
-	public FeedResponseDto getFeed(Pageable pageable){
-		List<Quiz> quizzes=quizRepository.findAll(pageable).getContent();
-		List<QuizDto> result=new ArrayList<>();
-		for(Quiz cur:quizzes){
+	public FeedResponseDto getFeed(Pageable pageable) {
+		List<Quiz> quizzes = quizRepository.findAll(pageable).getContent();
+		List<QuizDto> result = new ArrayList<>();
+		for (Quiz cur : quizzes) {
 			result.add(getQuizDetail(cur.getId()));
 		}
 
 		return new FeedResponseDto(result);
+	}
+
+	public List<QuizDto> searchQuiz(String keyword) {
+		//태그명 찾기
+		List<Tag> tagList = tagRepository.findAllByName(keyword);
+		List<Long> quizTagIds = null;
+
+		for (Tag tag : tagList) {
+			quizTagIds = quizTagRepository.findByTagId(tag.getId())
+				.stream().map(QuizTag::getQuiz)
+				.map(Quiz::getId)
+				.toList();
+		}
+
+		assert quizTagIds != null;
+		ArrayList<Long> hashSetIds = new ArrayList<>(new HashSet<>(quizTagIds));
+
+		return quizRepository.findAllById(hashSetIds).stream()
+			.map(quiz -> {
+				//mdm 관련 tag 찾기
+				List<String> tags = quizTagRepository.findByQuizId(quiz.getId()).stream()
+					.map(QuizTag::getTag)
+					.map(Tag::getName)
+					.toList();
+
+				//퀴즈 정답률
+				List<Submit> submits = submitRepository.findByQuizId(quiz.getId());
+				List<Submit> correct = submitRepository.findByQuizIdAndCorrectIsTrue(quiz.getId());
+				double rate = submits.isEmpty() ? 100.0 : ((double)correct.size() / submits.size() * 100);
+				return new QuizDto(
+					quiz.getId(),
+					quiz.getQuestion(),
+					quiz.getExample1(),
+					quiz.getExample2(),
+					quiz.getExample3(),
+					quiz.getExample4(),
+					quiz.getAnswer(),
+					quiz.getSolution(),
+					rate,
+					tags
+				);
+			})
+			.toList();
 	}
 }
