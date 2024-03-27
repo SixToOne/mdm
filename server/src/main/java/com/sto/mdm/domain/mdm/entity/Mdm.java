@@ -51,6 +51,8 @@ public class Mdm extends BaseEntity {
 
 	private int vote;
 
+	private int views;
+
 	private String nickname;
 
 	private String password;
@@ -77,5 +79,9 @@ public class Mdm extends BaseEntity {
 		this.count1 = count1;
 		this.count2 = count2;
 		this.vote = count1 + count2;
+	}
+
+	public void view() {
+		this.views += 1;
 	}
 }
