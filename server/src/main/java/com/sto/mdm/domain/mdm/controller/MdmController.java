@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
+import com.sto.mdm.domain.mdm.dto.MdmCreateResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
@@ -41,14 +42,14 @@ public class MdmController {
 	private final MdmService mdmService;
 
 	@PostMapping
-	ResponseEntity<BaseResponse<String>> postMdm(
+	ResponseEntity<BaseResponse<MdmCreateResponseDto>> postMdm(
 		@RequestPart MdmRequestDto mdmRequestDto,
 		@RequestPart(required = false) MultipartFile image1,
 		@RequestPart(required = false) MultipartFile image2,
 		@RequestPart(required = false) List<MultipartFile> images
 	) {
-		mdmService.createMdm(mdmRequestDto, image1, image2, images);
-		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+		return ResponseEntity.ok(new BaseResponse<>(200, "success",
+			new MdmCreateResponseDto(mdmService.createMdm(mdmRequestDto, image1, image2, images))));
 	}
 
 	@PatchMapping("/{mdmId}")
