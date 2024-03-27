@@ -1,15 +1,17 @@
 interface TextInputProps {
     placeholder?: string;
     required: boolean;
+    value: string;
+    onChange: (value: string) => void;
 }
 
-import { useState } from 'react';
+// import { useState } from 'react';
 
-const TextInput = ({ placeholder, required }: TextInputProps) => {
-    const [value, setValue] = useState('');
+const TextInput = ({ placeholder, required, value, onChange }: TextInputProps) => {
+    // const [value, setValue] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value);
+        onChange(e.target.value);
     };
 
     return (

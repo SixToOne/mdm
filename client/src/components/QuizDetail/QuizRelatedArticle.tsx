@@ -1,8 +1,15 @@
+interface QuizRelatedArticleProps {
+    quizId: number | undefined;
+}
+
 import { Tags } from '@/components/commons';
 import { useState } from 'react';
 
-const QuizRelatedArticle = () => {
+const QuizRelatedArticle = ({ quizId }: QuizRelatedArticleProps) => {
     const [tagList, setTagList] = useState<string[]>([]);
+    {
+        quizId;
+    }
 
     return (
         <div className="my-4 w-80 px-12 text-left">
@@ -25,3 +32,5 @@ const QuizRelatedArticle = () => {
 };
 
 export default QuizRelatedArticle;
+
+// 필요API: 퀴즈상세연관몇대몇get (최대 3개씩)

@@ -1,4 +1,11 @@
-const QuizSolve = () => {
+interface QuizProps {
+    quizId: number | undefined;
+}
+
+const QuizSolve = ({ quizId }: QuizProps) => {
+    {
+        quizId;
+    }
     return (
         <div className="bg-blue-50 my-4 py-8 px-12 text-left">
             <p className="font-bold mb-4">
@@ -6,11 +13,7 @@ const QuizSolve = () => {
             </p>
             <div className="w-80">
                 <p className="whitespace-pre-line py-4">
-                    용어 : 정의정의정의정의개행제대로되나테스트문장끝
-                </p>
-                <p className="whitespace-pre-line py-2">
-                    GPT 해설
-                    내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용개행제대로되나테스트문장끝
+                    이 용어는 쏼라쏼라한 뜻을 가진다. 해설은 이러쿵저러쿵해서 어쩌고저쩌고한다.
                 </p>
             </div>
         </div>
@@ -18,3 +21,5 @@ const QuizSolve = () => {
 };
 
 export default QuizSolve;
+
+// 필요API: 퀴즈해설get

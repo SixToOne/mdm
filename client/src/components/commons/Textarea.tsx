@@ -1,15 +1,17 @@
 interface TextareaProps {
     placeholder: string;
     required: boolean;
+    value: string;
+    onChange: (value: string) => void;
 }
 
-import { useState } from 'react';
+// import { useState } from 'react';
 
-const Textarea = ({ placeholder, required }: TextareaProps) => {
-    const [value, setValue] = useState('');
+const Textarea = ({ placeholder, required, value, onChange }: TextareaProps) => {
+    // const [value, setValue] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setValue(e.target.value);
+        onChange(e.target.value);
     };
 
     return (

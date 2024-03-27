@@ -1,14 +1,32 @@
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+// import { postNewMDM } from '@/apis/post-newMDM';
+// import { WriteRequest } from '@/apis/types/post-newMDM';
+
+// interface HeaderProps {
+//     writtenData?: WriteRequest;
+// }
 
 // /mdm/1 -> mdm
 export const getPath = (location: string): string => {
     return location.split('/')[1];
 };
-
 const RightButton = () => {
+    // const RightButton = ({ writtenData }: HeaderProps) => {
+    // console.log('작동??');
+    // console.log(writtenData);
     const location = useLocation();
-    const uploadArticle = () => {};
+
+    const uploadArticle = () => {
+        // if (writtenData) {
+        //     console.log('데이터 있네');
+        //     console.log(writtenData);
+        //     postNewMDM(writtenData);
+        // } else {
+        //     console.log('데이터 없네');
+        //     console.log(writtenData);
+        // }
+    };
 
     if (getPath(location.pathname) !== 'write') {
         return <Link to="/write">글쓰기</Link>;
@@ -17,6 +35,7 @@ const RightButton = () => {
     }
 };
 
+// const Header = ({ writtenData }: HeaderProps) => {
 const Header = () => {
     return (
         <StyledHeader>
@@ -26,6 +45,7 @@ const Header = () => {
                 <span>ㅁ</span>
             </AppName>
             <RightButton />
+            {/* <RightButton writtenData={writtenData} /> */}
         </StyledHeader>
     );
 };
