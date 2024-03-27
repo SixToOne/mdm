@@ -20,6 +20,7 @@ import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
+import com.sto.mdm.domain.mdm.dto.Opinion;
 import com.sto.mdm.domain.mdm.dto.VoteDto;
 import com.sto.mdm.domain.mdm.entity.Comment;
 import com.sto.mdm.domain.mdm.entity.CommentLike;
@@ -64,19 +65,20 @@ public class MdmService {
 
 		Mdm mdm = mdmRequestDto.toEntity();
 
-		String imageUrl1 = s3Uploader.saveFile(image1);
-		String imageUrl2 = s3Uploader.saveFile(image2);
+		String imageUrl1 = image1 != null ? s3Uploader.saveFile(image1) : null;
+		String imageUrl2 = image2 != null ? s3Uploader.saveFile(image2) : null;
 
 		mdm.setImages(imageUrl1, imageUrl2);
 
 		mdmRepository.save(mdm);
-
-		images.forEach(image -> {
-			String imageUrl = s3Uploader.saveFile(image);
-			mdmImageRepository.save(MdmImage.builder()
-				.mdm(mdm)
-				.image(imageUrl).build());
-		});
+		if (images != null) {
+			images.forEach(image -> {
+				String imageUrl = s3Uploader.saveFile(image);
+				mdmImageRepository.save(MdmImage.builder()
+					.mdm(mdm)
+					.image(imageUrl).build());
+			});
+		}
 
 		mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
 			.map(String::trim)
@@ -106,7 +108,7 @@ public class MdmService {
 	}
 
 	@Transactional
-	public MdmResponseDto getMdm(Long mdmId) {
+	public MdmResponseDto getMdm(Long mdmId, String ip) {
 		Mdm mdm = mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 		mdm.view();
@@ -121,21 +123,19 @@ public class MdmService {
 			.map(MdmImage::getImage)
 			.collect(Collectors.toList());
 
+		Vote vote = voteIpRepository.findByMdmIdAndIp(mdmId, ip)
+			.orElse(null);
+
 		return new MdmResponseDto(
 			mdm.getId(),
 			mdm.getTitle(),
 			mdm.getContent(),
-			mdm.getOpinion1(),
-			mdm.getOpinion2(),
-			mdm.getImage1(),
-			mdm.getImage2(),
-			mdm.getCount1(),
-			mdm.getCount2(),
+			new Opinion(mdm.getOpinion1(), mdm.getImage2(), mdm.getCount1(), vote != null ? vote.getCount1() : null),
+			new Opinion(mdm.getOpinion1(), mdm.getImage2(), mdm.getCount1(), vote != null ? vote.getCount2() : null),
 			mdm.getVote(),
 			mdm.getViews(),
 			mdm.getType(),
 			mdm.getNickname(),
-			mdm.getPassword(),
 			tags,
 			images,
 			mdm.getCommentCount(),
@@ -144,13 +144,11 @@ public class MdmService {
 
 	}
 
-	public CommentResponseDto getComments(Long mdmId, Pageable pageable) {
+	public CommentResponseDto getComments(String ip, Long mdmId, Pageable pageable) {
 		mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 
-		commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable);
-
-		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId, pageable).getContent());
+		return new CommentResponseDto(commentRepository.findByMdmIdAndParentIsNull(mdmId, ip, pageable));
 	}
 
 	@Transactional
@@ -172,11 +170,12 @@ public class MdmService {
 
 		Comment reply = commentDto.toEntity();
 		reply.setParent(comment);
+		reply.setMdm(mdm);
 
 		commentRepository.save(reply);
 	}
 
-	public CommentResponseDto getReplies(Long mdmId, Long commentId, Pageable pageable) {
+	public CommentResponseDto getReplies(String ip, Long mdmId, Long commentId, Pageable pageable) {
 		Mdm mdm = mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 
@@ -184,7 +183,7 @@ public class MdmService {
 			.orElseThrow(() -> new BaseException(ErrorCode.COMMENT_NOT_FOUND));
 
 		return new CommentResponseDto(
-			commentRepository.findByMdmIdAndParentId(commentId, pageable).getContent());
+			commentRepository.findByMdmIdAndParentId(commentId, ip, pageable));
 
 	}
 
@@ -250,24 +249,18 @@ public class MdmService {
 				cur.getId(),
 				cur.getTitle(),
 				cur.getContent(),
-				cur.getOpinion1(),
-				cur.getOpinion2(),
-				cur.getImage1(),
-				cur.getImage2(),
-				cur.getCount1(),
-				cur.getCount2(),
+				new Opinion(cur.getOpinion1(), cur.getImage2(), cur.getCount1(), null),
+				new Opinion(cur.getOpinion1(), cur.getImage2(), cur.getCount1(), null),
 				cur.getVote(),
 				cur.getViews(),
 				cur.getType(),
 				cur.getNickname(),
-				cur.getPassword(),
 				tags,
 				images,
 				cur.getCommentCount(),
 				cur.getCreatedAt()
 			));
 		}
-
 		return new HotMdmResponseDto(result);
 
 	}
@@ -291,11 +284,11 @@ public class MdmService {
 			});
 	}
 
-	public CommentResponseDto getTop3Comments(Long mdmId) {
+	public CommentResponseDto getTop3Comments(String ip, Long mdmId) {
 		mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 
-		return new CommentResponseDto(commentRepository.findByTop3Comments(mdmId));
+		return new CommentResponseDto(commentRepository.findByTop3Comments(ip, mdmId));
 	}
 
 	@Transactional

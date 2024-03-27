@@ -6,8 +6,8 @@ public record CommentReplyDto(
 	Long commentId,
 	String content,
 	String nickname,
-	String password,
 	long like,
+	boolean liked,
 	LocalDateTime createdAt
 ) {
 }
