@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/api/mdms")
+@RequestMapping("/mdms")
 @RequiredArgsConstructor
 public class MdmController {
 

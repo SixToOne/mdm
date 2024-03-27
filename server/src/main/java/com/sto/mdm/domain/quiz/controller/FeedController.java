@@ -16,13 +16,13 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/feed")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/api/feed")
 public class FeedController {
 	private final QuizService quizService;
 
 	@GetMapping
-	ResponseEntity<BaseResponse<FeedResponseDto>> getFeed(Pageable pageable){
-		return ResponseEntity.ok(new BaseResponse<>(200,"success",quizService.getFeed(pageable)));
+	ResponseEntity<BaseResponse<FeedResponseDto>> getFeed(Pageable pageable) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", quizService.getFeed(pageable)));
 	}
 }

@@ -16,7 +16,7 @@ public record MdmResponseDto(
 	int count1,
 	int count2,
 	int vote,
-
+	int views,
 	MdmType type,
 	String nickname,
 	String password,

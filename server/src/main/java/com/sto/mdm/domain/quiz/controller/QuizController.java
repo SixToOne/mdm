@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/quizs/{quizId}")
+@RequestMapping("/quizs/{quizId}")
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j

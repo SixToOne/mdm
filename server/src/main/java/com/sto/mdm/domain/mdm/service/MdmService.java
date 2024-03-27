@@ -105,9 +105,11 @@ public class MdmService {
 		mdmRepository.delete(mdm);
 	}
 
+	@Transactional
 	public MdmResponseDto getMdm(Long mdmId) {
 		Mdm mdm = mdmRepository.findById(mdmId)
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+		mdm.view();
 
 		List<String> tags = mdmTagRepository.findByMdmId(mdmId)
 			.stream().map(MdmTag::getTag)
@@ -130,6 +132,7 @@ public class MdmService {
 			mdm.getCount1(),
 			mdm.getCount2(),
 			mdm.getVote(),
+			mdm.getViews(),
 			mdm.getType(),
 			mdm.getNickname(),
 			mdm.getPassword(),
@@ -254,6 +257,7 @@ public class MdmService {
 				cur.getCount1(),
 				cur.getCount2(),
 				cur.getVote(),
+				cur.getViews(),
 				cur.getType(),
 				cur.getNickname(),
 				cur.getPassword(),
