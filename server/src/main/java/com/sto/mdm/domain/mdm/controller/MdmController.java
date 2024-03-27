@@ -65,18 +65,23 @@ public class MdmController {
 	}
 
 	@GetMapping("/{mdmId}")
-	ResponseEntity<BaseResponse<MdmResponseDto>> getMdm(@PathVariable Long mdmId) {
-		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getMdm(mdmId)));
+	ResponseEntity<BaseResponse<MdmResponseDto>> getMdm(HttpServletRequest request, @PathVariable Long mdmId) {
+		String ip = IpUtil.getClientIP(request);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getMdm(mdmId, ip)));
 	}
 
 	@GetMapping("/{mdmId}/comments")
-	ResponseEntity<BaseResponse<CommentResponseDto>> getComments(@PathVariable Long mdmId, Pageable pageable) {
-		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getComments(mdmId, pageable)));
+	ResponseEntity<BaseResponse<CommentResponseDto>> getComments(HttpServletRequest request, @PathVariable Long mdmId,
+		Pageable pageable) {
+		String ip = IpUtil.getClientIP(request);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getComments(ip, mdmId, pageable)));
 	}
 
 	@GetMapping("/{mdmId}/comments/top3")
-	ResponseEntity<BaseResponse<CommentResponseDto>> getTop3Comments(@PathVariable Long mdmId) {
-		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getTop3Comments(mdmId)));
+	ResponseEntity<BaseResponse<CommentResponseDto>> getTop3Comments(HttpServletRequest request,
+		@PathVariable Long mdmId) {
+		String ip = IpUtil.getClientIP(request);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getTop3Comments(ip, mdmId)));
 	}
 
 	@PostMapping("/{mdmId}/comments")
@@ -94,10 +99,12 @@ public class MdmController {
 	}
 
 	@GetMapping("/{mdmId}/comments/{commentId}/reply")
-	ResponseEntity<BaseResponse<CommentResponseDto>> getReply(@PathVariable Long mdmId, @PathVariable Long commentId,
+	ResponseEntity<BaseResponse<CommentResponseDto>> getReply(HttpServletRequest request, @PathVariable Long mdmId,
+		@PathVariable Long commentId,
 		Pageable pageable) {
+		String ip = IpUtil.getClientIP(request);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success",
-			mdmService.getReplies(mdmId, commentId, pageable)));
+			mdmService.getReplies(ip, mdmId, commentId, pageable)));
 	}
 
 	//몇대몇 검색

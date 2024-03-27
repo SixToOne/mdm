@@ -1,5 +1,8 @@
 package com.sto.mdm.domain.mdm.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -14,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,6 +54,9 @@ public class Comment extends BaseEntity {
 	@JoinColumn(name = "parent_id")
 	private Comment parent;
 
+	@OneToMany(mappedBy = "comment")
+	private List<CommentLike> likes = new ArrayList<>();
+
 	@Formula("(SELECT COUNT(*) FROM comment_like cl WHERE cl.comment_id = comment_id and cl.deleted = false)")
-	private int likeCount;
+	private long likeCount;
 }
