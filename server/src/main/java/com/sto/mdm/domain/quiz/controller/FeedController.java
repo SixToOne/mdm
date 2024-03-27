@@ -1,7 +1,9 @@
 package com.sto.mdm.domain.quiz.controller;
 
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/feed")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FeedController {
 	private final QuizService quizService;
 
