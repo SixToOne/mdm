@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/mdms")
+@RequestMapping("/mdms")
 @RequiredArgsConstructor
 public class MdmController {
 
