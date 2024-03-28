@@ -1,6 +1,7 @@
 package com.sto.mdm.domain.mdm.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,9 +83,9 @@ public class MdmService {
 			});
 		}
 
-		// mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
-		// 	.map(String::trim)
-		// 	.toList());
+		mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
+			.map(String::trim)
+			.toList());
 
 		mdmRequestDto.tags().forEach(t -> {
 			Tag tag = tagRepository.findByName(t)
