@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import MdmCard from '@/components/MdmCard';
+// import MdmCard from '@/components/MdmCard';
 import { Comment } from '@/components/Comment';
 
 const MDM = () => {
@@ -23,7 +23,7 @@ const MDM = () => {
                 하더라구요. 이미 가게 계약이 끝나서 돌려주기 힘들었죠. 여유가 된다면서 빌려주더니
                 갑자기 달라고 하네요.
             </PostContent>
-            <MdmCard />
+            {/* <MdmCard data={undefined} /> */}
             <TotalNumberOfComments>댓글 36</TotalNumberOfComments>
             <InputUser>
                 <Input type="text" placeholder="닉네임" />
