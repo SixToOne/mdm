@@ -1,16 +1,18 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 export const axiosConfig = () => {
     axios.defaults.baseURL = process.env.REACT_APP_API_SERVER;
     axios.defaults.withCredentials = true;
 
     axios.interceptors.response.use(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (response: AxiosResponse<any>) => {
-            return response.data;
+        (response) => {
+            const { data } = response;
+            return data;
         },
         (error) => {
-            return Promise.reject(error);
+            console.error(error);
+            return { data: undefined };
+            // return Promise.reject(error);
         }
     );
 };
