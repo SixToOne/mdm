@@ -15,6 +15,7 @@ import com.sto.mdm.domain.ip.repository.IpRepository;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
+import com.sto.mdm.domain.mdm.dto.MdmFeedResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
@@ -140,8 +141,8 @@ public class MdmService {
 			mdm.getId(),
 			mdm.getTitle(),
 			mdm.getContent(),
-			new Opinion(mdm.getOpinion1(), mdm.getImage2(), mdm.getCount1(), vote != null ? vote.getCount1() : null),
-			new Opinion(mdm.getOpinion1(), mdm.getImage2(), mdm.getCount1(), vote != null ? vote.getCount2() : null),
+			new Opinion(mdm.getOpinion1(), mdm.getImage1(), mdm.getCount1(), vote != null ? vote.getCount1() : null),
+			new Opinion(mdm.getOpinion2(), mdm.getImage2(), mdm.getCount2(), vote != null ? vote.getCount2() : null),
 			mdm.getVote(),
 			mdm.getViews(),
 			mdm.getType(),
@@ -241,10 +242,12 @@ public class MdmService {
 	}
 
 	public HotMdmResponseDto getHotMdm() {
-		List<Mdm> allMdm = mdmRepository.findHotMdm();
+		List<Integer> allMdm = mdmRepository.findHotMdm();
 		List<MdmResponseDto> result = new ArrayList<>();
 
-		for (Mdm cur : allMdm) {
+		for (Integer curId : allMdm) {
+			Mdm cur=mdmRepository.findById(Long.valueOf(curId))
+				.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 			List<String> tags = mdmTagRepository.findByMdmId(cur.getId())
 				.stream().map(MdmTag::getTag)
 				.map(Tag::getName)
@@ -259,8 +262,8 @@ public class MdmService {
 				cur.getId(),
 				cur.getTitle(),
 				cur.getContent(),
-				new Opinion(cur.getOpinion1(), cur.getImage2(), cur.getCount1(), null),
-				new Opinion(cur.getOpinion1(), cur.getImage2(), cur.getCount1(), null),
+				new Opinion(cur.getOpinion1(), cur.getImage1(), cur.getCount1(), null),
+				new Opinion(cur.getOpinion2(), cur.getImage2(), cur.getCount2(), null),
 				cur.getVote(),
 				cur.getViews(),
 				cur.getType(),
@@ -321,6 +324,16 @@ public class MdmService {
 			});
 		mdm.vote(voteDto.count1(), voteDto.count2());
 
+	}
+	public MdmFeedResponseDto getMdmFeed(String ip,Pageable pageable){
+		List<Mdm> mdms=mdmRepository.findAll(pageable).getContent();
+		List<MdmResponseDto> result=new ArrayList<>();
+
+		for(Mdm cur:mdms){
+			result.add(getMdm(cur.getId(),ip));
+		}
+
+		return new MdmFeedResponseDto(result);
 	}
 
 	@Transactional

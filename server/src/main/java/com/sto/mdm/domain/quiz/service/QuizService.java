@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sto.mdm.domain.mdm.entity.MdmTag;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
-import com.sto.mdm.domain.quiz.dto.FeedResponseDto;
 import com.sto.mdm.domain.quiz.dto.QuizConnectMdmDto;
 import com.sto.mdm.domain.quiz.dto.QuizDto;
+import com.sto.mdm.domain.quiz.dto.QuizFeedResponseDto;
 import com.sto.mdm.domain.quiz.dto.QuizTagDto;
 import com.sto.mdm.domain.quiz.dto.SolutionResponseDto;
 import com.sto.mdm.domain.quiz.dto.SubmitDto;
@@ -131,14 +131,14 @@ public class QuizService {
 		return new SolutionResponseDto(quiz.getSolution());
 	}
 
-	public FeedResponseDto getFeed(Pageable pageable) {
+	public QuizFeedResponseDto getQuizFeed(Pageable pageable) {
 		List<Quiz> quizzes = quizRepository.findAll(pageable).getContent();
 		List<QuizDto> result = new ArrayList<>();
 		for (Quiz cur : quizzes) {
 			result.add(getQuizDetail(cur.getId()));
 		}
 
-		return new FeedResponseDto(result);
+		return new QuizFeedResponseDto(result);
 	}
 
 	public List<QuizDto> searchQuiz(String keyword) {
