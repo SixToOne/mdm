@@ -1,26 +1,30 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import MdmCard from '@/components/MdmCard';
-import { getQuizFeeds } from '@/apis/get-quizFeeds';
 import { Quiz } from '@/components/Quiz';
+import { getQuizFeeds } from '@/apis/get-quizFeeds';
 import { IQuiz } from '@/apis/types/quiz';
-import { Link } from 'react-router-dom';
+import { IMdm } from '@/apis/types/mdm-post ';
+import { getMdmFeed } from '@/apis/get-feed';
 
 export type IFeedType = 'mdm' | 'quiz';
 
 const Home = () => {
     const [solved, setSolved] = useState<number[]>([]);
     const [feedType, setFeedType] = useState<IFeedType>('mdm');
-    const [mdmData] = useState<number[]>(Array.from({ length: 10 }, () => 1));
+    const [mdmData, setMdmData] = useState<IMdm[]>();
     const [quizData, setQuizData] = useState<IQuiz[]>([]);
-    const [page, setPage] = useState<number>(0);
-    const [size, setSize] = useState<number>(10);
 
-    // page, size가 변할 때만 함수 실행 = useEffect
     useEffect(() => {
+        const fetchMdmData = async () => {
+            const { mdmFeeds } = await getMdmFeed(1, 10);
+            if (mdmFeeds) setMdmData(mdmFeeds);
+        };
+
         const getQuizFeedData = async () => {
             try {
-                const res = await getQuizFeeds(page, size);
+                const res = await getQuizFeeds(0, 10);
                 if (res) {
                     setQuizData((prev) => [...prev, ...res]);
                 }
@@ -28,26 +32,21 @@ const Home = () => {
                 console.error();
             }
         };
-        getQuizFeedData();
-    }, [page, size]);
+        if (feedType === 'mdm') fetchMdmData();
+        else getQuizFeedData();
+    }, [feedType]);
 
-    // 무한 스크롤 시도 (지워도 무방)
-    const handleScroll = () => {
-        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-        if (scrollTop + clientHeight >= scrollHeight) {
-            setPage((prevPage) => prevPage + 1);
-            setSize((prevSize) => prevSize + size);
-        }
+    const handleDataChange = (id: number, newData: IMdm) => {
+        if (!mdmData) return;
+        const updatedData = mdmData.map((item) => {
+            if (item.mdmId === id) {
+                return { ...item, ...newData };
+            }
+            return item;
+        });
+        setMdmData(updatedData);
     };
-    // 무한 스크롤 시도 (지워도 무방)
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
-    // 유머 => mdm, 금융 => 퀴즈로 수정
     return (
         <StyledHome>
             <TabWrapper>
@@ -55,13 +54,18 @@ const Home = () => {
                     유머
                 </TabButton>
                 <TabButton onClick={() => setFeedType('quiz')} selected={feedType === 'quiz'}>
-                    퀴즈
+                    금융 퀴즈
                 </TabButton>
             </TabWrapper>
             {feedType === 'mdm' ? (
                 <FeedMain>
-                    {mdmData.map((data, index) => (
-                        <MdmCard key={index} />
+                    {mdmData?.map((data, index) => (
+                        <MdmCard
+                            key={index}
+                            data={data}
+                            border={true}
+                            handleDataChange={handleDataChange}
+                        />
                     ))}
                 </FeedMain>
             ) : (

@@ -20,10 +20,10 @@ const StyledMdmVoteButton = styled.div<{ isSelected: boolean }>`
     align-items: center;
     justify-content: center;
     border-radius: 5px;
-    background-color: ${({ theme, isSelected }) => (isSelected ? theme.PRIMARY : 'white')};
-    color: ${({ theme, isSelected }) => (isSelected ? 'white' : theme.DARK_BLACK)};
-    border: ${({ theme }) => `1px solid ${theme.BORDER_LIGHT}`};
-    font-weight: 500;
+    background-color: ${({ theme, isSelected }) =>
+        isSelected ? theme.PRIMARY_LIGHT : theme.BACKGROUND_LIGHT_GRAY};
+    color: ${({ theme, isSelected }) => (isSelected ? theme.PRIMARY : theme.DARK_BLACK)};
+    font-weight: 600;
     font-size: 14px;
 `;
 

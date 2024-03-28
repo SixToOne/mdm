@@ -1,42 +1,64 @@
-import { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import RangeInput from '@/components/commons/RangeInput';
 import ProgressBar from '@/components/commons/ProgressBar';
 import MdmVoteButton from '@/components/MdmVoteButton';
+import { IMdm } from '@/apis/types/mdm-post ';
+import { useVote } from '@/hooks/useVote';
+import { useState } from 'react';
 
 interface StyleProps {
     border?: boolean;
 }
 
-interface Props extends StyleProps {}
+interface Props extends StyleProps {
+    data: IMdm;
+    handleDataChange: (id: number, newData: IMdm) => void;
+}
 
-const MdmCard = ({ ...styleProps }: Props) => {
-    const [progressValue, setProgressValue] = useState<number>(50);
-    const handleProgress = (e: FormEvent<HTMLInputElement>) => {
-        setProgressValue(parseInt(e.currentTarget.value));
-    };
+const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
+    const { progressValue, handleProgress } = useVote(data, handleDataChange);
+    const [inputValue, setInputValue] = useState<number>(50);
 
     return (
         <StyledMdmCard {...styleProps}>
             <MdmVoteForm>
                 <div className="mdm-vote_btns">
-                    <MdmVoteButton content={'환승연애 당하기'} isSelected={true} />
                     <MdmVoteButton
-                        content={'환승할 때마다 나만 1250원씩 더 내기'}
-                        isSelected={false}
+                        content={data.opinion1.opinion}
+                        isSelected={
+                            data.opinion1.myRatio && data.opinion1.myRatio >= 5 ? true : false
+                        }
+                    />
+                    <MdmVoteButton
+                        content={data.opinion2.opinion}
+                        isSelected={
+                            data.opinion2.myRatio && data.opinion2.myRatio >= 5 ? true : false
+                        }
                     />
                 </div>
                 <RangeInput
                     min={0}
                     max={100}
                     step={10}
-                    value={progressValue}
-                    handleProgress={handleProgress}
+                    value={inputValue}
+                    handleProgress={(e) => {
+                        handleProgress(e);
+                        setInputValue(parseInt(e.currentTarget.value));
+                    }}
                 />
             </MdmVoteForm>
             <MdmResult>
-                <ProgressBar max={100} value={74} reverse={true} />
-                <VoteCount>128명 투표</VoteCount>
+                {progressValue ? (
+                    <ProgressBar
+                        max={100}
+                        value={progressValue}
+                        reverse={data.opinion2.count > data.opinion1.count ? true : false}
+                    />
+                ) : (
+                    <NotVote>투표하고 결과보기</NotVote>
+                )}
+
+                <VoteCount>{data.vote}명 투표</VoteCount>
             </MdmResult>
         </StyledMdmCard>
     );
@@ -46,6 +68,7 @@ const StyledMdmCard = styled.div<StyleProps>`
     padding: 18px;
     display: flex;
     flex-direction: column;
+    background-color: white;
     border: ${({ theme, border }) => (border ? `1px solid ${theme.BORDER_LIGHT}` : 'none')};
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -71,6 +94,19 @@ const VoteCount = styled.div`
     color: ${({ theme }) => theme.LIGHT_BLACK};
     text-align: right;
     padding-right: 2px;
+`;
+
+const NotVote = styled.div`
+    width: 100%;
+    height: 24px;
+    padding-top: 2px;
+    margin-bottom: 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    background-color: ${({ theme }) => theme.BORDER_LIGHT};
+    color: ${({ theme }) => theme.DARK_BLACK};
 `;
 
 export default MdmCard;
