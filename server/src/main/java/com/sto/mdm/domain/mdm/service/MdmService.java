@@ -42,7 +42,9 @@ import com.sto.mdm.global.response.ErrorCode;
 import com.sto.mdm.global.util.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -80,10 +82,11 @@ public class MdmService {
 			});
 		}
 
+		log.info("addTags");
 		mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
 			.map(String::trim)
 			.toList());
-
+		log.info("tags");
 		mdmRequestDto.tags().forEach(t -> {
 			Tag tag = tagRepository.findByName(t)
 				.orElseGet(() -> tagRepository.save(Tag.builder().name(t).build()));
