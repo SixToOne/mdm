@@ -16,13 +16,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class QuizConnectMdmDto {
-	// private Long id;
+	private Long id;
 	private String title;
 	private double vote;
 	private List<String> tags;
 
 	public static QuizConnectMdmDto of(Mdm mdm) {
 		return QuizConnectMdmDto.builder()
+			.id(mdm.getId())
 			.title(mdm.getTitle())
 			.vote(mdm.getVote())
 			.build();

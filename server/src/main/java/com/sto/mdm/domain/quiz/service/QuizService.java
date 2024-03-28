@@ -73,6 +73,7 @@ public class QuizService {
 					.map(Tag::getName)
 					.toList();
 				return QuizConnectMdmDto.builder()
+					.id(mdm.getId())
 					.title(mdm.getTitle())
 					.vote(mdm.getVote())
 					.tags(tagName)
