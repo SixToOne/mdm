@@ -1,25 +1,65 @@
-import { Quiz } from '@/components/Quiz';
 import { useState } from 'react';
+import styled from 'styled-components';
+import MdmCard from '@/components/MdmCard';
+
+export type IFeedType = 'mdm' | 'finance';
 
 const Home = () => {
-    const [solved, setSolved] = useState(false);
+    const [feedType, setFeedType] = useState<IFeedType>('mdm');
+    const [mdmData] = useState<number[]>(Array.from({ length: 10 }, () => 1));
 
     return (
-        <div className="flex flex-col min-h-screen">
-            {/* <div className="flex-grow text-center font-bold text-xl"></div> */}
-            <p className="font-bold mb-4">
-                <span className="text-PRIMARY">TOP 10</span> 몇대몇
-                {/* TOP 10 몇대몇 카드 형태로 배치 with 좌우 버튼 */}
-            </p>
-            <p className="font-bold my-2">타임라인</p>
-            {/* 퀴즈는 여러 피드를 스크롤로 늘어놓기 */}
-            <Quiz solved={solved} setSolved={setSolved} />
-            <Quiz solved={solved} setSolved={setSolved} />
-            <Quiz solved={solved} setSolved={setSolved} />
-            <Quiz solved={solved} setSolved={setSolved} />
-            <Quiz solved={solved} setSolved={setSolved} />
-        </div>
+        <StyledHome>
+            <TabWrapper>
+                <TabButton onClick={() => setFeedType('mdm')} selected={feedType === 'mdm'}>
+                    유머
+                </TabButton>
+                <TabButton onClick={() => setFeedType('finance')} selected={feedType === 'finance'}>
+                    금융
+                </TabButton>
+            </TabWrapper>
+            {feedType === 'mdm' ? (
+                <FeedMain>
+                    {mdmData.map((data, index) => (
+                        <MdmCard key={index} />
+                    ))}
+                </FeedMain>
+            ) : (
+                <>금융</>
+            )}
+        </StyledHome>
     );
 };
+
+const StyledHome = styled.div`
+    width: 100%;
+    height: 100%;
+`;
+
+const TabWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 10px;
+`;
+
+const TabButton = styled.button<{ selected: boolean }>`
+    padding: 7px;
+    font-size: 16px;
+    font-weight: 600;
+    ${({ theme, selected }) =>
+        selected
+            ? `border-bottom: 2px solid ${theme.PRIMARY}; color: ${theme.PRIMARY}`
+            : `color: ${theme.DARK_BLACK}`}
+`;
+
+const FeedMain = styled.main`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+`;
 
 export default Home;
