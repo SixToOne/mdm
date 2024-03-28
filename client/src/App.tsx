@@ -7,6 +7,7 @@ import Home from '@/pages/Home';
 import MDM from '@/pages/MDM';
 import QuizDetail from '@/pages/QuizDetail';
 import ArticleWrite from '@/pages/ArticleWrite';
+import Search from '@/pages/Search';
 import MainLayout from '@/components/layouts/MainLayout';
 import Page404 from '@/pages/Page404';
 
@@ -20,9 +21,10 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/quiz/:id" element={<QuizDetail />} />
+                    <Route path="/quiz/*" element={<QuizDetail />} />
                     <Route path="/write" element={<ArticleWrite />} />
                     <Route path="/mdm/:id" element={<MDM />} />
-                    {/* 검색 결과 페이지 필요 */}
+                    <Route path="/search" element={<Search />} />
                     <Route path="*" element={<Page404 />} />
                 </Routes>
             </MainLayout>
