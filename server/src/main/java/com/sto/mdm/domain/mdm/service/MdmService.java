@@ -1,7 +1,6 @@
 package com.sto.mdm.domain.mdm.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,16 +81,16 @@ public class MdmService {
 			});
 		}
 
-		log.info("addTags");
-		mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
-			.map(String::trim)
-			.toList());
-		log.info("tags");
-		mdmRequestDto.tags().forEach(t -> {
-			Tag tag = tagRepository.findByName(t)
-				.orElseGet(() -> tagRepository.save(Tag.builder().name(t).build()));
-			mdmTagRepository.save(MdmTag.builder().mdm(mdm).tag(tag).build());
-		});
+		// log.info("addTags");
+		// mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
+		// 	.map(String::trim)
+		// 	.toList());
+		// log.info("tags");
+		// mdmRequestDto.tags().forEach(t -> {
+		// 	Tag tag = tagRepository.findByName(t)
+		// 		.orElseGet(() -> tagRepository.save(Tag.builder().name(t).build()));
+		// 	mdmTagRepository.save(MdmTag.builder().mdm(mdm).tag(tag).build());
+		// });
 
 		return save.getId();
 
