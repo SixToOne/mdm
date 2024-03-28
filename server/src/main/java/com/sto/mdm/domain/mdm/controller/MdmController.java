@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
+import com.sto.mdm.domain.mdm.dto.DeleteDto;
 import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmCreateResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
@@ -60,8 +61,8 @@ public class MdmController {
 	}
 
 	@DeleteMapping("/{mdmId}")
-	ResponseEntity<BaseResponse<String>> deleteMdm(@PathVariable Long mdmId) {
-		mdmService.deleteMdm(mdmId);
+	ResponseEntity<BaseResponse<String>> deleteMdm(@PathVariable Long mdmId, @RequestBody DeleteDto deleteDto) {
+		mdmService.deleteMdm(deleteDto.password(), mdmId);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
 	}
 
@@ -89,6 +90,13 @@ public class MdmController {
 	ResponseEntity<BaseResponse<String>> postComment(@PathVariable Long mdmId,
 		@RequestBody CommentDto commentDto) {
 		mdmService.createComment(mdmId, commentDto);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@DeleteMapping("/{mdmId}/comments/{commentId}")
+	ResponseEntity<BaseResponse<String>> deleteComment(@PathVariable Long commentId,
+		@RequestBody DeleteDto deleteDto) {
+		mdmService.deleteComment(deleteDto.password(), commentId);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
 	}
 
