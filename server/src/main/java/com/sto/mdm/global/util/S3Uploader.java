@@ -14,7 +14,9 @@ import com.sto.mdm.global.response.BaseException;
 import com.sto.mdm.global.response.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class S3Uploader {
@@ -36,6 +38,8 @@ public class S3Uploader {
 		try {
 			amazonS3.putObject(bucket, fileName.toString(), multipartFile.getInputStream(), metadata);
 		} catch (IOException e) {
+			throw new BaseException(ErrorCode.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
 			throw new BaseException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 		return amazonS3.getUrl(bucket, fileName.toString()).toString();

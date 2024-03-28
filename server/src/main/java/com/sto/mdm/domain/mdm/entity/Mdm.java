@@ -76,12 +76,17 @@ public class Mdm extends BaseEntity {
 	}
 
 	public void vote(int count1, int count2) {
-		this.count1 = count1;
-		this.count2 = count2;
-		this.vote = count1 + count2;
+		this.count1 += count1;
+		this.count2 += count2;
+		this.vote = this.vote + 1;
 	}
 
 	public void view() {
 		this.views += 1;
+	}
+
+	public void revote(int count1, int count2) {
+		this.count1 += count1;
+		this.count2 += count2;
 	}
 }

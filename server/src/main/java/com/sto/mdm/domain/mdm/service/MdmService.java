@@ -246,7 +246,7 @@ public class MdmService {
 		List<MdmResponseDto> result = new ArrayList<>();
 
 		for (Integer curId : allMdm) {
-			Mdm cur=mdmRepository.findById(Long.valueOf(curId))
+			Mdm cur = mdmRepository.findById(Long.valueOf(curId))
 				.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 			List<String> tags = mdmTagRepository.findByMdmId(cur.getId())
 				.stream().map(MdmTag::getTag)
@@ -311,7 +311,8 @@ public class MdmService {
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 		voteIpRepository.findByMdmIdAndIp(mdmId, clientIP)
 			.ifPresentOrElse(vote -> {
-				throw new BaseException(ErrorCode.ALREADY_VOTED);
+				mdm.revote(voteDto.count1() - vote.getCount1(), voteDto.count2() - vote.getCount2());
+				vote.revote(voteDto.count1(), voteDto.count2());
 			}, () -> {
 				Ip ip = ipRepository.findByIp(clientIP)
 					.orElseGet(() -> ipRepository.save(Ip.builder().ip(clientIP).build()));
@@ -321,16 +322,17 @@ public class MdmService {
 					.count1(voteDto.count1())
 					.count2(voteDto.count2())
 					.build());
+				mdm.vote(voteDto.count1(), voteDto.count2());
 			});
-		mdm.vote(voteDto.count1(), voteDto.count2());
 
 	}
-	public MdmFeedResponseDto getMdmFeed(String ip,Pageable pageable){
-		List<Mdm> mdms=mdmRepository.findAll(pageable).getContent();
-		List<MdmResponseDto> result=new ArrayList<>();
 
-		for(Mdm cur:mdms){
-			result.add(getMdm(cur.getId(),ip));
+	public MdmFeedResponseDto getMdmFeed(String ip, Pageable pageable) {
+		List<Mdm> mdms = mdmRepository.findAll(pageable).getContent();
+		List<MdmResponseDto> result = new ArrayList<>();
+
+		for (Mdm cur : mdms) {
+			result.add(getMdm(cur.getId(), ip));
 		}
 
 		return new MdmFeedResponseDto(result);
