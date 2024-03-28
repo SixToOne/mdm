@@ -105,10 +105,17 @@ public class MdmService {
 	}
 
 	@Transactional
-	public void deleteMdm(Long mdmId) {
-		Mdm mdm = mdmRepository.findById(mdmId)
-			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
-		mdmRepository.delete(mdm);
+	public void deleteMdm(String password, Long mdmId) {
+		mdmRepository.findById(mdmId)
+			.ifPresentOrElse(mdm -> {
+				if (mdm.getPassword().equals(password)) {
+					mdmRepository.delete(mdm);
+				} else {
+					throw new BaseException(ErrorCode.UNAUTHORIZED);
+				}
+			}, () -> {
+				throw new BaseException(ErrorCode.MDM_NOT_FOUND);
+			});
 	}
 
 	@Transactional
@@ -327,6 +334,21 @@ public class MdmService {
 		}
 
 		return new MdmFeedResponseDto(result);
+	}
+
+	@Transactional
+	public void deleteComment(String password, Long commentId) {
+		commentRepository.findById(commentId)
+			.ifPresentOrElse(comment -> {
+				if (comment.getPassword().equals(password)) {
+					commentRepository.delete(comment);
+				} else {
+					throw new BaseException(ErrorCode.UNAUTHORIZED);
+				}
+			}, () -> {
+				throw new BaseException(ErrorCode.COMMENT_NOT_FOUND);
+			});
+
 	}
 }
 
