@@ -15,6 +15,7 @@ import com.sto.mdm.domain.ip.repository.IpRepository;
 import com.sto.mdm.domain.mdm.dto.CommentDto;
 import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
+import com.sto.mdm.domain.mdm.dto.MdmFeedResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
@@ -315,6 +316,16 @@ public class MdmService {
 			});
 		mdm.vote(voteDto.count1(), voteDto.count2());
 
+	}
+	public MdmFeedResponseDto getMdmFeed(String ip,Pageable pageable){
+		List<Mdm> mdms=mdmRepository.findAll(pageable).getContent();
+		List<MdmResponseDto> result=new ArrayList<>();
+
+		for(Mdm cur:mdms){
+			result.add(getMdm(cur.getId(),ip));
+		}
+
+		return new MdmFeedResponseDto(result);
 	}
 }
 
