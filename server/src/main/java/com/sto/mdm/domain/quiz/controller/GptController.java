@@ -40,6 +40,7 @@ public class GptController {
 	//게시글 키워드 추출
 	@PostMapping("/mdmsKeyword")
 	ResponseEntity<BaseResponse<String>> postMdmsKeyword() {
+		log.info("gptMdmKeyword controller 들어오니");
 		String answer = gptClient.generateMdmKeyword("\"안녕하세요. 현재 약 한 달 넘게 이성 친구와 교제 중입니다. "
 			+ "저희는 점심이나 저녁 식사 같은 경우에는 각각 본인이 주문한 메뉴 가격을 계산을 합니다.\\n"
 			+ "물론 이 점은 좋지만 이해가 되지 않는 점이 있습니다. "
