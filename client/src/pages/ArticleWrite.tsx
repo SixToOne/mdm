@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export interface WriteForm {
     title: string;
     content: string;
@@ -63,7 +64,7 @@ const ArticleWrite = () => {
         const files = e.target.files;
         if (files) {
             const fileList = Array.from(files);
-            setImages(fileList);
+            setImages((prev) => [...prev, ...fileList]);
             const urls = fileList.map((file) => URL.createObjectURL(file));
             setPreviewList((prevList) => [...prevList, ...urls]);
         }
@@ -88,9 +89,32 @@ const ArticleWrite = () => {
         secondImage: File | undefined,
         images: File[]
     ) => {
+        if (writtenData.type === 'finance') {
+            if (
+                !writtenData.title ||
+                !writtenData.content ||
+                !writtenData.opinion1 ||
+                !writtenData.opinion2 ||
+                !writtenData.nickname ||
+                !writtenData.password
+            ) {
+                alert('필수 입력란을 작성해주세요.');
+                return;
+            }
+        } else {
+            if (
+                !writtenData.opinion1 ||
+                !writtenData.opinion2 ||
+                !writtenData.nickname ||
+                !writtenData.password
+            ) {
+                alert('필수 입력란을 작성해주세요.');
+                return;
+            }
+        }
         const formData = new FormData();
         formData.append(
-            'req',
+            'mdmRequestDto',
             new Blob([JSON.stringify(writtenData)], { type: 'application/json' })
         );
         if (firstImage) {
@@ -99,25 +123,21 @@ const ArticleWrite = () => {
         if (secondImage) {
             formData.append('image2', secondImage);
         }
-        images.forEach((image, index) => {
-            formData.append(`images[${index}]`, image);
-        });
-
-        console.log(formData);
-        const res = await postNewMDM(formData);
-        if (res) {
-            console.log(res);
+        if (images.length > 0) {
+            images.forEach((image, index) => {
+                formData.append('images', image);
+            });
         }
-        const id = res?.id;
+
+        const res = await postNewMDM(formData);
+        const id = res?.mdmId;
         if (id) {
             navigate(`/mdm/${id}`);
-        } else {
-            alert('필수 입력란을 모두 기입해주세요.');
         }
     };
 
     return (
-        <>
+        <div>
             <button onClick={() => uploadArticle(writtenData, firstImage, secondImage, images)}>
                 등록
             </button>
@@ -220,7 +240,7 @@ const ArticleWrite = () => {
                     </div>
                 </div>
             </section>
-        </>
+        </div>
     );
 };
 
