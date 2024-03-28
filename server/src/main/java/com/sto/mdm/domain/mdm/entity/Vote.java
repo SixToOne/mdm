@@ -45,4 +45,9 @@ public class Vote extends BaseEntity {
 	@JoinColumn(name = "ip_id")
 	private Ip ip;
 
+	public void revote(int count1, int count2) {
+		this.count1 = count1;
+		this.count2 = count2;
+	}
+
 }
