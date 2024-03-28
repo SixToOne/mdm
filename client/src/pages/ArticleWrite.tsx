@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export interface WriteForm {
     title: string;
     content: string;
@@ -63,7 +64,7 @@ const ArticleWrite = () => {
         const files = e.target.files;
         if (files) {
             const fileList = Array.from(files);
-            setImages(fileList);
+            setImages((prev) => [...prev, ...fileList]);
             const urls = fileList.map((file) => URL.createObjectURL(file));
             setPreviewList((prevList) => [...prevList, ...urls]);
         }
@@ -90,7 +91,7 @@ const ArticleWrite = () => {
     ) => {
         const formData = new FormData();
         formData.append(
-            'req',
+            'mdmRequestDto',
             new Blob([JSON.stringify(writtenData)], { type: 'application/json' })
         );
         if (firstImage) {
@@ -99,9 +100,17 @@ const ArticleWrite = () => {
         if (secondImage) {
             formData.append('image2', secondImage);
         }
-        images.forEach((image, index) => {
-            formData.append(`images[${index}]`, image);
-        });
+        // images = [] 이미지들 담고
+        // formdata key값: images
+        // images: []
+        // if (images.length > 0) {
+        //     formData.append('images', images);
+        // }
+        if (images.length > 0) {
+            images.forEach((image, index) => {
+                formData.append('images', image);
+            });
+        }
 
         console.log(formData);
         const res = await postNewMDM(formData);
@@ -117,7 +126,7 @@ const ArticleWrite = () => {
     };
 
     return (
-        <>
+        <div>
             <button onClick={() => uploadArticle(writtenData, firstImage, secondImage, images)}>
                 등록
             </button>
@@ -220,7 +229,7 @@ const ArticleWrite = () => {
                     </div>
                 </div>
             </section>
-        </>
+        </div>
     );
 };
 

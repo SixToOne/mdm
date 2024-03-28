@@ -6,6 +6,7 @@ interface QuizProps {
     solved: number[];
     setSolved: Dispatch<SetStateAction<number[]>>;
     quizId: number | undefined;
+    handleRoute?: (quizId: number) => void;
 }
 
 import { Tags } from '@/components/commons';
@@ -65,6 +66,19 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
         }
     };
 
+    const handleReset = () => {
+        if (!quizId) {
+            return;
+        }
+        try {
+            setIsCorrect(null);
+            setSubmit(false);
+            setSolved((prev) => prev.filter((id) => id !== quizId));
+        } catch {
+            console.error();
+        }
+    };
+
     return (
         <div className="my-4 rounded-md border-2 border-BORDER_LIGHT">
             <div className="flex flex-col items-center">
@@ -75,7 +89,7 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
                 </div>
             </div>
             <div className="text-end">
-                <div className="mr-4 mb-4">정답률 {quizData?.rate}%</div>
+                <div className="mr-4 mb-4">정답률 {Math.round(quizData?.rate || 0)}%</div>
             </div>
             <div className="flex flex-col items-center">
                 <div className="w-full px-4 mb-4 text-start">
@@ -122,6 +136,14 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
                 >
                     제출하기
                 </button>
+                {solved.includes(quizId || 0) && (
+                    <button
+                        className="py-1 px-32 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold"
+                        onClick={handleReset}
+                    >
+                        다시 풀기
+                    </button>
+                )}
             </div>
         </div>
     );
