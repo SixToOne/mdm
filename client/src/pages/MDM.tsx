@@ -1,8 +1,41 @@
 import styled from 'styled-components';
 // import MdmCard from '@/components/MdmCard';
 import { Comment } from '@/components/Comment';
+import { useCallback, useState } from 'react';
+import { postComment } from '@/apis/post-comment';
+import { INewComment } from '@/apis/types/mdm-post ';
 
 const MDM = () => {
+    const [nickname, setNickname] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [commentInputValue, setCommentInputValue] = useState<string>('');
+
+    const validateInput = useCallback(() => {
+        if (!nickname) {
+            alert('닉네임을 입력해주세요.');
+            return false;
+        }
+        if (!password) {
+            alert('패스워드를 입력해주세요.');
+            return false;
+        }
+        if (!commentInputValue) {
+            alert('댓글을 입력해주세요.');
+            return false;
+        }
+        return true;
+    }, [nickname, password, commentInputValue]);
+
+    const uploadComment = async () => {
+        if (!validateInput()) return;
+        const newComment: INewComment = {
+            content: commentInputValue,
+            nickname,
+            password,
+        };
+        await postComment(34, newComment);
+    };
+
     return (
         <StyledMDM>
             <PostTitle>친구 돈 오백 안갚는 뻔뻔한 나</PostTitle>
@@ -25,11 +58,24 @@ const MDM = () => {
             </PostContent>
             {/* <MdmCard data={undefined} /> */}
             <TotalNumberOfComments>댓글 36</TotalNumberOfComments>
+            <button onClick={uploadComment}>댓글 등록</button>
             <InputUser>
-                <Input type="text" placeholder="닉네임" />
-                <Input type="text" placeholder="비밀번호" />
+                <Input
+                    type="text"
+                    placeholder="닉네임"
+                    onChange={(e) => setNickname(e.target.value)}
+                />
+                <Input
+                    type="text"
+                    placeholder="비밀번호"
+                    onChange={(e) => setPassword(e.target.value)}
+                />
             </InputUser>
-            <Input type="text" placeholder="댓글을 작성해주세요." />
+            <Input
+                type="text"
+                placeholder="댓글을 작성해주세요."
+                onChange={(e) => setCommentInputValue(e.target.value)}
+            />
             <Comment isBestComment={true} />
             <Comment isBestComment={true} />
             <Comment isBestComment={true} />
@@ -66,18 +112,27 @@ const PostContent = styled.div`
 `;
 
 const TotalNumberOfComments = styled.div`
-    padding-top: 18px;
-    font-size: 20px;
+    padding: 18px 0 10px 3px;
+    font-size: 16px;
+    font-weight: 500;
     border-top: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
 `;
 
 const InputUser = styled.div`
+    width: 100%;
+    height: 48px;
+    margin-bottom: 4px;
     display: flex;
+    gap: 4px;
 `;
 
 const Input = styled.input`
     width: 100%;
-    height: 30px;
+    height: 48px;
+    padding-left: 5px;
+    border: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    border-radius: 4px;
+
     &:focus {
         outline: none;
     }

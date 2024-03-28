@@ -35,3 +35,9 @@ export interface IComment {
     password: string;
     like: number;
 }
+
+export interface INewComment {
+    content: string;
+    nickname: string;
+    password: string;
+}
