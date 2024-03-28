@@ -26,8 +26,8 @@ const StyledMainLayout = styled.div`
 
 const Container = styled.div`
     width: 100%;
-    height: calc(100% - 96px);
-    padding: 18px 22px;
+    height: calc(100% - 56px);
+    padding: 0 22px 18px 22px;
     overflow: scroll;
 `;
 
