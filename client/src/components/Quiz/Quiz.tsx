@@ -2,7 +2,7 @@ export interface RegistForm {
     correct: boolean;
 }
 
-interface QuizProps {
+export interface QuizProps {
     solved: number[];
     setSolved: Dispatch<SetStateAction<number[]>>;
     quizId: number | undefined;
@@ -56,24 +56,10 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
         }
         try {
             const isCorrect = selectedExample === quizData?.answer;
-            console.log(selectedExample, quizData?.answer);
             setSubmit(true);
             setSolved((prev) => [...prev, quizId]);
             setIsCorrect(isCorrect);
             await postAnswer(quizId, { correct: isCorrect });
-        } catch {
-            console.error();
-        }
-    };
-
-    const handleReset = () => {
-        if (!quizId) {
-            return;
-        }
-        try {
-            setIsCorrect(null);
-            setSubmit(false);
-            setSolved((prev) => prev.filter((id) => id !== quizId));
         } catch {
             console.error();
         }
@@ -88,8 +74,8 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
                     </span>
                 </div>
             </div>
-            <div className="text-end">
-                <div className="mr-4 mb-4">정답률 {Math.round(quizData?.rate || 0)}%</div>
+            <div className="text-end w-full px-4">
+                <div className="mb-4">정답률 {Math.round(quizData?.rate || 0)}%</div>
             </div>
             <div className="flex flex-col items-center">
                 <div className="w-full px-4 mb-4 text-start">
@@ -97,53 +83,39 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
                 </div>
             </div>
 
-            {/* 보기별 정답률은 API에 없는 상태 */}
-
             <div className="flex flex-col items-center pb-4">
                 <button
-                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 1 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example1 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example1 ? 'text-RED' : ''}`}
+                    className={`w-5/6 rounded-md border-2 border-solid border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 1 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example1 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example1 ? 'text-RED' : ''}`}
                     onClick={() => handleSelect(1, quizData?.example1 || '')}
                 >
                     <span>① {quizData?.example1}</span>
-                    {submit && <span>25%</span>}
                 </button>
                 <button
-                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 2 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example2 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example2 ? 'text-RED' : ''} `}
+                    className={`w-5/6 rounded-md border-2 border-solid border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 2 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example2 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example2 ? 'text-RED' : ''} `}
                     onClick={() => handleSelect(2, quizData?.example2 || '')}
                 >
                     <span>② {quizData?.example2}</span>
-                    {submit && <span>25%</span>}
                 </button>
                 <button
-                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 3 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example3 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example3 ? 'text-RED' : ''}`}
+                    className={`w-5/6 rounded-md border-2 border-solid border-BORDER_LIGHT px-4 py-1  flex justify-between ${select === 3 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example3 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example3 ? 'text-RED' : ''}`}
                     onClick={() => handleSelect(3, quizData?.example3 || '')}
                 >
                     <span>③ {quizData?.example3}</span>
-                    {submit && <span>25%</span>}
                 </button>
                 <button
-                    className={`w-80 rounded-md border-2 border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 4 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example4 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example4 ? 'text-RED' : ''}`}
+                    className={`w-5/6 rounded-md border-2 border-solid border-BORDER_LIGHT px-4 py-1 flex justify-between ${select === 4 ? 'bg-BACKGROUND_LIGHT_GRAY' : ''} ${submit && isCorrect && selectedExample === quizData?.example4 ? 'text-PRIMARY' : ''} ${submit && !isCorrect && quizData?.answer === quizData?.example4 ? 'text-RED' : ''}`}
                     onClick={() => handleSelect(4, quizData?.example4 || '')}
                 >
                     <span>④ {quizData?.example4}</span>
-                    {submit && <span>25%</span>}
                 </button>
             </div>
             <div className="flex flex-col items-center">
                 <button
-                    className={`py-1 px-32 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold ${submit && solved.includes(quizId || 0) ? 'hidden' : ''}`}
+                    className={`w-5/6 py-1 px-24 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold ${submit && solved.includes(quizId || 0) ? 'hidden' : ''}`}
                     onClick={handleSubmit}
                 >
                     제출하기
                 </button>
-                {solved.includes(quizId || 0) && (
-                    <button
-                        className="py-1 px-32 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold"
-                        onClick={handleReset}
-                    >
-                        다시 풀기
-                    </button>
-                )}
             </div>
         </div>
     );

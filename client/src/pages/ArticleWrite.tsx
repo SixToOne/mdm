@@ -89,6 +89,29 @@ const ArticleWrite = () => {
         secondImage: File | undefined,
         images: File[]
     ) => {
+        if (writtenData.type === 'finance') {
+            if (
+                !writtenData.title ||
+                !writtenData.content ||
+                !writtenData.opinion1 ||
+                !writtenData.opinion2 ||
+                !writtenData.nickname ||
+                !writtenData.password
+            ) {
+                alert('필수 입력란을 작성해주세요.');
+                return;
+            }
+        } else {
+            if (
+                !writtenData.opinion1 ||
+                !writtenData.opinion2 ||
+                !writtenData.nickname ||
+                !writtenData.password
+            ) {
+                alert('필수 입력란을 작성해주세요.');
+                return;
+            }
+        }
         const formData = new FormData();
         formData.append(
             'mdmRequestDto',
@@ -100,28 +123,16 @@ const ArticleWrite = () => {
         if (secondImage) {
             formData.append('image2', secondImage);
         }
-        // images = [] 이미지들 담고
-        // formdata key값: images
-        // images: []
-        // if (images.length > 0) {
-        //     formData.append('images', images);
-        // }
         if (images.length > 0) {
             images.forEach((image, index) => {
                 formData.append('images', image);
             });
         }
 
-        console.log(formData);
         const res = await postNewMDM(formData);
-        if (res) {
-            console.log(res);
-        }
-        const id = res?.id;
+        const id = res?.mdmId;
         if (id) {
             navigate(`/mdm/${id}`);
-        } else {
-            alert('필수 입력란을 모두 기입해주세요.');
         }
     };
 

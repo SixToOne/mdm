@@ -1,85 +1,117 @@
-// import { IQuiz } from '@/apis/types/quiz';
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import MdmCard from '@/components/MdmCard';
+import { getQuizFeeds } from '@/apis/get-quizFeeds';
 import { Quiz } from '@/components/Quiz';
-import { LeftCard, RightCard } from '@/components/icons';
-import { useState } from 'react';
+import { IQuiz } from '@/apis/types/quiz';
 import { Link } from 'react-router-dom';
-// import { useNavigate } from 'react-router-dom';
+
+export type IFeedType = 'mdm' | 'quiz';
 
 const Home = () => {
     const [solved, setSolved] = useState<number[]>([]);
-    // const [questionFeeds, setQuestionFeeds] = useState<IQuiz[]>([])
-    // const [mdmFeeds, setMdmFeeds] = useState<>([])
-    // const [feeds, setFeeds] = useState([]);
+    const [feedType, setFeedType] = useState<IFeedType>('mdm');
+    const [mdmData] = useState<number[]>(Array.from({ length: 10 }, () => 1));
+    const [quizData, setQuizData] = useState<IQuiz[]>([]);
+    const [page, setPage] = useState<number>(0);
+    const [size, setSize] = useState<number>(10);
 
-    // const navigate = useNavigate();
+    // page, size가 변할 때만 함수 실행 = useEffect
+    useEffect(() => {
+        const getQuizFeedData = async () => {
+            try {
+                const res = await getQuizFeeds(page, size);
+                if (res) {
+                    setQuizData((prev) => [...prev, ...res]);
+                }
+            } catch (error) {
+                console.error();
+            }
+        };
+        getQuizFeedData();
+    }, [page, size]);
 
-    // // 퀴즈 리스트 불러오기
-    // const handleRoute = (quizId: number) => {
-    //     // /quiz/1로 이동
-    //     navigate(`/quiz/${quizId}`);
-    // };
+    // 무한 스크롤 시도 (지워도 무방)
+    const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        if (scrollTop + clientHeight >= scrollHeight) {
+            setPage((prevPage) => prevPage + 1);
+            setSize((prevSize) => prevSize + size);
+        }
+    };
+    // 무한 스크롤 시도 (지워도 무방)
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
+    // 유머 => mdm, 금융 => 퀴즈로 수정
     return (
-        <div className="flex flex-col min-h-screen">
-            {/* <div className="flex-grow text-center font-bold text-xl"></div> */}
-            <p className="font-bold mb-4">
-                <div className="my-4">
-                    <span className="text-PRIMARY">TOP 10</span> 몇대몇
-                </div>
-                {/* TOP 10 몇대몇 카드 형태로 배치 with 좌우 버튼 */}
-
-                {/* 페이지 구현 위해 임시로 아이콘 및 컴포넌트 배치함 */}
-                <div className="flex items-center">
-                    <LeftCard />
-                    <MdmCard />
-                    <RightCard />
-                </div>
-            </p>
-            <p className="font-bold my-4">타임라인</p>
-
-            {/* 추후 피드 api로 바꿔서 늘어놓기 */}
-            {/* 컴포넌트 클릭 시 해당 상세로 이동하도록 */}
-
-            <Quiz
-                solved={solved}
-                setSolved={setSolved}
-                quizId={1}
-                // handleRoute={() => handleRoute(quizId)}
-            />
-            {/* 
-            {questionFeed.map((quiz, index) => (
-                <div key={index}>
-                    <Quiz
-                        solved={solved}
-                        setSolved={setSolved}
-                        quizId={index}
-                        handleRoute={() => handleRoute(index)}
-                    />
-                </div>
-            ))} */}
-
-            <Link to="/quiz/2">
-                <div className="text-end">| 자세히 |</div>
-            </Link>
-            <Quiz solved={solved} setSolved={setSolved} quizId={2} />
-
-            <Link to="/quiz/3">
-                <div className="text-end">| 자세히 |</div>
-            </Link>
-            <Quiz solved={solved} setSolved={setSolved} quizId={3} />
-
-            <Link to="/quiz/4">
-                <div className="text-end">| 자세히 |</div>
-            </Link>
-            <Quiz solved={solved} setSolved={setSolved} quizId={4} />
-
-            <Link to="/quiz/5">
-                <div className="text-end">| 자세히 |</div>
-            </Link>
-            <Quiz solved={solved} setSolved={setSolved} quizId={5} />
-        </div>
+        <StyledHome>
+            <TabWrapper>
+                <TabButton onClick={() => setFeedType('mdm')} selected={feedType === 'mdm'}>
+                    유머
+                </TabButton>
+                <TabButton onClick={() => setFeedType('quiz')} selected={feedType === 'quiz'}>
+                    퀴즈
+                </TabButton>
+            </TabWrapper>
+            {feedType === 'mdm' ? (
+                <FeedMain>
+                    {mdmData.map((data, index) => (
+                        <MdmCard key={index} />
+                    ))}
+                </FeedMain>
+            ) : (
+                <FeedMain>
+                    {quizData.map((each, index) => (
+                        <div key={index}>
+                            <Quiz quizId={each.id} solved={solved} setSolved={setSolved} />
+                            <div className="flex justify-between mx-4">
+                                <span>해설이 궁금하다면?</span>
+                                <Link to={`/quiz/${each.id}`}>
+                                    <span className="text-PRIMARY">자세히 보기</span>
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
+                </FeedMain>
+            )}
+        </StyledHome>
     );
 };
+
+const StyledHome = styled.div`
+    width: 100%;
+    height: 100%;
+`;
+
+const TabWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 10px;
+`;
+
+const TabButton = styled.button<{ selected: boolean }>`
+    padding: 7px;
+    font-size: 16px;
+    font-weight: 600;
+    ${({ theme, selected }) =>
+        selected
+            ? `border-bottom: 2px solid ${theme.PRIMARY}; color: ${theme.PRIMARY}`
+            : `color: ${theme.DARK_BLACK}`}
+`;
+
+const FeedMain = styled.main`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+`;
 
 export default Home;

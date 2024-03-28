@@ -53,7 +53,7 @@ const Header = () => {
 const StyledHeader = styled.div`
     position: sticky;
     width: 100%;
-    height: 48px;
+    height: 56px;
 `;
 
 const AppName = styled(Link)`
