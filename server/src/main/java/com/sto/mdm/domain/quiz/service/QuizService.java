@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sto.mdm.domain.mdm.entity.MdmTag;
+import com.sto.mdm.domain.mdm.entity.MdmType;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
 import com.sto.mdm.domain.quiz.dto.QuizConnectMdmDto;
@@ -65,7 +66,8 @@ public class QuizService {
 			}
 		}
 		//MDM 아이디로 같은 게시물 찾기
-		List<QuizConnectMdmDto> relatedPosts = mdmRepository.findAllById(mdmTagIds)
+		List<QuizConnectMdmDto> relatedPosts = mdmRepository.findAllByIdsAndType(new ArrayList<>(mdmTagIds),
+				MdmType.FINANCE)
 			.stream()
 			.map(mdm -> {
 				List<String> tagName = mdmTagRepository.findByMdmId(mdm.getId()).stream()
