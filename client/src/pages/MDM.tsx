@@ -57,8 +57,10 @@ const MDM = () => {
                 갑자기 달라고 하네요.
             </PostContent>
             {/* <MdmCard data={undefined} /> */}
-            <TotalNumberOfComments>댓글 36</TotalNumberOfComments>
-            <button onClick={uploadComment}>댓글 등록</button>
+            <CommentHeader>
+                <TotalNumberOfComments>댓글 36</TotalNumberOfComments>
+                <UploadCommentButton onClick={uploadComment}>등록</UploadCommentButton>
+            </CommentHeader>
             <InputUser>
                 <Input
                     type="text"
@@ -71,8 +73,7 @@ const MDM = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </InputUser>
-            <Input
-                type="text"
+            <Textarea
                 placeholder="댓글을 작성해주세요."
                 onChange={(e) => setCommentInputValue(e.target.value)}
             />
@@ -111,11 +112,27 @@ const PostContent = styled.div`
     padding: 10px 2px 24px 2px;
 `;
 
-const TotalNumberOfComments = styled.div`
-    padding: 18px 0 10px 3px;
-    font-size: 16px;
-    font-weight: 500;
+const CommentHeader = styled.div`
+    width: 100%;
+    padding: 18px 3px 10px 3px;
     border-top: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+`;
+
+const TotalNumberOfComments = styled.div`
+    font-size: 18px;
+    font-weight: 500;
+`;
+
+const UploadCommentButton = styled.button`
+    padding: 3px 7px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: ${({ theme }) => theme.BACKGROUND_LIGHT_GRAY};
+    color: ${({ theme }) => theme.LIGHT_BLACK};
 `;
 
 const InputUser = styled.div`
@@ -134,7 +151,19 @@ const Input = styled.input`
     border-radius: 4px;
 
     &:focus {
-        outline: none;
+        outline-color: ${({ theme }) => theme.PRIMARY};
+    }
+`;
+
+const Textarea = styled.textarea`
+    width: 100%;
+    height: 80px;
+    padding: 5px 0 0 5px;
+    border: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    border-radius: 4px;
+
+    &:focus {
+        outline-color: ${({ theme }) => theme.PRIMARY};
     }
 `;
 
