@@ -23,7 +23,7 @@ export interface IMdmOption {
     myRatio: number | null;
 }
 
-export interface IMyRatio {
+export interface IMdmRatio {
     count1: number;
     count2: number;
 }
