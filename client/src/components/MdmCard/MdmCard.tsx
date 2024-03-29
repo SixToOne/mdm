@@ -4,12 +4,13 @@ import ProgressBar from '@/components/commons/ProgressBar';
 import MdmVoteButton from '@/components/MdmVoteButton';
 import { IMdm } from '@/apis/types/mdm-post ';
 import { useVote } from '@/hooks/useVote';
-import { PostContent, PostInfo, PostTitle } from '@/pages/MDM';
+import { Nickname, PostContent, PostInfo, PostTitle } from '@/pages/MDM';
 import Tag from '@/components/Tag';
 import { getFormattedYearMonthDayTime } from '@/utils/time';
+import React from 'react';
 
 interface StyleProps {
-    border?: boolean;
+    $hasBorder?: boolean;
 }
 
 interface Props extends StyleProps {
@@ -23,31 +24,32 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
         handleDataChange,
     });
 
+    console.log(mdmResultPercentage);
+
     return (
         <StyledMdmCard {...styleProps}>
             <TagsWrapper>
-                {data.tags.map((tag) => (
-                    <Tag content={tag} key={data.mdmId} />
+                {data.tags.map((tag, index) => (
+                    <Tag content={tag} key={index} />
                 ))}
             </TagsWrapper>
             {data.title && <PostTitle>{data.title}</PostTitle>}
             <PostInfo>
                 <div>
-                    <span>{data.nickname}</span>
+                    <Nickname>{data.nickname}</Nickname>
                     <span>{getFormattedYearMonthDayTime(new Date(data.createdAt))}</span>
                 </div>
                 <div>
                     <span>조회수 {data.views}</span>
-                    <span>댓글 {data.vote}</span>
                 </div>
             </PostInfo>
             {data.title && (
                 <PostContent>
-                    {data.content.split('\n').map((line) => (
-                        <>
+                    {data.content.split('\n').map((line, index) => (
+                        <React.Fragment key={index}>
                             {line}
                             <br />
-                        </>
+                        </React.Fragment>
                     ))}
                 </PostContent>
             )}
@@ -77,7 +79,8 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
                 />
             </MdmVoteForm>
             <MdmResult>
-                {mdmResultPercentage ? (
+                {mdmResultPercentage &&
+                mdmResultPercentage.count1 + mdmResultPercentage.count2 > 0 ? (
                     <ProgressBar
                         max={100}
                         value={Math.max(mdmResultPercentage.count1, mdmResultPercentage.count2)}
@@ -86,7 +89,6 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
                 ) : (
                     <NotVote>투표하고 결과보기</NotVote>
                 )}
-
                 <VoteCount>{data.vote}명 투표</VoteCount>
             </MdmResult>
         </StyledMdmCard>
@@ -98,7 +100,7 @@ const StyledMdmCard = styled.div<StyleProps>`
     display: flex;
     flex-direction: column;
     background-color: white;
-    border: ${({ theme, border }) => (border ? `1px solid ${theme.BORDER_LIGHT}` : 'none')};
+    border: ${({ theme, $hasBorder }) => ($hasBorder ? `1px solid ${theme.BORDER_LIGHT}` : 'none')};
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 `;
@@ -128,7 +130,6 @@ const MdmResult = styled.div`
 
 const VoteCount = styled.div`
     font-size: 12px;
-    color: ${({ theme }) => theme.LIGHT_BLACK};
     text-align: right;
     padding-right: 2px;
 `;

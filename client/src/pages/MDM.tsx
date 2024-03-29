@@ -41,12 +41,11 @@ const MDM = () => {
             <PostTitle>친구 돈 오백 안갚는 뻔뻔한 나</PostTitle>
             <PostInfo>
                 <div>
-                    <span>차재화니</span>
+                    <Nickname>차재화니</Nickname>
                     <span>20분 전</span>
                 </div>
                 <div>
                     <span>조회수 10,000</span>
-                    <span>댓글 5</span>
                 </div>
             </PostInfo>
             <PostContent>
@@ -104,7 +103,12 @@ export const PostInfo = styled.div`
     justify-content: space-between;
     gap: 8px;
     font-size: 12px;
-    color: ${({ theme }) => theme.LIGHT_BLACK};
+    color: ${({ theme }) => theme.DARK_BLACK};
+`;
+
+export const Nickname = styled.span`
+    margin-right: 6px;
+    font-weight: 500;
 `;
 
 export const PostContent = styled.div`

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -74,15 +75,14 @@ const Home = () => {
                 <FeedMain>
                     {mdmData.map((data, index) => {
                         return (
-                            <>
+                            <React.Fragment key={data.mdmId}>
                                 <MdmCard
-                                    key={index}
                                     data={data}
-                                    border={true}
+                                    $hasBorder={true}
                                     handleDataChange={handleDataChange}
                                 />
                                 {index === mdmData.length - 1 && <LastItem ref={lastItemRef} />}
-                            </>
+                            </React.Fragment>
                         );
                     })}
                 </FeedMain>
