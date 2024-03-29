@@ -14,6 +14,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { getQuiz } from '@/apis/get-quiz';
 import { IQuiz } from '@/apis/types/quiz';
 import { postAnswer } from '@/apis/post-answer';
+import { useNavigate } from 'react-router-dom';
 
 const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
     const [quizData, setQuizData] = useState<IQuiz | null>(null);
@@ -23,7 +24,8 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [submit, setSubmit] = useState<boolean>(false);
 
-    // quizId가 변할 때만 함수 실행 = useEffect
+    const navigate = useNavigate();
+
     useEffect(() => {
         const getQuizData = async () => {
             try {
@@ -34,6 +36,7 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
                         setTagList(quiz.tags);
                     } else {
                         setQuizData(null);
+                        navigate('/404');
                     }
                     setIsCorrect(null);
                     setSubmit(false);
@@ -67,19 +70,21 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
 
     return (
         <div className="my-4 rounded-md border-2 border-BORDER_LIGHT">
-            <div className="flex flex-col items-center">
-                <div className="flex justify-between w-full px-4 my-4 flex-wrap">
-                    <span className="flex flex-wrap">
-                        <Tags tags={tagList} setTagList={setTagList} />
-                    </span>
+            <div className="flex justify-between w-full px-4 mt-8 mb-4">
+                <div className="flex items-start flex-wrap w-4/5">
+                    <Tags tags={tagList} setTagList={setTagList} />
+                </div>
+
+                <div className="w-1/5 text-end mr-4 mb-2 mt-auto">
+                    <div className="whitespace-nowrap text-DARK_BLACK">
+                        정답률 {Math.round(quizData?.rate || 0)}%
+                    </div>
                 </div>
             </div>
-            <div className="text-end w-full px-4">
-                <div className="mb-4">정답률 {Math.round(quizData?.rate || 0)}%</div>
-            </div>
-            <div className="flex flex-col items-center">
-                <div className="w-full px-4 mb-4 text-start">
-                    <p className="font-bold">{quizData?.question}</p>
+
+            <div className="flex mx-4 text-start">
+                <div className="w-full mb-4">
+                    <p className="font-bold text-lg">{quizData?.question}</p>
                 </div>
             </div>
 
@@ -109,7 +114,8 @@ const Quiz = ({ solved, setSolved, quizId }: QuizProps) => {
                     <span>④ {quizData?.example4}</span>
                 </button>
             </div>
-            <div className="flex flex-col items-center">
+
+            <div className="flex flex-col items-center mb-4">
                 <button
                     className={`w-5/6 py-1 px-24 mb-4 rounded-md bg-PRIMARY text-WHITE font-bold ${submit && solved.includes(quizId || 0) ? 'hidden' : ''}`}
                     onClick={handleSubmit}

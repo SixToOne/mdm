@@ -21,7 +21,6 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/quiz/:id" element={<QuizDetail />} />
-                    <Route path="/quiz/*" element={<QuizDetail />} />
                     <Route path="/write" element={<ArticleWrite />} />
                     <Route path="/mdm/:id" element={<MDM />} />
                     <Route path="/search" element={<Search />} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getSolution } from '@/apis/get-solution';
-import { IQuizSolution } from '@/apis/types/quiz-solution';
+import { IQuizSolution } from '@/apis/types/quiz';
 
 interface QuizProps {
     quizId: number | undefined;
@@ -9,7 +9,6 @@ interface QuizProps {
 const QuizSolve = ({ quizId }: QuizProps) => {
     const [solution, setSolution] = useState<IQuizSolution | undefined>();
 
-    // quizId가 변할 때만 함수 실행 = useEffect
     useEffect(() => {
         const getQuizData = async () => {
             try {

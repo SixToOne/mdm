@@ -73,7 +73,7 @@ const Home = () => {
                     {quizData.map((each, index) => (
                         <div key={index}>
                             <Quiz quizId={each.id} solved={solved} setSolved={setSolved} />
-                            <div className="flex justify-between mx-4">
+                            <div className="flex justify-between mx-4 mb-4">
                                 <span>해설이 궁금하다면?</span>
                                 <Link to={`/quiz/${each.id}`}>
                                     <span className="text-PRIMARY">자세히 보기</span>
