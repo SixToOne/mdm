@@ -11,7 +11,7 @@ public record MdmResponseDto(
 	String content,
 	Opinion opinion1,
 	Opinion opinion2,
-	int vote,
+	Integer vote,
 	int views,
 	MdmType type,
 	String nickname,

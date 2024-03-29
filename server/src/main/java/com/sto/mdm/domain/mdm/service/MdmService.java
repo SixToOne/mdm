@@ -315,7 +315,6 @@ public class MdmService {
 			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
 		voteIpRepository.findByMdmIdAndIp(mdmId, clientIP)
 			.ifPresentOrElse(vote -> {
-				mdm.revote(voteDto.count1() - vote.getCount1(), voteDto.count2() - vote.getCount2());
 				vote.revote(voteDto.count1(), voteDto.count2());
 			}, () -> {
 				Ip ip = ipRepository.findByIp(clientIP)
@@ -326,7 +325,6 @@ public class MdmService {
 					.count1(voteDto.count1())
 					.count2(voteDto.count2())
 					.build());
-				mdm.vote(voteDto.count1(), voteDto.count2());
 			});
 
 	}

@@ -41,15 +41,18 @@ public class Mdm extends BaseEntity {
 
 	private String opinion2;
 
-	private int count1;
+	@Formula("(SELECT SUM(v.count1) FROM vote v WHERE v.mdm_id = mdm_id and v.deleted = false)")
+	private Integer count1;
 
-	private int count2;
+	@Formula("(SELECT SUM(v.count2) FROM vote v WHERE v.mdm_id = mdm_id and v.deleted = false)")
+	private Integer count2;
 
 	private String image1;
 
 	private String image2;
 
-	private int vote;
+	@Formula("(SELECT COUNT(*) FROM vote v WHERE v.mdm_id = mdm_id and v.deleted = false)")
+	private Integer vote;
 
 	private int views;
 

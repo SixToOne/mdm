@@ -8,9 +8,9 @@ import com.sto.mdm.domain.mdm.entity.MdmType;
 public record MdmSearchDto(
 	String opinion1,
 	String opinion2,
-	int count1,
-	int count2,
-	int vote,
+	Integer count1,
+	Integer count2,
+	Integer vote,
 	MdmType type,
 	String nickname,
 	List<String> tags,
