@@ -4,13 +4,24 @@ interface QuizRelatedArticleProps {
 
 import { Tags } from '@/components/commons';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getRelatedMDM } from '@/apis/get-relatedMDM';
-import { IRelatedMDM } from '@/apis/types/related-MDM';
+import { IRelatedMDM } from '@/apis/types/quiz';
+import MoreTags from '@/components/icons/MoreTags';
+import FoldTags from '@/components/icons/FoldTags';
 
 const QuizRelatedArticle = ({ quizId }: QuizRelatedArticleProps) => {
     const [related, setRelated] = useState<IRelatedMDM[]>([]);
+    const [show, setShow] = useState<boolean[]>([]);
 
-    // quizId가 변할 때만 함수 실행 = useEffect
+    const handleShow = (index: number) => {
+        setShow((prev) => {
+            const now = [...prev];
+            now[index] = !now[index];
+            return now;
+        });
+    };
+
     useEffect(() => {
         const getQuizData = async () => {
             try {
@@ -18,6 +29,9 @@ const QuizRelatedArticle = ({ quizId }: QuizRelatedArticleProps) => {
                     const res = await getRelatedMDM(quizId);
                     if (res) {
                         setRelated(res);
+                        if (related.length > 0) {
+                            setShow(Array(related.length).fill(false));
+                        }
                     }
                 }
             } catch (error) {
@@ -29,57 +43,38 @@ const QuizRelatedArticle = ({ quizId }: QuizRelatedArticleProps) => {
 
     return (
         <div className="my-4 px-4 text-left">
-            <p className="font-bold mb-4">
+            <p className="font-bold my-8">
                 <span className="text-blue-500">몇대몇</span> 실생활 금융
             </p>
-            <div>
+            <div className="mx-2">
                 {related.length === 0 ? (
                     <div>연관 글이 없습니다.</div>
                 ) : (
                     related.map((article, index) => (
-                        <div key={index} className="mb-4">
-                            <div>{article.vote}명 투표</div>
-                            <div>제목: {article.title}</div>
-                            <div className="flex justify-between my-4">
-                                태그: <Tags tags={article.tags} />
-                                <button>
-                                    <div>더보기</div>
-                                </button>
+                        <div key={index} className="mb-12 mt-4">
+                            <div className="text-DARK_BLACK">{article.vote} 명 투표</div>
+                            <Link to={`/mdm/${article.id}`}>
+                                <div className="font-bold text-xl my-2">{article.title}</div>
+                            </Link>
+                            <div className="flex justify-between my-2">
+                                <Tags
+                                    tags={
+                                        show[index] === true
+                                            ? article.tags
+                                            : article.tags.slice(0, 3)
+                                    }
+                                />
+                                {article.tags.length > 3 && (
+                                    <div className="mt-2">
+                                        <button onClick={() => handleShow(index)}>
+                                            {show[index] === true ? <FoldTags /> : <MoreTags />}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))
                 )}
-                {/* <div>
-                <div>{related[0]?.vote}명 투표</div>
-                <div>제목: {related[0]?.title}</div>
-                <div className="flex justify-between my-4">
-                    태그:
-                    <Tags tags={related[0]?.tags} />
-                    <button>
-                        <div>더보기</div>
-                    </button>
-                </div>
-
-                <div>{related[1]?.vote}명 투표</div>
-                <div>제목: {related[1]?.title}</div>
-                <div className="flex justify-between my-4">
-                    태그:
-                    <Tags tags={related[1]?.tags} />
-                    <button>
-                        <div>더보기</div>
-                    </button>
-                </div>
-
-                <div>{related[2]?.vote}명 투표</div>
-                <div>제목: {related[2]?.title}</div>
-                <div className="flex justify-between my-4">
-                    태그:
-                    <Tags tags={related[2]?.tags} />
-                    <button>
-                        <div>더보기</div>
-                    </button>
-                </div>
-            </div> */}
             </div>
         </div>
     );

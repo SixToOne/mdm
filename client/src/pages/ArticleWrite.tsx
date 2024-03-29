@@ -38,10 +38,10 @@ const ArticleWrite = () => {
     const navigate = useNavigate();
 
     const handleFinanceToggle = () => {
-        setIsFinance(!isFinance);
+        setIsFinance((isFinance) => !isFinance);
         setWrittenData((prevData) => ({
             ...prevData,
-            type: isFinance ? 'finance' : 'humor',
+            type: !isFinance ? 'finance' : 'humor',
         }));
     };
 
