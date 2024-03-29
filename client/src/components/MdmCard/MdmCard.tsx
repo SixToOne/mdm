@@ -4,6 +4,7 @@ import ProgressBar from '@/components/commons/ProgressBar';
 import MdmVoteButton from '@/components/MdmVoteButton';
 import { IMdm } from '@/apis/types/mdm-post ';
 import { useVote } from '@/hooks/useVote';
+import { PostContent, PostInfo, PostTitle } from '@/pages/MDM';
 
 interface StyleProps {
     border?: boolean;
@@ -22,6 +23,25 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
 
     return (
         <StyledMdmCard {...styleProps}>
+            <PostTitle>{data.title}</PostTitle>
+            <PostInfo>
+                <div>
+                    <span>{data.nickname}</span>
+                    <span>{data.createdAt}</span>
+                </div>
+                <div>
+                    <span>조회수 {data.views}</span>
+                    <span>댓글 {data.vote}</span>
+                </div>
+            </PostInfo>
+            <PostContent>
+                {data.content.split('\n').map((line) => (
+                    <>
+                        {line}
+                        <br />
+                    </>
+                ))}
+            </PostContent>
             <MdmVoteForm>
                 <div className="mdm-vote_btns">
                     <MdmVoteButton

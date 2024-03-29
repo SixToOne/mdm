@@ -92,12 +92,12 @@ const StyledMDM = styled.div`
     height: 100%;
 `;
 
-const PostTitle = styled.header`
+export const PostTitle = styled.header`
     font-size: 20px;
     font-weight: 600;
 `;
 
-const PostInfo = styled.div`
+export const PostInfo = styled.div`
     padding: 5px 0;
     display: flex;
     align-items: center;
@@ -107,7 +107,7 @@ const PostInfo = styled.div`
     color: ${({ theme }) => theme.LIGHT_BLACK};
 `;
 
-const PostContent = styled.div`
+export const PostContent = styled.div`
     font-size: 15px;
     padding: 10px 2px 24px 2px;
 `;
