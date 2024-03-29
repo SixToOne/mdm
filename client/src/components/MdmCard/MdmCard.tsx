@@ -6,6 +6,7 @@ import { IMdm } from '@/apis/types/mdm-post ';
 import { useVote } from '@/hooks/useVote';
 import { PostContent, PostInfo, PostTitle } from '@/pages/MDM';
 import Tag from '@/components/Tag';
+import { getFormattedYearMonthDayTime } from '@/utils/time';
 
 interface StyleProps {
     border?: boolean;
@@ -29,25 +30,27 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
                     <Tag content={tag} key={data.mdmId} />
                 ))}
             </TagsWrapper>
-            <PostTitle>{data.title}</PostTitle>
+            {data.title && <PostTitle>{data.title}</PostTitle>}
             <PostInfo>
                 <div>
                     <span>{data.nickname}</span>
-                    <span>{data.createdAt}</span>
+                    <span>{getFormattedYearMonthDayTime(new Date(data.createdAt))}</span>
                 </div>
                 <div>
                     <span>조회수 {data.views}</span>
                     <span>댓글 {data.vote}</span>
                 </div>
             </PostInfo>
-            <PostContent>
-                {data.content.split('\n').map((line) => (
-                    <>
-                        {line}
-                        <br />
-                    </>
-                ))}
-            </PostContent>
+            {data.title && (
+                <PostContent>
+                    {data.content.split('\n').map((line) => (
+                        <>
+                            {line}
+                            <br />
+                        </>
+                    ))}
+                </PostContent>
+            )}
             <MdmVoteForm>
                 <div className="mdm-vote_btns">
                     <MdmVoteButton
