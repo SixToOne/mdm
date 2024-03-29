@@ -28,6 +28,7 @@ import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.dto.VoteDto;
 import com.sto.mdm.domain.mdm.service.MdmService;
+import com.sto.mdm.domain.quiz.dto.RelatedQuizDto;
 import com.sto.mdm.global.response.BaseResponse;
 import com.sto.mdm.global.util.IpUtil;
 
@@ -140,6 +141,11 @@ public class MdmController {
 		@RequestBody VoteDto voteDto) {
 		mdmService.voteMdm(IpUtil.getClientIP(request), mdmId, voteDto);
 		return ResponseEntity.ok(new BaseResponse<>(200, "success", null));
+	}
+
+	@GetMapping("/{mdmId}/quizs")
+	ResponseEntity<BaseResponse<List<RelatedQuizDto>>> getQuizs(@PathVariable Long mdmId) {
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.getQuizs(mdmId)));
 	}
 
 }

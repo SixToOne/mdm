@@ -1,5 +1,7 @@
 package com.sto.mdm.domain.quiz.entity;
 
+import java.util.List;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -10,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +45,9 @@ public class Quiz extends BaseEntity {
 	private String answer;
 
 	private String solution;
+
+	@OneToMany(mappedBy = "quiz")
+	private List<QuizTag> quizTags;
 
 	public void setSolution(String solution) {
 		this.solution = solution;
