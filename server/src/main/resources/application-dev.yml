@@ -48,6 +48,12 @@ openai:
   api:
     url: ${GPT_URL}
     key: ${GPT_KEY}
+
+dictionary:
+  api:
+    url: ${DICTIONARY_URL}
+    key: ${DICTIONARY_KEY}
+
 server:
   servlet:
     context-path: /api
