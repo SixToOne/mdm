@@ -35,6 +35,8 @@ import com.sto.mdm.domain.mdm.repository.MdmImageRepository;
 import com.sto.mdm.domain.mdm.repository.MdmRepository;
 import com.sto.mdm.domain.mdm.repository.MdmTagRepository;
 import com.sto.mdm.domain.mdm.repository.VoteRepository;
+import com.sto.mdm.domain.quiz.dto.RelatedQuizDto;
+import com.sto.mdm.domain.quiz.repository.QuizRepository;
 import com.sto.mdm.domain.tag.entity.Tag;
 import com.sto.mdm.domain.tag.repository.TagRepository;
 import com.sto.mdm.global.infra.gpt3.GptClient;
@@ -61,6 +63,7 @@ public class MdmService {
 	private final CommentLikeRepository commentLikeRepository;
 	private final IpRepository ipRepository;
 	private final VoteRepository voteIpRepository;
+	private final QuizRepository quizRepository;
 
 	@Transactional
 	public Long createMdm(MdmRequestDto mdmRequestDto, MultipartFile image1, MultipartFile image2,
@@ -351,6 +354,21 @@ public class MdmService {
 			}, () -> {
 				throw new BaseException(ErrorCode.COMMENT_NOT_FOUND);
 			});
+
+	}
+
+	public List<RelatedQuizDto> getQuizs(Long mdmId) {
+		Mdm mdm = mdmRepository.findById(mdmId)
+			.orElseThrow(() -> new BaseException(ErrorCode.MDM_NOT_FOUND));
+
+		List<Long> tags = mdmTagRepository.findByMdmId(mdmId)
+			.stream().map(MdmTag::getTag)
+			.map(Tag::getId)
+			.toList();
+
+		List<Long> ids = quizRepository.findAllRelatedId(tags);
+
+		return quizRepository.findAllByTagsId(ids);
 
 	}
 }
