@@ -5,6 +5,7 @@ import MdmVoteButton from '@/components/MdmVoteButton';
 import { IMdm } from '@/apis/types/mdm-post ';
 import { useVote } from '@/hooks/useVote';
 import { PostContent, PostInfo, PostTitle } from '@/pages/MDM';
+import Tag from '@/components/Tag';
 
 interface StyleProps {
     border?: boolean;
@@ -23,6 +24,11 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
 
     return (
         <StyledMdmCard {...styleProps}>
+            <TagsWrapper>
+                {data.tags.map((tag) => (
+                    <Tag content={tag} key={data.mdmId} />
+                ))}
+            </TagsWrapper>
             <PostTitle>{data.title}</PostTitle>
             <PostInfo>
                 <div>
@@ -92,6 +98,14 @@ const StyledMdmCard = styled.div<StyleProps>`
     border: ${({ theme, border }) => (border ? `1px solid ${theme.BORDER_LIGHT}` : 'none')};
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+`;
+
+const TagsWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    gap: 7px;
+    margin-bottom: 12px;
+    overflow: hidden;
 `;
 
 const MdmVoteForm = styled.div`
