@@ -12,6 +12,6 @@ public interface MdmRepository extends JpaRepository<Mdm, Long> {
 	@Query(value = "select mdm_id from mdm where created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) order by vote desc limit 10", nativeQuery = true)
 	List<Integer> findHotMdm();
 
-	@Query("SELECT f FROM Mdm f WHERE f.id IN :ids AND f.type = :type")
-	List<Mdm> findAllByIdsAndType(List<Long> ids, MdmType type);
+	@Query("SELECT f FROM Mdm f WHERE f.id IN :ids AND f.type = :type ORDER BY f.vote desc")
+	List<Mdm> findAllByIdsAndTypeOrderByVote(List<Long> ids, MdmType type);
 }

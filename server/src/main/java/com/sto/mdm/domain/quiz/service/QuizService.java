@@ -66,9 +66,11 @@ public class QuizService {
 			}
 		}
 		//MDM 아이디로 같은 게시물 찾기
-		List<QuizConnectMdmDto> relatedPosts = mdmRepository.findAllByIdsAndType(new ArrayList<>(mdmTagIds),
+		List<QuizConnectMdmDto> relatedPosts = mdmRepository.findAllByIdsAndTypeOrderByVote(new ArrayList<>(mdmTagIds),
 				MdmType.FINANCE)
 			.stream()
+			.distinct()
+			.limit(3)
 			.map(mdm -> {
 				List<String> tagName = mdmTagRepository.findByMdmId(mdm.getId()).stream()
 					.map(MdmTag::getTag)
@@ -84,9 +86,10 @@ public class QuizService {
 			.toList();
 
 		//중복방지
-		List<QuizConnectMdmDto> uniqueRelatedPosts = new ArrayList<>(new HashSet<>(relatedPosts));
-		log.info(uniqueRelatedPosts.toString());
-		return uniqueRelatedPosts;
+		// List<QuizConnectMdmDto> uniqueRelatedPosts = new ArrayList<>(new HashSet<>(relatedPosts));
+		// log.info(uniqueRelatedPosts.toString());
+		// return uniqueRelatedPosts;
+		return relatedPosts;
 	}
 
 	public QuizDto getQuizDetail(long quizId) {
