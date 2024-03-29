@@ -1,8 +1,41 @@
 import styled from 'styled-components';
 // import MdmCard from '@/components/MdmCard';
 import { Comment } from '@/components/Comment';
+import { useCallback, useState } from 'react';
+import { postComment } from '@/apis/post-comment';
+import { INewComment } from '@/apis/types/mdm-post ';
 
 const MDM = () => {
+    const [nickname, setNickname] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [commentInputValue, setCommentInputValue] = useState<string>('');
+
+    const validateInput = useCallback(() => {
+        if (!nickname) {
+            alert('닉네임을 입력해주세요.');
+            return false;
+        }
+        if (!password) {
+            alert('패스워드를 입력해주세요.');
+            return false;
+        }
+        if (!commentInputValue) {
+            alert('댓글을 입력해주세요.');
+            return false;
+        }
+        return true;
+    }, [nickname, password, commentInputValue]);
+
+    const uploadComment = async () => {
+        if (!validateInput()) return;
+        const newComment: INewComment = {
+            content: commentInputValue,
+            nickname,
+            password,
+        };
+        await postComment(34, newComment);
+    };
+
     return (
         <StyledMDM>
             <PostTitle>친구 돈 오백 안갚는 뻔뻔한 나</PostTitle>
@@ -24,12 +57,26 @@ const MDM = () => {
                 갑자기 달라고 하네요.
             </PostContent>
             {/* <MdmCard data={undefined} /> */}
-            <TotalNumberOfComments>댓글 36</TotalNumberOfComments>
+            <CommentHeader>
+                <TotalNumberOfComments>댓글 36</TotalNumberOfComments>
+                <UploadCommentButton onClick={uploadComment}>등록</UploadCommentButton>
+            </CommentHeader>
             <InputUser>
-                <Input type="text" placeholder="닉네임" />
-                <Input type="text" placeholder="비밀번호" />
+                <Input
+                    type="text"
+                    placeholder="닉네임"
+                    onChange={(e) => setNickname(e.target.value)}
+                />
+                <Input
+                    type="text"
+                    placeholder="비밀번호"
+                    onChange={(e) => setPassword(e.target.value)}
+                />
             </InputUser>
-            <Input type="text" placeholder="댓글을 작성해주세요." />
+            <Textarea
+                placeholder="댓글을 작성해주세요."
+                onChange={(e) => setCommentInputValue(e.target.value)}
+            />
             <Comment isBestComment={true} />
             <Comment isBestComment={true} />
             <Comment isBestComment={true} />
@@ -45,12 +92,12 @@ const StyledMDM = styled.div`
     height: 100%;
 `;
 
-const PostTitle = styled.header`
+export const PostTitle = styled.header`
     font-size: 20px;
     font-weight: 600;
 `;
 
-const PostInfo = styled.div`
+export const PostInfo = styled.div`
     padding: 5px 0;
     display: flex;
     align-items: center;
@@ -60,26 +107,63 @@ const PostInfo = styled.div`
     color: ${({ theme }) => theme.LIGHT_BLACK};
 `;
 
-const PostContent = styled.div`
+export const PostContent = styled.div`
     font-size: 15px;
     padding: 10px 2px 24px 2px;
 `;
 
-const TotalNumberOfComments = styled.div`
-    padding-top: 18px;
-    font-size: 20px;
+const CommentHeader = styled.div`
+    width: 100%;
+    padding: 18px 3px 10px 3px;
     border-top: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+`;
+
+const TotalNumberOfComments = styled.div`
+    font-size: 18px;
+    font-weight: 500;
+`;
+
+const UploadCommentButton = styled.button`
+    padding: 3px 7px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: ${({ theme }) => theme.BACKGROUND_LIGHT_GRAY};
+    color: ${({ theme }) => theme.LIGHT_BLACK};
 `;
 
 const InputUser = styled.div`
+    width: 100%;
+    height: 48px;
+    margin-bottom: 4px;
     display: flex;
+    gap: 4px;
 `;
 
 const Input = styled.input`
     width: 100%;
-    height: 30px;
+    height: 48px;
+    padding-left: 5px;
+    border: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    border-radius: 4px;
+
     &:focus {
-        outline: none;
+        outline-color: ${({ theme }) => theme.PRIMARY};
+    }
+`;
+
+const Textarea = styled.textarea`
+    width: 100%;
+    height: 80px;
+    padding: 5px 0 0 5px;
+    border: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    border-radius: 4px;
+
+    &:focus {
+        outline-color: ${({ theme }) => theme.PRIMARY};
     }
 `;
 

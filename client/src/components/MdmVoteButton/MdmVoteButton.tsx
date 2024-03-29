@@ -3,11 +3,12 @@ import styled from 'styled-components';
 interface MdmVoteButtonProps {
     content: string;
     isSelected: boolean;
+    handleClick: () => void;
 }
 
-const MdmVoteButton = ({ content, isSelected }: MdmVoteButtonProps) => {
+const MdmVoteButton = ({ content, isSelected, handleClick }: MdmVoteButtonProps) => {
     return (
-        <StyledMdmVoteButton isSelected={isSelected}>
+        <StyledMdmVoteButton isSelected={isSelected} onClick={handleClick}>
             <Content>{content}</Content>
         </StyledMdmVoteButton>
     );

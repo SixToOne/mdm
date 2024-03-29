@@ -7,19 +7,22 @@ import { getQuizFeeds } from '@/apis/get-quizFeeds';
 import { IQuiz } from '@/apis/types/quiz';
 import { IMdm } from '@/apis/types/mdm-post ';
 import { getMdmFeed } from '@/apis/get-feed';
+import { useIntersect } from '@/hooks/useIntersect';
 
 export type IFeedType = 'mdm' | 'quiz';
 
 const Home = () => {
     const [solved, setSolved] = useState<number[]>([]);
     const [feedType, setFeedType] = useState<IFeedType>('mdm');
-    const [mdmData, setMdmData] = useState<IMdm[]>();
+    const [mdmData, setMdmData] = useState<IMdm[]>([]);
     const [quizData, setQuizData] = useState<IQuiz[]>([]);
+    const [page, setPage] = useState<number>(0);
+    const [pageSize] = useState<number>(10);
 
     useEffect(() => {
         const fetchMdmData = async () => {
-            const { mdmFeeds } = await getMdmFeed(1, 10);
-            if (mdmFeeds) setMdmData(mdmFeeds);
+            const { mdmFeeds } = await getMdmFeed(page, pageSize);
+            if (mdmFeeds) setMdmData((prev) => [...prev, ...mdmFeeds]);
         };
 
         const getQuizFeedData = async () => {
@@ -34,7 +37,7 @@ const Home = () => {
         };
         if (feedType === 'mdm') fetchMdmData();
         else getQuizFeedData();
-    }, [feedType]);
+    }, [feedType, page, pageSize]);
 
     const handleDataChange = (id: number, newData: IMdm) => {
         if (!mdmData) return;
@@ -44,8 +47,18 @@ const Home = () => {
             }
             return item;
         });
+        console.log(updatedData);
         setMdmData(updatedData);
     };
+
+    const lastItemRef = useIntersect(async (entry, observer) => {
+        observer.unobserve(entry.target);
+        if (mdmData.length / pageSize === 0) {
+            setPage((prev) => prev + 1);
+        }
+    });
+
+    if (!mdmData) return <>...loading</>;
 
     return (
         <StyledHome>
@@ -59,14 +72,19 @@ const Home = () => {
             </TabWrapper>
             {feedType === 'mdm' ? (
                 <FeedMain>
-                    {mdmData?.map((data, index) => (
-                        <MdmCard
-                            key={index}
-                            data={data}
-                            border={true}
-                            handleDataChange={handleDataChange}
-                        />
-                    ))}
+                    {mdmData.map((data, index) => {
+                        return (
+                            <>
+                                <MdmCard
+                                    key={index}
+                                    data={data}
+                                    border={true}
+                                    handleDataChange={handleDataChange}
+                                />
+                                {index === mdmData.length - 1 && <LastItem ref={lastItemRef} />}
+                            </>
+                        );
+                    })}
                 </FeedMain>
             ) : (
                 <FeedMain>
@@ -90,6 +108,7 @@ const Home = () => {
 const StyledHome = styled.div`
     width: 100%;
     height: 100%;
+    overflow: scroll;
 `;
 
 const TabWrapper = styled.div`
@@ -97,7 +116,7 @@ const TabWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-around;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
 `;
 
 const TabButton = styled.button<{ selected: boolean }>`
@@ -112,10 +131,15 @@ const TabButton = styled.button<{ selected: boolean }>`
 
 const FeedMain = styled.main`
     width: 100%;
-    height: 100%;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     gap: 30px;
+`;
+
+const LastItem = styled.div`
+    width: 100%;
+    height: 1px;
 `;
 
 export default Home;

@@ -4,7 +4,8 @@ import ProgressBar from '@/components/commons/ProgressBar';
 import MdmVoteButton from '@/components/MdmVoteButton';
 import { IMdm } from '@/apis/types/mdm-post ';
 import { useVote } from '@/hooks/useVote';
-import { useState } from 'react';
+import { PostContent, PostInfo, PostTitle } from '@/pages/MDM';
+import Tag from '@/components/Tag';
 
 interface StyleProps {
     border?: boolean;
@@ -16,11 +17,37 @@ interface Props extends StyleProps {
 }
 
 const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
-    const { progressValue, handleProgress } = useVote(data, handleDataChange);
-    const [inputValue, setInputValue] = useState<number>(50);
+    const { mdmResultPercentage, rangeInputValue, handleProgress, changeMyMdmRatio } = useVote({
+        data,
+        handleDataChange,
+    });
 
     return (
         <StyledMdmCard {...styleProps}>
+            <TagsWrapper>
+                {data.tags.map((tag) => (
+                    <Tag content={tag} key={data.mdmId} />
+                ))}
+            </TagsWrapper>
+            <PostTitle>{data.title}</PostTitle>
+            <PostInfo>
+                <div>
+                    <span>{data.nickname}</span>
+                    <span>{data.createdAt}</span>
+                </div>
+                <div>
+                    <span>조회수 {data.views}</span>
+                    <span>댓글 {data.vote}</span>
+                </div>
+            </PostInfo>
+            <PostContent>
+                {data.content.split('\n').map((line) => (
+                    <>
+                        {line}
+                        <br />
+                    </>
+                ))}
+            </PostContent>
             <MdmVoteForm>
                 <div className="mdm-vote_btns">
                     <MdmVoteButton
@@ -28,31 +55,30 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
                         isSelected={
                             data.opinion1.myRatio && data.opinion1.myRatio >= 5 ? true : false
                         }
+                        handleClick={() => changeMyMdmRatio(10, 0)}
                     />
                     <MdmVoteButton
                         content={data.opinion2.opinion}
                         isSelected={
                             data.opinion2.myRatio && data.opinion2.myRatio >= 5 ? true : false
                         }
+                        handleClick={() => changeMyMdmRatio(0, 10)}
                     />
                 </div>
                 <RangeInput
                     min={0}
                     max={100}
                     step={10}
-                    value={inputValue}
-                    handleProgress={(e) => {
-                        handleProgress(e);
-                        setInputValue(parseInt(e.currentTarget.value));
-                    }}
+                    value={rangeInputValue}
+                    handleProgress={(e) => handleProgress(parseInt(e.currentTarget.value))}
                 />
             </MdmVoteForm>
             <MdmResult>
-                {progressValue ? (
+                {mdmResultPercentage ? (
                     <ProgressBar
                         max={100}
-                        value={progressValue}
-                        reverse={data.opinion2.count > data.opinion1.count ? true : false}
+                        value={Math.max(mdmResultPercentage.count1, mdmResultPercentage.count2)}
+                        reverse={mdmResultPercentage.count1 < mdmResultPercentage.count2 || false}
                     />
                 ) : (
                     <NotVote>투표하고 결과보기</NotVote>
@@ -72,6 +98,14 @@ const StyledMdmCard = styled.div<StyleProps>`
     border: ${({ theme, border }) => (border ? `1px solid ${theme.BORDER_LIGHT}` : 'none')};
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+`;
+
+const TagsWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    gap: 7px;
+    margin-bottom: 12px;
+    overflow: hidden;
 `;
 
 const MdmVoteForm = styled.div`

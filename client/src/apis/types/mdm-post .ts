@@ -23,7 +23,7 @@ export interface IMdmOption {
     myRatio: number | null;
 }
 
-export interface IMyRatio {
+export interface IMdmRatio {
     count1: number;
     count2: number;
 }
@@ -34,4 +34,10 @@ export interface IComment {
     nickname: string;
     password: string;
     like: number;
+}
+
+export interface INewComment {
+    content: string;
+    nickname: string;
+    password: string;
 }
