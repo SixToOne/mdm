@@ -10,10 +10,6 @@ export interface IQuiz {
     tags: string[];
 }
 
-export interface IQuizFeed {
-    quizFeeds: IQuiz[];
-}
-
 export interface IQuizSolution {
     solution: string;
 }

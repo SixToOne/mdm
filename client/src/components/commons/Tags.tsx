@@ -21,9 +21,9 @@ const Tags = ({ tags, isBlue, setTagList }: TagProps) => {
             {tags?.map((tag, index) => (
                 <button key={index}>
                     <div
-                        className={`flex items-center mr-4 my-1 rounded-2xl px-4 py-1 ${isBlue === true ? 'bg-PRIMARY text-WHITE' : 'border-2 border-BORDER_LIGHT'}`}
+                        className={`flex text-xs items-center mr-2 my-1 rounded-xl px-2 py-1 ${isBlue === true ? 'bg-PRIMARY text-WHITE' : 'border-2 border-BORDER_LIGHT'}`}
                     >
-                        {tag}
+                        # {tag}
                         {isBlue && (
                             <div
                                 className="relative ml-2 cursor:pointer"

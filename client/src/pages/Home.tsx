@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import MdmCard from '@/components/MdmCard';
-import { Quiz } from '@/components/Quiz';
-import { getQuizFeeds } from '@/apis/get-quizFeeds';
+import { QuizCard } from '@/components/Quiz';
 import { IQuiz } from '@/apis/types/quiz';
 import { IMdm } from '@/apis/types/mdm-post ';
+import { getQuizFeeds } from '@/apis/get-quizFeeds';
 import { getMdmFeed } from '@/apis/get-feed';
 import { useIntersect } from '@/hooks/useIntersect';
 
@@ -26,15 +26,10 @@ const Home = () => {
         };
 
         const getQuizFeedData = async () => {
-            try {
-                const res = await getQuizFeeds(0, 10);
-                if (res) {
-                    setQuizData((prev) => [...prev, ...res]);
-                }
-            } catch (error) {
-                console.error();
-            }
+            const { quizFeeds } = await getQuizFeeds(page, pageSize);
+            if (quizFeeds) setQuizData((prev) => [...prev, ...quizFeeds]);
         };
+
         if (feedType === 'mdm') fetchMdmData();
         else getQuizFeedData();
     }, [feedType, page, pageSize]);
@@ -64,7 +59,7 @@ const Home = () => {
         <StyledHome>
             <TabWrapper>
                 <TabButton onClick={() => setFeedType('mdm')} selected={feedType === 'mdm'}>
-                    유머
+                    몇대몇
                 </TabButton>
                 <TabButton onClick={() => setFeedType('quiz')} selected={feedType === 'quiz'}>
                     금융 퀴즈
@@ -88,17 +83,24 @@ const Home = () => {
                 </FeedMain>
             ) : (
                 <FeedMain>
-                    {quizData.map((each, index) => (
-                        <div key={index}>
-                            <Quiz quizId={each.id} solved={solved} setSolved={setSolved} />
-                            <div className="flex justify-between mx-4 mb-4">
-                                <span>해설이 궁금하다면?</span>
-                                <Link to={`/quiz/${each.id}`}>
-                                    <span className="text-PRIMARY">자세히 보기</span>
-                                </Link>
+                    {quizData.map((each, index) => {
+                        return (
+                            <div key={index}>
+                                <QuizCard
+                                    quiz={each}
+                                    quizId={each.id}
+                                    solved={solved}
+                                    setSolved={setSolved}
+                                />
+                                <div className="flex justify-between mx-4 mb-4">
+                                    <span>해설이 궁금하다면?</span>
+                                    <Link to={`/quiz/${each.id}`}>
+                                        <span className="text-PRIMARY">자세히 보기</span>
+                                    </Link>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </FeedMain>
             )}
         </StyledHome>
