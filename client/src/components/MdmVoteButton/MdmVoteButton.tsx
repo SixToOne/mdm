@@ -2,24 +2,28 @@ import styled from 'styled-components';
 
 interface MdmVoteButtonProps {
     content: string;
+    imageSource?: string | null;
     isSelected: boolean;
     handleClick: () => void;
 }
 
-const MdmVoteButton = ({ content, isSelected, handleClick }: MdmVoteButtonProps) => {
+const MdmVoteButton = ({ content, imageSource, isSelected, handleClick }: MdmVoteButtonProps) => {
     return (
-        <StyledMdmVoteButton $isSelected={isSelected} onClick={handleClick}>
-            <Content>{content}</Content>
-        </StyledMdmVoteButton>
+        <>
+            <StyledMdmVoteButton $isSelected={isSelected} onClick={handleClick}>
+                {imageSource && <Image src={imageSource} alt="몇대몇 사진" />}
+                <Content>{content}</Content>
+            </StyledMdmVoteButton>
+        </>
     );
 };
 
 const StyledMdmVoteButton = styled.div<{ $isSelected: boolean }>`
     width: 100%;
-    padding: 20px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     border-radius: 5px;
     background-color: ${({ theme, $isSelected }) =>
         $isSelected ? theme.PRIMARY_LIGHT : theme.BACKGROUND_LIGHT_GRAY};
@@ -31,7 +35,20 @@ const StyledMdmVoteButton = styled.div<{ $isSelected: boolean }>`
 `;
 
 const Content = styled.span`
+    width: 100%;
+    height: 100%;
+    padding: 20px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const Image = styled.img`
+    width: 100%;
+    height: 80px;
+    border-radius: 5px 5px 0 0;
+    object-fit: cover;
 `;
 
 export default MdmVoteButton;
