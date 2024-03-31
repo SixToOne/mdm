@@ -27,7 +27,6 @@ export const useVote = ({ data, handleDataChange }: IUseVote) => {
         setMdmResultPercentage(newMdmResultPercentage);
         const newMyMdmRatio = { count1: opinion1.count, count2: opinion2.count };
         setMyMdmRatio(newMyMdmRatio);
-        setRangeInputValue(opinion2.count * 10);
     }, [data]);
 
     const update = useCallback(
@@ -43,6 +42,7 @@ export const useVote = ({ data, handleDataChange }: IUseVote) => {
     const changeMyMdmRatio = useCallback((count1: number, count2: number) => {
         const newMyMdmRatio = { count1, count2 };
         setMyMdmRatio(newMyMdmRatio);
+        setRangeInputValue(count2 * 10);
         update(newMyMdmRatio);
     }, []);
 
