@@ -1,13 +1,12 @@
+import React from 'react';
 import styled from 'styled-components';
-import RangeInput from '@/components/commons/RangeInput';
 import ProgressBar from '@/components/commons/ProgressBar';
-import MdmVoteButton from '@/components/MdmVoteButton';
 import { IMdm } from '@/apis/types/mdm-post ';
 import { useVote } from '@/hooks/useVote';
 import { Nickname, PostContent, PostInfo, PostTitle } from '@/pages/MDM';
 import Tag from '@/components/Tag';
 import { getFormattedYearMonthDayTime } from '@/utils/time';
-import React from 'react';
+import MdmVoteForm from '../MdmVoteForm';
 
 interface StyleProps {
     $hasBorder?: boolean;
@@ -23,8 +22,6 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
         data,
         handleDataChange,
     });
-
-    console.log(mdmResultPercentage);
 
     return (
         <StyledMdmCard {...styleProps}>
@@ -53,31 +50,12 @@ const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
                     ))}
                 </PostContent>
             )}
-            <MdmVoteForm>
-                <div className="mdm-vote_btns">
-                    <MdmVoteButton
-                        content={data.opinion1.opinion}
-                        isSelected={
-                            data.opinion1.myRatio && data.opinion1.myRatio >= 5 ? true : false
-                        }
-                        handleClick={() => changeMyMdmRatio(10, 0)}
-                    />
-                    <MdmVoteButton
-                        content={data.opinion2.opinion}
-                        isSelected={
-                            data.opinion2.myRatio && data.opinion2.myRatio >= 5 ? true : false
-                        }
-                        handleClick={() => changeMyMdmRatio(0, 10)}
-                    />
-                </div>
-                <RangeInput
-                    min={0}
-                    max={100}
-                    step={10}
-                    value={rangeInputValue}
-                    handleProgress={(e) => handleProgress(parseInt(e.currentTarget.value))}
-                />
-            </MdmVoteForm>
+            <MdmVoteForm
+                data={data}
+                handleClick={(a: number, b: number) => changeMyMdmRatio(a, b)}
+                rangeInputValue={rangeInputValue}
+                handleProgress={handleProgress}
+            />
             <MdmResult>
                 {mdmResultPercentage &&
                 mdmResultPercentage.count1 + mdmResultPercentage.count2 > 0 ? (
@@ -113,28 +91,17 @@ const TagsWrapper = styled.div`
     overflow: hidden;
 `;
 
-const MdmVoteForm = styled.div`
-    width: 100%;
-    padding-bottom: 18px;
-
-    .mdm-vote_btns {
-        margin-bottom: 8px;
-        display: flex;
-        gap: 16px;
-    }
-`;
-
-const MdmResult = styled.div`
+export const MdmResult = styled.div`
     margin-top: 18px;
 `;
 
-const VoteCount = styled.div`
+export const VoteCount = styled.div`
     font-size: 12px;
     text-align: right;
     padding-right: 2px;
 `;
 
-const NotVote = styled.div`
+export const NotVote = styled.div`
     width: 100%;
     height: 24px;
     padding-top: 2px;
