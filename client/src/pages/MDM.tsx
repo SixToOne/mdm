@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Comment } from '@/components/Comment';
 import { postComment } from '@/apis/post-comment';
 import { IMdm, INewComment } from '@/apis/types/mdm-post ';
 import { getMdmPost } from '@/apis/get-mdm';
@@ -11,6 +10,7 @@ import { useVote } from '@/hooks/useVote';
 import MdmVoteForm from '@/components/MdmVoteForm';
 import { MdmResult, NotVote, VoteCount } from '@/components/MdmCard/MdmCard';
 import { ProgressBar } from '@/components/commons';
+import MdmComments from '@/components/MdmComments';
 
 const MDM = () => {
     const { id } = useParams();
@@ -38,13 +38,13 @@ const MDM = () => {
     }, [nickname, password, commentInputValue]);
 
     const uploadComment = async () => {
-        if (!validateInput()) return;
+        if (!validateInput() || !mdmData) return;
         const newComment: INewComment = {
             content: commentInputValue,
             nickname,
             password,
         };
-        await postComment(34, newComment);
+        await postComment(mdmData.mdmId, newComment);
     };
 
     useEffect(() => {
@@ -128,12 +128,8 @@ const MDM = () => {
                 placeholder="댓글을 작성해주세요."
                 onChange={(e) => setCommentInputValue(e.target.value)}
             />
-            <Comment isBestComment={true} />
-            <Comment isBestComment={true} />
-            <Comment isBestComment={true} />
-            <Comment />
-            <Comment />
-            <Comment />
+
+            <MdmComments mdmId={mdmData.mdmId} />
         </StyledMDM>
     );
 };
@@ -182,7 +178,7 @@ const TotalNumberOfComments = styled.div`
     font-weight: 500;
 `;
 
-const UploadCommentButton = styled.button`
+export const UploadCommentButton = styled.button`
     padding: 3px 7px;
     border-radius: 8px;
     font-size: 14px;
@@ -191,7 +187,7 @@ const UploadCommentButton = styled.button`
     color: ${({ theme }) => theme.LIGHT_BLACK};
 `;
 
-const InputUser = styled.div`
+export const InputUser = styled.div`
     width: 100%;
     height: 48px;
     margin-bottom: 4px;
@@ -199,7 +195,7 @@ const InputUser = styled.div`
     gap: 4px;
 `;
 
-const Input = styled.input`
+export const Input = styled.input`
     width: 100%;
     height: 48px;
     padding-left: 5px;
@@ -211,7 +207,7 @@ const Input = styled.input`
     }
 `;
 
-const Textarea = styled.textarea`
+export const Textarea = styled.textarea`
     width: 100%;
     height: 80px;
     padding: 5px 0 0 5px;

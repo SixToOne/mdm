@@ -1,29 +1,96 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ArrowDown, Reply } from '@/components/icons';
+import { IMdmComment, INewComment } from '@/apis/types/mdm-post ';
+import { getFormattedYearMonthDayTime } from '@/utils/time';
+import { getMdmCommentReplies } from '@/apis/get-comments';
+import { Input, InputUser, Textarea, UploadCommentButton } from '@/pages/MDM';
+import { postReply } from '@/apis/post-comment';
 
 interface CommentProps {
-    isBestComment?: boolean;
+    mdmId: number;
+    mdmCommentdata: IMdmComment;
 }
 
-export const Comment = ({ isBestComment }: CommentProps) => {
+export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
+    const [showReply, setShowReply] = useState<boolean>(false);
+    const [repliesData, setRepliesData] = useState<IMdmComment[]>([]);
+    const [nickname, setNickname] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [commentInputValue, setCommentInputValue] = useState<string>('');
+
+    const fetchData = async () => {
+        const data = await getMdmCommentReplies(mdmId, mdmCommentdata.commentId, 0, 20);
+        if (data) setRepliesData(data);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [mdmId, mdmCommentdata]);
+
+    const uploadComment = async () => {
+        if (!mdmCommentdata) return;
+        const newComment: INewComment = {
+            content: commentInputValue,
+            nickname,
+            password,
+        };
+        await postReply(mdmId, mdmCommentdata.commentId, newComment);
+        fetchData();
+    };
+
     return (
         <StyledComment>
             <CommentHeader>
-                {isBestComment && <BestMark>BEST</BestMark>}
+                {mdmCommentdata.liked && <BestMark>BEST</BestMark>}
                 <CommentInfo>
-                    <Nickname>육영이</Nickname>
-                    <Date>2023.10.23</Date>
+                    <Nickname>{mdmCommentdata.nickname}</Nickname>
+                    <CreatedDate>
+                        {getFormattedYearMonthDayTime(new Date(mdmCommentdata.createdAt))}
+                    </CreatedDate>
                 </CommentInfo>
             </CommentHeader>
-            <CommentContent>무조건 파혼각</CommentContent>
-            <OpenCommentReplyButton />
-            <CommentReply />
-            <CommentReply />
+            <CommentContent>{mdmCommentdata.content}</CommentContent>
+            <OpenCommentReplyButton handleClick={() => setShowReply(!showReply)} />
+            {showReply && (
+                <>
+                    <InputUser>
+                        <Input
+                            type="text"
+                            placeholder="닉네임"
+                            onChange={(e) => setNickname(e.target.value)}
+                        />
+                        <Input
+                            type="text"
+                            placeholder="비밀번호"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </InputUser>
+                    <Textarea
+                        placeholder="댓글을 작성해주세요."
+                        onChange={(e) => setCommentInputValue(e.target.value)}
+                    />
+                    <UploadCommentButton onClick={uploadComment}>등록</UploadCommentButton>
+
+                    {repliesData.length > 0 ? (
+                        repliesData.map((reply) => (
+                            <CommentReply key={reply.commentId} replyData={reply} />
+                        ))
+                    ) : (
+                        <NoReply>답글이 없어요.</NoReply>
+                    )}
+                </>
+            )}
         </StyledComment>
     );
 };
 
-export const CommentReply = () => {
+interface CommentReplyProps {
+    replyData: IMdmComment;
+}
+
+export const CommentReply = ({ replyData }: CommentReplyProps) => {
     return (
         <StyledReply>
             <ReplyIconWrapper>
@@ -32,19 +99,25 @@ export const CommentReply = () => {
             <div>
                 <CommentHeader>
                     <CommentInfo>
-                        <Nickname>육영이</Nickname>
-                        <Date>2023.10.23</Date>
+                        <Nickname>{replyData.nickname}</Nickname>
+                        <CreatedDate>
+                            {getFormattedYearMonthDayTime(new Date(replyData.createdAt))}
+                        </CreatedDate>
                     </CommentInfo>
                 </CommentHeader>
-                <CommentContent>무조건 파혼각</CommentContent>
+                <CommentContent>{replyData.content}</CommentContent>
             </div>
         </StyledReply>
     );
 };
 
-const OpenCommentReplyButton = () => {
+interface OpenCommentReplyButtonProps {
+    handleClick: () => void;
+}
+
+const OpenCommentReplyButton = ({ handleClick }: OpenCommentReplyButtonProps) => {
     return (
-        <StyledOpenCommentReplyButton>
+        <StyledOpenCommentReplyButton onClick={handleClick}>
             <span>답글</span>
             <ArrowDown />
         </StyledOpenCommentReplyButton>
@@ -52,12 +125,11 @@ const OpenCommentReplyButton = () => {
 };
 
 const StyledOpenCommentReplyButton = styled.div`
-    margin-left: 2px;
+    margin: 0 0 7px 2px;
     display: flex;
     align-items: center;
     gap: 4px;
     color: ${({ theme }) => theme.PRIMARY};
-    font-size: 14px;
     font-weight: 600;
 `;
 
@@ -100,10 +172,19 @@ const Nickname = styled.span`
     margin-right: 5px;
 `;
 
-const Date = styled.span`
+const CreatedDate = styled.span`
     color: ${({ theme }) => theme.LIGHT_BLACK};
 `;
 
 const CommentContent = styled.div`
-    padding: 5px 0;
+    padding: 14px 0;
+`;
+
+const NoReply = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${({ theme }) => theme.LIGHT_BLACK};
+    font-size: 14px;
 `;

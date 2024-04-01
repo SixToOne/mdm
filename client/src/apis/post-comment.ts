@@ -7,3 +7,8 @@ export const postComment = async (mdmId: number, data: INewComment) => {
     const res = await axios.post(`${path}/${mdmId}/comments`, data);
     return res.data;
 };
+
+export const postReply = async (mdmId: number, commentId: number, data: INewComment) => {
+    const res = await axios.post(`${path}/${mdmId}/comments/${commentId}/reply`, data);
+    return res.data;
+};
