@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ArrowDown, Reply } from '@/components/icons';
-import { IMdmComment, INewComment } from '@/apis/types/mdm-post ';
+import { IMdmComment } from '@/apis/types/mdm-post ';
 import { getFormattedYearMonthDayTime } from '@/utils/time';
 import { getMdmCommentReplies } from '@/apis/get-comments';
-import { Input, InputUser, Textarea, UploadCommentButton } from '@/pages/MDM';
+import CommentForm from '@/components/CommentForm';
+import useComment from '@/hooks/useComment';
+import { UploadCommentButton } from '@/components/MdmComments/MdmComments';
 import { postReply } from '@/apis/post-comment';
 
 interface CommentProps {
@@ -14,31 +15,26 @@ interface CommentProps {
 }
 
 export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
+    // 대댓글
+    const { newComment, handleInputCommentForm, validateInput, resetInputValue } = useComment();
     const [showReply, setShowReply] = useState<boolean>(false);
     const [repliesData, setRepliesData] = useState<IMdmComment[]>([]);
-    const [nickname, setNickname] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [commentInputValue, setCommentInputValue] = useState<string>('');
+
+    useEffect(() => {
+        fetchData();
+    }, [mdmId, mdmCommentdata]);
 
     const fetchData = async () => {
         const data = await getMdmCommentReplies(mdmId, mdmCommentdata.commentId, 0, 20);
         if (data) setRepliesData(data);
     };
 
-    useEffect(() => {
-        fetchData();
-    }, [mdmId, mdmCommentdata]);
-
-    const uploadComment = async () => {
-        if (!mdmCommentdata) return;
-        const newComment: INewComment = {
-            content: commentInputValue,
-            nickname,
-            password,
-        };
+    const uploadReply = useCallback(async () => {
+        if (!validateInput()) return;
         await postReply(mdmId, mdmCommentdata.commentId, newComment);
+        resetInputValue();
         fetchData();
-    };
+    }, [mdmId, newComment]);
 
     return (
         <StyledComment>
@@ -55,24 +51,8 @@ export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
             <OpenCommentReplyButton handleClick={() => setShowReply(!showReply)} />
             {showReply && (
                 <>
-                    <InputUser>
-                        <Input
-                            type="text"
-                            placeholder="닉네임"
-                            onChange={(e) => setNickname(e.target.value)}
-                        />
-                        <Input
-                            type="text"
-                            placeholder="비밀번호"
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </InputUser>
-                    <Textarea
-                        placeholder="댓글을 작성해주세요."
-                        onChange={(e) => setCommentInputValue(e.target.value)}
-                    />
-                    <UploadCommentButton onClick={uploadComment}>등록</UploadCommentButton>
-
+                    <CommentForm inputValue={newComment} handleInput={handleInputCommentForm} />
+                    <UploadCommentButton onClick={uploadReply}>등록</UploadCommentButton>
                     {repliesData.length > 0 ? (
                         repliesData.map((reply) => (
                             <CommentReply key={reply.commentId} replyData={reply} />
