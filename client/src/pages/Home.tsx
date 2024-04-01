@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -43,7 +42,6 @@ const Home = () => {
             }
             return item;
         });
-        console.log(updatedData);
         setMdmData(updatedData);
     };
 
@@ -70,14 +68,14 @@ const Home = () => {
                 <FeedMain>
                     {mdmData.map((data, index) => {
                         return (
-                            <React.Fragment key={data.mdmId}>
+                            <Link key={data.mdmId} to={`/mdm/${data.mdmId}`}>
                                 <MdmCard
                                     data={data}
                                     $hasBorder={true}
                                     handleDataChange={handleDataChange}
                                 />
                                 {index === mdmData.length - 1 && <LastItem ref={lastItemRef} />}
-                            </React.Fragment>
+                            </Link>
                         );
                     })}
                 </FeedMain>
