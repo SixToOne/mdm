@@ -28,12 +28,13 @@ export interface IMdmRatio {
     count2: number;
 }
 
-export interface IComment {
+export interface IMdmComment {
     commentId: number;
     content: string;
     nickname: string;
-    password: string;
     like: number;
+    liked: boolean;
+    createdAt: string;
 }
 
 export interface INewComment {

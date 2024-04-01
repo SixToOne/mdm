@@ -4,7 +4,7 @@ import { postMdmVote } from '@/apis/post-mdm-vote';
 import { getMdmPost } from '@/apis/get-mdm';
 
 interface IUseVote {
-    data: IMdm;
+    data: IMdm | undefined;
     handleDataChange: (id: number, newData: IMdm) => void;
 }
 
@@ -18,6 +18,7 @@ export const useVote = ({ data, handleDataChange }: IUseVote) => {
     }, [data]);
 
     const init = useCallback(() => {
+        if (!data) return;
         const { opinion1, opinion2 } = data;
         const newMdmResultPercentage = {
             count1: getPercentage(opinion1.count + opinion2.count, opinion1.count),
@@ -26,11 +27,11 @@ export const useVote = ({ data, handleDataChange }: IUseVote) => {
         setMdmResultPercentage(newMdmResultPercentage);
         const newMyMdmRatio = { count1: opinion1.count, count2: opinion2.count };
         setMyMdmRatio(newMyMdmRatio);
-        setRangeInputValue(opinion2.count * 10);
     }, [data]);
 
     const update = useCallback(
         async (myRatio: IMdmRatio) => {
+            if (!data) return;
             await postMdmVote(data.mdmId, myRatio);
             const newData = await getMdmPost(data.mdmId);
             handleDataChange(data.mdmId, newData);
@@ -41,6 +42,7 @@ export const useVote = ({ data, handleDataChange }: IUseVote) => {
     const changeMyMdmRatio = useCallback((count1: number, count2: number) => {
         const newMyMdmRatio = { count1, count2 };
         setMyMdmRatio(newMyMdmRatio);
+        setRangeInputValue(count2 * 10);
         update(newMyMdmRatio);
     }, []);
 

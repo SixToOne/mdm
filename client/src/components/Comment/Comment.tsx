@@ -1,29 +1,90 @@
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ArrowDown, Reply } from '@/components/icons';
+import { IMdmComment } from '@/apis/types/mdm-post ';
+import { getFormattedYearMonthDayTime } from '@/utils/time';
+import { getMdmCommentReplies } from '@/apis/get-comments';
+import CommentForm from '@/components/CommentForm';
+import useComment from '@/hooks/useComment';
+import { UploadCommentButton } from '@/components/MdmComments/MdmComments';
+import { postReply } from '@/apis/post-comment';
+import ThumbsUp from '@/components/icons/ThumbsUp';
 
 interface CommentProps {
     isBestComment?: boolean;
+    mdmId: number;
+    mdmCommentdata: IMdmComment;
+    updateLikeComment: (mdmId: number, commentId: number) => Promise<void>;
 }
 
-export const Comment = ({ isBestComment }: CommentProps) => {
+export const Comment = ({
+    isBestComment,
+    mdmId,
+    mdmCommentdata,
+    updateLikeComment,
+}: CommentProps) => {
+    // 대댓글
+    const { newComment, handleInputCommentForm, validateInput, resetInputValue } = useComment();
+    const [showReply, setShowReply] = useState<boolean>(false);
+    const [repliesData, setRepliesData] = useState<IMdmComment[]>([]);
+
+    useEffect(() => {
+        fetchData();
+    }, [mdmId, mdmCommentdata]);
+
+    const fetchData = async () => {
+        const data = await getMdmCommentReplies(mdmId, mdmCommentdata.commentId, 0, 20);
+        if (data) setRepliesData(data);
+    };
+
+    const uploadReply = useCallback(async () => {
+        if (!validateInput()) return;
+        await postReply(mdmId, mdmCommentdata.commentId, newComment);
+        resetInputValue();
+        fetchData();
+    }, [mdmId, newComment]);
+
     return (
         <StyledComment>
             <CommentHeader>
                 {isBestComment && <BestMark>BEST</BestMark>}
                 <CommentInfo>
-                    <Nickname>육영이</Nickname>
-                    <Date>2023.10.23</Date>
+                    <Nickname>{mdmCommentdata.nickname}</Nickname>
+                    <CreatedDate>
+                        {getFormattedYearMonthDayTime(new Date(mdmCommentdata.createdAt))}
+                    </CreatedDate>
                 </CommentInfo>
+                <Liked>
+                    <button onClick={() => updateLikeComment(mdmId, mdmCommentdata.commentId)}>
+                        <ThumbsUp checked={mdmCommentdata.liked} />
+                    </button>
+                    <LikedCount>{mdmCommentdata.like}</LikedCount>
+                </Liked>
             </CommentHeader>
-            <CommentContent>무조건 파혼각</CommentContent>
-            <OpenCommentReplyButton />
-            <CommentReply />
-            <CommentReply />
+            <CommentContent>{mdmCommentdata.content}</CommentContent>
+            <OpenCommentReplyButton handleClick={() => setShowReply(!showReply)} />
+            {showReply && (
+                <>
+                    <CommentForm inputValue={newComment} handleInput={handleInputCommentForm} />
+                    <UploadCommentButton onClick={uploadReply}>등록</UploadCommentButton>
+                    {repliesData.length > 0 ? (
+                        repliesData.map((reply) => (
+                            <CommentReply key={reply.commentId} replyData={reply} />
+                        ))
+                    ) : (
+                        <NoReply>답글이 없어요.</NoReply>
+                    )}
+                </>
+            )}
         </StyledComment>
     );
 };
 
-export const CommentReply = () => {
+interface CommentReplyProps {
+    replyData: IMdmComment;
+}
+
+export const CommentReply = ({ replyData }: CommentReplyProps) => {
     return (
         <StyledReply>
             <ReplyIconWrapper>
@@ -32,19 +93,25 @@ export const CommentReply = () => {
             <div>
                 <CommentHeader>
                     <CommentInfo>
-                        <Nickname>육영이</Nickname>
-                        <Date>2023.10.23</Date>
+                        <Nickname>{replyData.nickname}</Nickname>
+                        <CreatedDate>
+                            {getFormattedYearMonthDayTime(new Date(replyData.createdAt))}
+                        </CreatedDate>
                     </CommentInfo>
                 </CommentHeader>
-                <CommentContent>무조건 파혼각</CommentContent>
+                <CommentContent>{replyData.content}</CommentContent>
             </div>
         </StyledReply>
     );
 };
 
-const OpenCommentReplyButton = () => {
+interface OpenCommentReplyButtonProps {
+    handleClick: () => void;
+}
+
+const OpenCommentReplyButton = ({ handleClick }: OpenCommentReplyButtonProps) => {
     return (
-        <StyledOpenCommentReplyButton>
+        <StyledOpenCommentReplyButton onClick={handleClick}>
             <span>답글</span>
             <ArrowDown />
         </StyledOpenCommentReplyButton>
@@ -52,12 +119,11 @@ const OpenCommentReplyButton = () => {
 };
 
 const StyledOpenCommentReplyButton = styled.div`
-    margin-left: 2px;
+    margin: 0 0 7px 2px;
     display: flex;
     align-items: center;
     gap: 4px;
     color: ${({ theme }) => theme.PRIMARY};
-    font-size: 14px;
     font-weight: 600;
 `;
 
@@ -71,6 +137,7 @@ const ReplyIconWrapper = styled.div`
 `;
 
 const StyledComment = styled.div`
+    width: 100%;
     padding: 20px 0;
     border-bottom: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
 `;
@@ -87,7 +154,7 @@ const BestMark = styled.div`
 
 const CommentHeader = styled.div`
     display: flex;
-    align-items: center;
+    align-items: start;
     font-size: 14px;
 `;
 
@@ -100,10 +167,34 @@ const Nickname = styled.span`
     margin-right: 5px;
 `;
 
-const Date = styled.span`
+const CreatedDate = styled.span`
     color: ${({ theme }) => theme.LIGHT_BLACK};
 `;
 
 const CommentContent = styled.div`
-    padding: 5px 0;
+    padding: 0 0 14px 0;
+`;
+
+const NoReply = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${({ theme }) => theme.LIGHT_BLACK};
+    font-size: 14px;
+`;
+
+const Liked = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+`;
+
+const LikedCount = styled.span`
+    width: 18px;
+    font-size: 12px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.LIGHT_BLACK};
+    text-align: center;
 `;
