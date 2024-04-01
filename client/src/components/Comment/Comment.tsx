@@ -7,7 +7,8 @@ import { getMdmCommentReplies } from '@/apis/get-comments';
 import CommentForm from '@/components/CommentForm';
 import useComment from '@/hooks/useComment';
 import { UploadCommentButton } from '@/components/MdmComments/MdmComments';
-import { postReply } from '@/apis/post-comment';
+import { postLikeComment, postReply } from '@/apis/post-comment';
+import ThumbsUp from '@/components/icons/ThumbsUp';
 
 interface CommentProps {
     mdmId: number;
@@ -36,6 +37,11 @@ export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
         fetchData();
     }, [mdmId, newComment]);
 
+    const updateLikeComment = useCallback(async () => {
+        await postLikeComment(mdmId, mdmCommentdata.commentId);
+        fetchData();
+    }, [mdmId]);
+
     return (
         <StyledComment>
             <CommentHeader>
@@ -46,6 +52,12 @@ export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
                         {getFormattedYearMonthDayTime(new Date(mdmCommentdata.createdAt))}
                     </CreatedDate>
                 </CommentInfo>
+                <Liked>
+                    <button onClick={updateLikeComment}>
+                        <ThumbsUp checked={mdmCommentdata.liked} />
+                    </button>
+                    <LikedCount>{mdmCommentdata.like}</LikedCount>
+                </Liked>
             </CommentHeader>
             <CommentContent>{mdmCommentdata.content}</CommentContent>
             <OpenCommentReplyButton handleClick={() => setShowReply(!showReply)} />
@@ -139,7 +151,7 @@ const BestMark = styled.div`
 
 const CommentHeader = styled.div`
     display: flex;
-    align-items: center;
+    align-items: start;
     font-size: 14px;
 `;
 
@@ -157,7 +169,7 @@ const CreatedDate = styled.span`
 `;
 
 const CommentContent = styled.div`
-    padding: 14px 0;
+    padding: 0 0 14px 0;
 `;
 
 const NoReply = styled.div`
@@ -167,4 +179,19 @@ const NoReply = styled.div`
     justify-content: center;
     color: ${({ theme }) => theme.LIGHT_BLACK};
     font-size: 14px;
+`;
+
+const Liked = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+`;
+
+const LikedCount = styled.span`
+    width: 18px;
+    font-size: 12px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.LIGHT_BLACK};
+    text-align: center;
 `;

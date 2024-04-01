@@ -12,3 +12,8 @@ export const postReply = async (mdmId: number, commentId: number, data: INewComm
     const res = await axios.post(`${path}/${mdmId}/comments/${commentId}/reply`, data);
     return res.data;
 };
+
+export const postLikeComment = async (mdmId: number, commentId: number) => {
+    const res = await axios.post(`${path}/${mdmId}/comments/${commentId}/likes`);
+    return res.data;
+};

@@ -9,3 +9,4 @@ export { default as Menu } from './Menu';
 export { default as SearchGlasses } from './SearchGlasses';
 export { default as Reply } from './Reply';
 export { default as RightCard } from './RightCard';
+export { default as ThumbsUp } from './ThumbsUp';
