@@ -10,7 +10,13 @@ interface MdmVoteButtonProps {
 const MdmVoteButton = ({ content, imageSource, isSelected, handleClick }: MdmVoteButtonProps) => {
     return (
         <>
-            <StyledMdmVoteButton $isSelected={isSelected} onClick={handleClick}>
+            <StyledMdmVoteButton
+                $isSelected={isSelected}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleClick();
+                }}
+            >
                 {imageSource && <Image src={imageSource} alt="몇대몇 사진" />}
                 <Content>{content}</Content>
             </StyledMdmVoteButton>
