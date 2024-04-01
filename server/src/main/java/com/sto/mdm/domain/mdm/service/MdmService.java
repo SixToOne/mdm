@@ -289,8 +289,7 @@ public class MdmService {
 
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new BaseException(ErrorCode.COMMENT_NOT_FOUND));
-
-		commentLikeRepository.findByCommentIdAndIpId(commentId, mdmId)
+		commentLikeRepository.findByCommentIdAndIpId(commentId, ip)
 			.ifPresentOrElse(commentLikeRepository::delete, () -> {
 				Ip savedIp = ipRepository.findByIp(ip)
 					.orElseGet(() -> ipRepository.save(Ip.builder().ip(ip).build()));
