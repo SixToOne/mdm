@@ -63,7 +63,7 @@ public class Mdm extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private MdmType type;
 
-	@Formula("(SELECT COUNT(*) FROM comment c WHERE c.mdm_id = mdm_id and c.deleted = false)")
+	@Formula("(SELECT COUNT(*) FROM comment c WHERE c.mdm_id = mdm_id and c.parent_id is null and c.deleted = false)")
 	private int commentCount;
 
 	public void setImages(String image1, String image2) {
