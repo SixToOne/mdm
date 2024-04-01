@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Comment } from '@/components/Comment';
 import CommentForm from '@/components/CommentForm';
 import useComment from '@/hooks/useComment';
-import { postComment } from '@/apis/post-comment';
+import { postComment, postLikeComment } from '@/apis/post-comment';
 import { getMdmComments } from '@/apis/get-comments';
 import { IMdmComment } from '@/apis/types/mdm-post ';
 
@@ -32,6 +32,11 @@ const MdmComments = ({ mdmId, totalComment }: MdmCommentsProps) => {
         fetchData();
     }, [mdmId, newComment]);
 
+    const updateLikeComment = useCallback(async (mdmId: number, commentId: number) => {
+        await postLikeComment(mdmId, commentId);
+        fetchData();
+    }, []);
+
     return (
         <StyledMdmComments>
             <CommentHeader>
@@ -40,7 +45,12 @@ const MdmComments = ({ mdmId, totalComment }: MdmCommentsProps) => {
             </CommentHeader>
             <CommentForm inputValue={newComment} handleInput={handleInputCommentForm} />
             {data.map((comment) => (
-                <Comment mdmId={mdmId} mdmCommentdata={comment} key={comment.commentId} />
+                <Comment
+                    key={comment.commentId}
+                    mdmId={mdmId}
+                    mdmCommentdata={comment}
+                    updateLikeComment={updateLikeComment}
+                />
             ))}
         </StyledMdmComments>
     );

@@ -7,15 +7,16 @@ import { getMdmCommentReplies } from '@/apis/get-comments';
 import CommentForm from '@/components/CommentForm';
 import useComment from '@/hooks/useComment';
 import { UploadCommentButton } from '@/components/MdmComments/MdmComments';
-import { postLikeComment, postReply } from '@/apis/post-comment';
+import { postReply } from '@/apis/post-comment';
 import ThumbsUp from '@/components/icons/ThumbsUp';
 
 interface CommentProps {
     mdmId: number;
     mdmCommentdata: IMdmComment;
+    updateLikeComment: (mdmId: number, commentId: number) => Promise<void>;
 }
 
-export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
+export const Comment = ({ mdmId, mdmCommentdata, updateLikeComment }: CommentProps) => {
     // 대댓글
     const { newComment, handleInputCommentForm, validateInput, resetInputValue } = useComment();
     const [showReply, setShowReply] = useState<boolean>(false);
@@ -37,11 +38,6 @@ export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
         fetchData();
     }, [mdmId, newComment]);
 
-    const updateLikeComment = useCallback(async () => {
-        await postLikeComment(mdmId, mdmCommentdata.commentId);
-        fetchData();
-    }, [mdmId]);
-
     return (
         <StyledComment>
             <CommentHeader>
@@ -53,7 +49,7 @@ export const Comment = ({ mdmId, mdmCommentdata }: CommentProps) => {
                     </CreatedDate>
                 </CommentInfo>
                 <Liked>
-                    <button onClick={updateLikeComment}>
+                    <button onClick={() => updateLikeComment(mdmId, mdmCommentdata.commentId)}>
                         <ThumbsUp checked={mdmCommentdata.liked} />
                     </button>
                     <LikedCount>{mdmCommentdata.like}</LikedCount>
