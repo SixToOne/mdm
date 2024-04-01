@@ -32,9 +32,10 @@ public class DictionaryClient {
 	public List<DictionaryResponseDto> findDictionary(String word) {
 
 		// API 요청 및 응답 처리
-		Dictionary response = WebClient.create()
+		Dictionary response = dictionaryWebClient
 			.get()
-			.uri(apiUrl + "?key=" + apiKey + "&q=" + word)
+			.uri(apiUrl + "?key=" + apiKey + "&q=" + word
+				+ "&advanced=y&method=include&num=20")
 			.accept(MediaType.APPLICATION_XML)
 			.retrieve()
 			.bodyToMono(Dictionary.class)
@@ -47,7 +48,7 @@ public class DictionaryClient {
 
 		// 응답에서 최대 3개의 결과 추출
 		List<DictionaryResponseDto> list = new ArrayList<>();
-		int maxResults = Math.min(3, response.getItem().size());
+		int maxResults = Math.min(20, response.getItem().size());
 		for (int i = 0; i < maxResults; i++) {
 			String title = response.getItem().get(i).getWord();
 			String definition = response.getItem().get(i).getSense().getDefinition();
