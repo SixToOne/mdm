@@ -11,12 +11,18 @@ import { postReply } from '@/apis/post-comment';
 import ThumbsUp from '@/components/icons/ThumbsUp';
 
 interface CommentProps {
+    isBestComment?: boolean;
     mdmId: number;
     mdmCommentdata: IMdmComment;
     updateLikeComment: (mdmId: number, commentId: number) => Promise<void>;
 }
 
-export const Comment = ({ mdmId, mdmCommentdata, updateLikeComment }: CommentProps) => {
+export const Comment = ({
+    isBestComment,
+    mdmId,
+    mdmCommentdata,
+    updateLikeComment,
+}: CommentProps) => {
     // 대댓글
     const { newComment, handleInputCommentForm, validateInput, resetInputValue } = useComment();
     const [showReply, setShowReply] = useState<boolean>(false);
@@ -41,7 +47,7 @@ export const Comment = ({ mdmId, mdmCommentdata, updateLikeComment }: CommentPro
     return (
         <StyledComment>
             <CommentHeader>
-                {mdmCommentdata.liked && <BestMark>BEST</BestMark>}
+                {isBestComment && <BestMark>BEST</BestMark>}
                 <CommentInfo>
                     <Nickname>{mdmCommentdata.nickname}</Nickname>
                     <CreatedDate>
@@ -131,6 +137,7 @@ const ReplyIconWrapper = styled.div`
 `;
 
 const StyledComment = styled.div`
+    width: 100%;
     padding: 20px 0;
     border-bottom: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
 `;

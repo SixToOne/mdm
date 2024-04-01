@@ -4,7 +4,7 @@ import { Comment } from '@/components/Comment';
 import CommentForm from '@/components/CommentForm';
 import useComment from '@/hooks/useComment';
 import { postComment, postLikeComment } from '@/apis/post-comment';
-import { getMdmComments } from '@/apis/get-comments';
+import { getMdmBestComments, getMdmComments } from '@/apis/get-comments';
 import { IMdmComment } from '@/apis/types/mdm-post ';
 
 interface MdmCommentsProps {
@@ -14,6 +14,7 @@ interface MdmCommentsProps {
 
 const MdmComments = ({ mdmId, totalComment }: MdmCommentsProps) => {
     const [data, setData] = useState<IMdmComment[]>([]);
+    const [bestComments, setBestComments] = useState<IMdmComment[]>([]);
     const { newComment, handleInputCommentForm, validateInput, resetInputValue } = useComment();
 
     useEffect(() => {
@@ -22,7 +23,9 @@ const MdmComments = ({ mdmId, totalComment }: MdmCommentsProps) => {
 
     const fetchData = async () => {
         const data = await getMdmComments(mdmId, 0, 20);
+        const best = await getMdmBestComments(mdmId);
         if (data) setData(data);
+        if (best) setBestComments(best);
     };
 
     const uploadComment = useCallback(async () => {
@@ -44,6 +47,15 @@ const MdmComments = ({ mdmId, totalComment }: MdmCommentsProps) => {
                 <UploadCommentButton onClick={uploadComment}>등록</UploadCommentButton>
             </CommentHeader>
             <CommentForm inputValue={newComment} handleInput={handleInputCommentForm} />
+            {bestComments.map((comment) => (
+                <Comment
+                    key={comment.commentId}
+                    mdmId={mdmId}
+                    mdmCommentdata={comment}
+                    updateLikeComment={updateLikeComment}
+                    isBestComment={true}
+                />
+            ))}
             {data.map((comment) => (
                 <Comment
                     key={comment.commentId}
