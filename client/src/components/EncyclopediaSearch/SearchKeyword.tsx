@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { SearchGlasses } from '@/components/icons';
 import styled, { useTheme } from 'styled-components';
-import { getDictionaryKeyword } from '@/apis/post-dictionary-keyword';
+import { getDictionaryKeyword } from '@/apis/get-dictionary-keyword';
 import { IDic } from '@/apis/types/dictionary';
 
 export interface SearchProps {
