@@ -38,6 +38,9 @@ const CompareInput = ({
             URL.revokeObjectURL(firstFile);
         }
         setFirstFile('');
+        if (firstInputFile.current) {
+            firstInputFile.current.value = '';
+        }
         setFirstImage(undefined);
     };
 
@@ -46,6 +49,9 @@ const CompareInput = ({
             URL.revokeObjectURL(secondFile);
         }
         setSecondFile('');
+        if (secondInputFile.current) {
+            secondInputFile.current.value = '';
+        }
         setSecondImage(undefined);
     };
 
@@ -53,18 +59,27 @@ const CompareInput = ({
         const file = e.target.files;
         if (file) {
             const files = Array.from(file);
-            const url = URL.createObjectURL(files[0]);
-            setFirstFile(url);
-            onChange(e, 'first');
+            if (files[0]) {
+                const url = URL.createObjectURL(files[0]);
+                if (url) {
+                    setFirstFile(url);
+                }
+                onChange(e, 'first');
+            }
         }
     };
+
     const handleSecondFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files;
         if (file) {
             const files = Array.from(file);
-            const url = URL.createObjectURL(files[0]);
-            setSecondFile(url);
-            onChange(e, 'second');
+            if (files[0]) {
+                const url = URL.createObjectURL(files[0]);
+                if (url) {
+                    setSecondFile(url);
+                }
+                onChange(e, 'second');
+            }
         }
     };
 

@@ -29,6 +29,9 @@ const ImageInput = ({
         const newList = previewList.filter((_, index) => index !== id);
         setPreviewList(newList);
         setImages((prev) => prev.filter((_, index) => index !== id));
+        if (inputFile.current) {
+            inputFile.current.value = '';
+        }
     };
 
     return (

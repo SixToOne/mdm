@@ -65,6 +65,7 @@ const StyledSearch = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
+    margin-top: 1rem;
 `;
 
 const Top = styled.div`

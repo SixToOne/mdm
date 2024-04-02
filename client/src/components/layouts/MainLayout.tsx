@@ -25,6 +25,7 @@ const StyledMainLayout = styled.div`
 `;
 
 const Container = styled.div`
+    position: relative;
     width: 100%;
     max-width: 480px;
     height: calc(100% - 56px);
