@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ProgressBar from '@/components/commons/ProgressBar';
 import { IMdm } from '@/apis/types/mdm-post ';
@@ -19,19 +18,13 @@ interface Props extends StyleProps {
 }
 
 const MdmCard = ({ data, handleDataChange, ...styleProps }: Props) => {
-    const navigate = useNavigate();
     const { mdmResultPercentage, rangeInputValue, handleProgress, changeMyMdmRatio } = useVote({
         data,
         handleDataChange,
     });
 
     return (
-        <StyledMdmCard
-            {...styleProps}
-            onClick={() => {
-                navigate(`/mdm/${data.mdmId}`);
-            }}
-        >
+        <StyledMdmCard {...styleProps}>
             <TagsWrapper>
                 {data.tags.map((tag, index) => (
                     <Tag content={tag} key={index} />
