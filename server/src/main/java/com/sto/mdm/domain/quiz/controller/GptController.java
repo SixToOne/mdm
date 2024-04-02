@@ -46,7 +46,7 @@ public class GptController {
 			+ "물론 이 점은 좋지만 이해가 되지 않는 점이 있습니다. "
 			+ "예를 들자면 에버랜드 같은 곳으로 놀러갈 때는 이성 친구가 차량으로 태워주고, 티켓값은 제가 부담하라고 합니다."
 			+ "\\n먼 길 태워주느라 정말 고맙지만 자동차 기름값을 언급하는 현 이성 친구.. "
-			+ "계속 연인 관계로 가는 것이 맞을까요?\"");
+			+ "계속 연인 관계로 가는 것이 맞을까요?\"", "이별해야한다", "아직 이르다");
 		return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), "success", answer));
 	}
 }

@@ -86,7 +86,8 @@ public class MdmService {
 			});
 		}
 
-		mdmRequestDto.addTags(Arrays.stream(gptService.generateMdmKeyword(mdm.getContent()).split(","))
+		mdmRequestDto.addTags(Arrays.stream(
+				gptService.generateMdmKeyword(mdm.getContent(), mdm.getOpinion1(), mdm.getOpinion2()).split(","))
 			.map(String::trim)
 			.toList());
 

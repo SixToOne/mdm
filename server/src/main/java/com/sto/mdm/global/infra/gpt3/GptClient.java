@@ -45,12 +45,15 @@ public class GptClient {
 	}
 
 	//게시판 키워드 추출
-	public String generateMdmKeyword(String mdm) {
+	public String generateMdmKeyword(String mdmContent, String opinion1, String opinion2) {
 		double temperature = 0.3;
 		double top_p = 1;
-		String system = "너는 게시글을 읽고 키워드를 4개만 뽑아야해. 띄어쓰기 대신에 _ 를 이용해. 키워드 형식은 00,00,00,00 이렇게 부탁해. 게시글은 다음과 같아." + mdm;
-		String user = "게시글에 대한 키워드 추출 4개만 부탁해.";
-		log.info("gptMdmKeyword service 들어오니");
+		String system =
+			"너는 글을 읽고 키워드를 3개만 뽑아야해. 띄어쓰기 대신에 _ 를 이용해. 키워드 형식은 00,00,00,00 이렇게 부탁해. 게시글은 다음과 같아." + mdmContent
+				+ opinion1
+				+ opinion2;
+		String user = "글에 대한 키워드 추출 4개만 부탁해.";
+		// log.info("gptMdmKeyword service 들어오니");
 		return chatCompletions(model, system, user, temperature, top_p);
 	}
 
@@ -62,7 +65,7 @@ public class GptClient {
 			if (response.getChoices() == null || response.getChoices().isEmpty()) {
 				throw new BaseException(ErrorCode.INTERNAL_SERVER_ERROR);
 			}
-			log.info("gptMdmKeyword response 받아왔니{}", response.getChoices().get(0).getMessage().getContent());
+			// log.info("gptMdmKeyword response 받아왔니{}", response.getChoices().get(0).getMessage().getContent());
 			return response.getChoices().get(0).getMessage().getContent();
 		} catch (Exception e) {
 			throw new BaseException(ErrorCode.INTERNAL_SERVER_ERROR);
