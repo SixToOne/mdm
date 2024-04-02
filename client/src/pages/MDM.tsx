@@ -49,7 +49,7 @@ const MDM = () => {
                     <span>조회수 {mdmData.views}</span>
                 </div>
             </PostInfo>
-            {mdmData.title && (
+            {mdmData.content && (
                 <PostContent>
                     {mdmData.content.split('\n').map((line, index) => (
                         <React.Fragment key={index}>
@@ -95,6 +95,7 @@ export const PostTitle = styled.header`
 
 export const PostInfo = styled.div`
     padding: 5px 0;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -110,7 +111,7 @@ export const Nickname = styled.span`
 
 export const PostContent = styled.div`
     font-size: 15px;
-    padding: 10px 2px 24px 2px;
+    padding: 2px 2px 24px 2px;
 `;
 
 export default MDM;
