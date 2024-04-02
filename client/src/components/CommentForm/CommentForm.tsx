@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { INewComment } from '@/apis/types/mdm-post ';
+import { INewComment } from '@/apis/types/mdm';
 
 interface CommentFormProps {
     inputValue: INewComment;

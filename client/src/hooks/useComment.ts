@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { INewComment } from '@/apis/types/mdm-post ';
+import { INewComment } from '@/apis/types/mdm';
 
 const useComment = () => {
     const [newComment, setNewComment] = useState<INewComment>({

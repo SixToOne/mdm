@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ArrowDown, Reply } from '@/components/icons';
-import { IMdmComment } from '@/apis/types/mdm-post ';
+import { IMdmComment } from '@/apis/types/mdm';
 import { getFormattedYearMonthDayTime } from '@/utils/time';
 import { getMdmCommentReplies } from '@/apis/get-comments';
 import CommentForm from '@/components/CommentForm';

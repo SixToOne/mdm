@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { IMdm, IMdmRatio } from '@/apis/types/mdm-post ';
+import { IMdm, IMdmRatio } from '@/apis/types/mdm';
 import { postMdmVote } from '@/apis/post-mdm-vote';
 import { getMdmPost } from '@/apis/get-mdm';
 

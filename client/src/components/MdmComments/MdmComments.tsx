@@ -5,7 +5,7 @@ import CommentForm from '@/components/CommentForm';
 import useComment from '@/hooks/useComment';
 import { postComment, postLikeComment } from '@/apis/post-comment';
 import { getMdmBestComments, getMdmComments } from '@/apis/get-comments';
-import { IMdmComment } from '@/apis/types/mdm-post ';
+import { IMdmComment } from '@/apis/types/mdm';
 
 interface MdmCommentsProps {
     mdmId: number;

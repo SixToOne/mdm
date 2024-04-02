@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { IMdm } from '@/apis/types/mdm-post ';
+import { IMdm } from '@/apis/types/mdm';
 import RangeInput from '@/components/commons/RangeInput';
 import MdmVoteButton from '@/components/MdmVoteButton';
 

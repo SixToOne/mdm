@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import MdmCard from '@/components/MdmCard';
 import { QuizCard } from '@/components/Quiz';
 import { IQuiz } from '@/apis/types/quiz';
-import { IMdm } from '@/apis/types/mdm-post ';
+import { IMdm } from '@/apis/types/mdm';
 import { getQuizFeeds } from '@/apis/get-quizFeeds';
 import { getMdmFeed } from '@/apis/get-feed';
 import { useIntersect } from '@/hooks/useIntersect';

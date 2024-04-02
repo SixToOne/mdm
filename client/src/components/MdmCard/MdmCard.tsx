@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ProgressBar from '@/components/commons/ProgressBar';
-import { IMdm } from '@/apis/types/mdm-post ';
+import { IMdm } from '@/apis/types/mdm';
 import { useVote } from '@/hooks/useVote';
 import { Nickname, PostContent, PostInfo, PostTitle } from '@/pages/MDM';
 import Tag from '@/components/Tag';

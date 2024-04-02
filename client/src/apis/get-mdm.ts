@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from 'axios';
-import { IMdm } from './types/mdm-post ';
+import { IMdm } from '@/apis/types/mdm';
 
 const path = '/mdms';
 

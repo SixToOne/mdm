@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IMdmRatio } from '@/apis/types/mdm-post ';
+import { IMdmRatio } from '@/apis/types/mdm';
 
 const path = '/mdms';
 

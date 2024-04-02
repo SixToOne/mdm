@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { IMdm } from '@/apis/types/mdm-post ';
+import { IMdm } from '@/apis/types/mdm';
 import { getMdmPost } from '@/apis/get-mdm';
 import { getFormattedYearMonthDayTime } from '@/utils/time';
 import { useVote } from '@/hooks/useVote';
