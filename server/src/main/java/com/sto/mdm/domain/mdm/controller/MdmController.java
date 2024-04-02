@@ -22,9 +22,9 @@ import com.sto.mdm.domain.mdm.dto.CommentResponseDto;
 import com.sto.mdm.domain.mdm.dto.DeleteDto;
 import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmCreateResponseDto;
+import com.sto.mdm.domain.mdm.dto.MdmFeedResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
-import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.dto.VoteDto;
 import com.sto.mdm.domain.mdm.service.MdmService;
@@ -119,8 +119,10 @@ public class MdmController {
 
 	//몇대몇 검색
 	@GetMapping("/search")
-	ResponseEntity<BaseResponse<List<MdmSearchDto>>> searchMdm(@RequestParam String keyword) {
-		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.searchMdm(keyword)));
+	ResponseEntity<BaseResponse<MdmFeedResponseDto>> searchMdm(@RequestParam String keyword,
+		HttpServletRequest request) {
+		String ip = IpUtil.getClientIP(request);
+		return ResponseEntity.ok(new BaseResponse<>(200, "success", mdmService.searchMdm(keyword, ip)));
 	}
 
 	@GetMapping("/hot")
