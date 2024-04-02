@@ -52,15 +52,14 @@ public class GptService {
 		List<QuizDto> quizzes = quizRepository.findAll().stream()
 			.map(QuizDto::of).toList();
 
-		// for (QuizDto quizDto : quizzes) {
-		for (int i = 100; i < 200; i++) {
-			QuizDto quizDto = quizzes.get(i);
+		for (QuizDto quizDto : quizzes) {
+			// for (int i = 3600; i < 3720; i++) {
+			// 	QuizDto quizDto = quizzes.get(i);
 			String question = quizDto.getQuestion();
 			String generateKeyword = gptService.generateSolutionKeyword(question);
 			StringTokenizer st = new StringTokenizer(generateKeyword, ",");
 
-			int count = 4;
-			while (count-- > 0) {
+			while (st.hasMoreTokens()) {
 				String keyword = st.nextToken().trim();
 				Tag tag = tagRepository.findByName(keyword)
 					.orElseGet(() -> tagRepository.save(Tag.builder().name(keyword).build()));
