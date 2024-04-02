@@ -9,6 +9,7 @@ const Encyclopedia = () => {
 
     return (
         <section>
+            <div className="text-PRIMARY text-center font-bold text-2xl my-4">금융용어 사전</div>
             <SearchKeyword setSearched={setKeywordSearched} setWordList={setWordList} />
             {keywordSearched === true && <SearchList wordList={wordList} />}
         </section>

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
-import { SearchGlasses } from '@/components/icons';
+import { Dictionary, SearchGlasses } from '@/components/icons';
 import { useState } from 'react';
 
 const event = new Event('uploadArticle');
@@ -12,9 +12,14 @@ const Header = () => {
 
     return (
         <StyledHeader>
-            <SearchKeyword to="/search">
-                <SearchGlasses color={theme.DARK_BLACK} />
-            </SearchKeyword>
+            <SearchGroup>
+                <SearchKeyword to="/search">
+                    <SearchGlasses color={theme.DARK_BLACK} />
+                </SearchKeyword>
+                <SearchDic to="/financialdic">
+                    <Dictionary color={theme.DARK_BLACK} />
+                </SearchDic>
+            </SearchGroup>
             <AppName to="/">
                 <span>ㅁ</span>
                 <span style={{ color: theme.PRIMARY }}>ㄷ</span>
@@ -62,6 +67,18 @@ const AppName = styled(Link)`
 
 const WriteArticle = styled.div``;
 
-const SearchKeyword = styled(Link)``;
+const SearchGroup = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const SearchKeyword = styled(Link)`
+    display: inline-block;
+    padding-right: 20px;
+`;
+
+const SearchDic = styled(Link)`
+    display: inline-block;
+`;
 
 export default Header;
