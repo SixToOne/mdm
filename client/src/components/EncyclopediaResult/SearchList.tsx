@@ -23,7 +23,9 @@ const SearchList = ({ wordList }: SearchListProps) => {
     return (
         <div className="my-8">
             <div className="font-bold mx-2">총 {wordList.length}개</div>
+
             <div className="border-t-2 my-8"></div>
+
             {wordList.map((data, i) => {
                 return (
                     <ul
@@ -32,11 +34,28 @@ const SearchList = ({ wordList }: SearchListProps) => {
                         className={`font-bold mx-4 my-8 cursor-pointer ${clicked.includes(i) ? 'text-PRIMARY' : ''}`}
                     >
                         {data.title}
-                        {clicked.includes(i) && (
+                        {data.supNo >= 1 && <sup>{data.supNo}</sup>}
+
+                        {clicked.includes(i) && data.senses.length > 1 && (
                             <ul key={i} className="my-4 p-4 bg-BORDER_LIGHT text-DARK_BLACK">
-                                {data.description}
+                                {data.senses.map((each, idx) => {
+                                    return (
+                                        <ul key={idx} className="my-2">
+                                            {each.senseOrder}. {each.definition}
+                                        </ul>
+                                    );
+                                })}
                             </ul>
                         )}
+
+                        {clicked.includes(i) && data.senses.length === 1 && (
+                            <ul key={i} className="my-4 p-4 bg-BORDER_LIGHT text-DARK_BLACK">
+                                {data.senses.map((each, idx) => {
+                                    return <ul key={idx}>{each.definition}</ul>;
+                                })}
+                            </ul>
+                        )}
+
                         <div className="border-t-2 my-8"></div>
                     </ul>
                 );
