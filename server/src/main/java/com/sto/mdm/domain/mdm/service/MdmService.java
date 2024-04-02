@@ -89,6 +89,7 @@ public class MdmService {
 		mdmRequestDto.addTags(Arrays.stream(
 				gptService.generateMdmKeyword(mdm.getContent(), mdm.getOpinion1(), mdm.getOpinion2()).split(","))
 			.map(String::trim)
+			.map(s -> s.replaceAll(" ", "_"))
 			.toList());
 
 		mdmRequestDto.tags().forEach(t -> {
