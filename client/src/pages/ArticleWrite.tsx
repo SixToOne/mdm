@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export interface WriteForm {
     title: string;
     content: string;
@@ -10,7 +9,7 @@ export interface WriteForm {
     tags: string[];
 }
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CompareInput, ImageInput, TagInput } from '@/components/Inputs';
 import { PasswordInput, Tags, Textarea, TextInput, Toggle } from '@/components/commons';
 
@@ -36,6 +35,14 @@ const ArticleWrite = () => {
     const [secondImage, setSecondImage] = useState<File>();
     const [images, setImages] = useState<File[]>([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleUploadArticle = () => {
+            uploadArticle(writtenData, firstImage, secondImage, images);
+        };
+        window.addEventListener('uploadArticle', handleUploadArticle, true);
+        return () => window.removeEventListener('uploadArticle', handleUploadArticle, true);
+    }, [writtenData, firstImage, secondImage, images]);
 
     const handleFinanceToggle = () => {
         setIsFinance((isFinance) => !isFinance);
@@ -124,7 +131,7 @@ const ArticleWrite = () => {
             formData.append('image2', secondImage);
         }
         if (images.length > 0) {
-            images.forEach((image, index) => {
+            images.forEach((image) => {
                 formData.append('images', image);
             });
         }
@@ -138,9 +145,6 @@ const ArticleWrite = () => {
 
     return (
         <div>
-            <button onClick={() => uploadArticle(writtenData, firstImage, secondImage, images)}>
-                등록
-            </button>
             <section className="mx-auto">
                 <Toggle
                     isContent={isFinance}
