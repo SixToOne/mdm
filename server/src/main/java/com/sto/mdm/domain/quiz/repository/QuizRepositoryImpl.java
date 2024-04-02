@@ -49,8 +49,7 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
 								.where(submit.quiz.eq(quiz)),
 							list(tag.name)
 						)
-					))
-			;
+					)).stream().limit(4).toList();
 	}
 
 	@Override
