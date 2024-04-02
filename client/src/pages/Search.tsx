@@ -1,20 +1,18 @@
 import { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { SearchGlasses } from '@/components/icons';
-import { getSearchTags } from '@/apis/get-seach-tags';
+import { getSearchTags, ITag } from '@/apis/get-seach-tags';
 import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
     const theme = useTheme();
     const [inputValue, setInputValue] = useState<string>('');
-    const [tags, setTags] = useState<string[]>();
+    const [tags, setTags] = useState<ITag[]>();
     const navigate = useNavigate();
 
     const handleInputKeyword = async () => {
-        const data = await getSearchTags(inputValue);
-        if (data) {
-            setTags(data.tags);
-        }
+        const { tags } = await getSearchTags(inputValue);
+        if (tags) setTags(tags);
     };
 
     const searchQuizAndMdm = (keyword: string) => {
@@ -37,9 +35,10 @@ const Search = () => {
                 <CancelButton>취소</CancelButton>
             </Top>
             <SearchTags>
-                {tags?.map((tag, index) => (
+                {tags?.map(({ tag, cnt }, index) => (
                     <SearchTag key={index} onClick={() => searchQuizAndMdm(tag)}>
                         <span># {tag}</span>
+                        <TagPostCount>게시물 {cnt}개</TagPostCount>
                     </SearchTag>
                 ))}
             </SearchTags>
@@ -97,9 +96,16 @@ const SearchTag = styled.button`
     width: 100%;
     padding: 10px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 5px;
     border-bottom: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+    font-weight: 500;
+`;
+
+const TagPostCount = styled.span`
+    color: ${({ theme }) => theme.LIGHT_BLACK};
+    font-size: 14px;
+    font-weight: 400;
 `;
 
 export default Search;
