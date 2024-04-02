@@ -4,9 +4,11 @@ interface CompareInputProps {
     opinion2: string;
     handleValueChange: (e: React.ChangeEvent<HTMLInputElement>, key: string) => void;
     onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+    setFirstImage: Dispatch<SetStateAction<File | undefined>>;
+    setSecondImage: Dispatch<SetStateAction<File | undefined>>;
 }
 
-import { useState, useRef } from 'react';
+import { useState, useRef, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { FileAdd, Delete } from '@/components/icons';
 
@@ -16,6 +18,8 @@ const CompareInput = ({
     opinion2,
     handleValueChange,
     onChange,
+    setFirstImage,
+    setSecondImage,
 }: CompareInputProps) => {
     const firstInputFile = useRef<HTMLInputElement>(null);
     const secondInputFile = useRef<HTMLInputElement>(null);
@@ -30,11 +34,19 @@ const CompareInput = ({
     };
 
     const handleFirstDeleteClick = () => {
+        if (firstFile) {
+            URL.revokeObjectURL(firstFile);
+        }
         setFirstFile('');
+        setFirstImage(undefined);
     };
 
     const handleSecondDeleteClick = () => {
+        if (secondFile) {
+            URL.revokeObjectURL(secondFile);
+        }
         setSecondFile('');
+        setSecondImage(undefined);
     };
 
     const handleFirstFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

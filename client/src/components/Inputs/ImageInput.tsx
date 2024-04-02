@@ -3,13 +3,20 @@ interface ImageInputProps {
     previewList: string[];
     setPreviewList: React.Dispatch<React.SetStateAction<string[]>>;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    setImages: Dispatch<SetStateAction<File[]>>;
 }
 
-import { useRef } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
 import styled from 'styled-components';
 import { ImageAdd, Delete } from '@/components/icons';
 
-const ImageInput = ({ placeholder, previewList, setPreviewList, onChange }: ImageInputProps) => {
+const ImageInput = ({
+    placeholder,
+    previewList,
+    setPreviewList,
+    onChange,
+    setImages,
+}: ImageInputProps) => {
     const inputFile = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {
@@ -21,6 +28,7 @@ const ImageInput = ({ placeholder, previewList, setPreviewList, onChange }: Imag
     const handleDeleteClick = (id: number) => {
         const newList = previewList.filter((_, index) => index !== id);
         setPreviewList(newList);
+        setImages((prev) => prev.filter((_, index) => index !== id));
     };
 
     return (
