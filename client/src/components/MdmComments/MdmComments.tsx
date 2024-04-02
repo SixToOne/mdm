@@ -68,12 +68,14 @@ const MdmComments = ({ mdmId, totalComment }: MdmCommentsProps) => {
     );
 };
 
-const StyledMdmComments = styled.div``;
+const StyledMdmComments = styled.div`
+    margin-top: 20px;
+    border-top: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
+`;
 
 const CommentHeader = styled.div`
     width: 100%;
     padding: 18px 3px 10px 3px;
-    border-top: 1px solid ${({ theme }) => theme.BORDER_LIGHT};
     display: flex;
     align-items: center;
     justify-content: space-between;

@@ -42,3 +42,11 @@ export interface INewComment {
     nickname: string;
     password: string;
 }
+
+export interface IRelatedQuiz {
+    id: number;
+    question: string;
+    correct: number;
+    submit: number;
+    tags: string[];
+}

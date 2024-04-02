@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { IMdm } from '@/apis/types/mdm';
@@ -9,20 +9,33 @@ import MdmVoteForm from '@/components/MdmVoteForm';
 import { MdmResult, NotVote, VoteCount } from '@/components/MdmCard/MdmCard';
 import { ProgressBar } from '@/components/commons';
 import MdmComments from '@/components/MdmComments';
+import Tag from '@/components/Tag';
+import RelatedQuiz from '@/components/RelatedQuiz';
+import { IRelatedQuiz } from '@/apis/types/mdm';
+import { getMdmRelatedQuiz } from '@/apis/get-mdm';
+import { ArrowDown } from '@/components/icons';
 
 const MDM = () => {
     const { id } = useParams();
     if (!id) return null;
 
     const [mdmData, setMdmData] = useState<IMdm>();
+    const [relatedQuiz, setRelatedQuiz] = useState<IRelatedQuiz[]>([]);
+    const [toggle, setToggle] = useState<boolean>(false);
 
-    const fetchMdmData = async () => {
+    const fetchMdmData = useCallback(async () => {
         const data = await getMdmPost(parseInt(id));
         if (data) setMdmData(data);
-    };
+    }, []);
+
+    const fetchRelatedQuiz = useCallback(async () => {
+        const data = await getMdmRelatedQuiz(parseInt(id));
+        if (data) setRelatedQuiz(data);
+    }, []);
 
     useEffect(() => {
         fetchMdmData();
+        fetchRelatedQuiz();
     }, [id]);
 
     const handleDataChange = (id: number, newData: IMdm) => {
@@ -78,6 +91,18 @@ const MDM = () => {
                 )}
                 <VoteCount>{mdmData.vote}명 투표</VoteCount>
             </MdmResult>
+            <div>
+                <TagsWrapper>
+                    {mdmData.tags.map((tag, index) => (
+                        <Tag content={tag} key={index} />
+                    ))}
+                </TagsWrapper>
+                <FinanceQuiz onClick={() => setToggle(!toggle)}>
+                    금융Quiz
+                    <ArrowDown />
+                </FinanceQuiz>
+                {toggle && <RelatedQuiz relatedQuiz={relatedQuiz} />}
+            </div>
             <MdmComments mdmId={mdmData.mdmId} totalComment={mdmData.commentCount} />
         </StyledMDM>
     );
@@ -112,6 +137,22 @@ export const Nickname = styled.span`
 export const PostContent = styled.div`
     font-size: 15px;
     padding: 2px 2px 24px 2px;
+`;
+
+const TagsWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    gap: 7px;
+    margin-bottom: 12px;
+    overflow: scroll;
+`;
+
+const FinanceQuiz = styled.div`
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
 `;
 
 export default MDM;
