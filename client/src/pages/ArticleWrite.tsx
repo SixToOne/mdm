@@ -31,8 +31,8 @@ const ArticleWrite = () => {
         password: '',
         tags: [],
     });
-    const [firstImage, setFirstImage] = useState<File>();
-    const [secondImage, setSecondImage] = useState<File>();
+    const [firstImage, setFirstImage] = useState<File | undefined>();
+    const [secondImage, setSecondImage] = useState<File | undefined>();
     const [images, setImages] = useState<File[]>([]);
     const navigate = useNavigate();
 
@@ -69,11 +69,13 @@ const ArticleWrite = () => {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-        if (files) {
+        if (files && files.length > 0) {
             const fileList = Array.from(files);
             setImages((prev) => [...prev, ...fileList]);
             const urls = fileList.map((file) => URL.createObjectURL(file));
             setPreviewList((prevList) => [...prevList, ...urls]);
+        } else {
+            setImages([]);
         }
     };
 
@@ -86,6 +88,9 @@ const ArticleWrite = () => {
             } else {
                 setSecondImage(file);
             }
+        } else {
+            setFirstImage(undefined);
+            setSecondImage(undefined);
         }
     };
 
@@ -124,12 +129,14 @@ const ArticleWrite = () => {
             'mdmRequestDto',
             new Blob([JSON.stringify(writtenData)], { type: 'application/json' })
         );
+
         if (firstImage) {
             formData.append('image1', firstImage);
         }
         if (secondImage) {
             formData.append('image2', secondImage);
         }
+
         if (images.length > 0) {
             images.forEach((image) => {
                 formData.append('images', image);
@@ -199,6 +206,7 @@ const ArticleWrite = () => {
                         onChange={handleImageChange}
                         previewList={previewList}
                         setPreviewList={setPreviewList}
+                        setImages={setImages}
                     />
                 </div>
 
@@ -216,6 +224,8 @@ const ArticleWrite = () => {
                     opinion2={writtenData.opinion2}
                     handleValueChange={handleValueChange}
                     onChange={handleCompareChange}
+                    setFirstImage={setFirstImage}
+                    setSecondImage={setSecondImage}
                 />
             </section>
 
