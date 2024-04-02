@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { SearchGlasses } from '@/components/icons';
-import { getSearchTags, ITag } from '@/apis/get-seach-tags';
+import { getSearchTags, ITag } from '@/apis/get-seach';
 import { useNavigate } from 'react-router-dom';
+import SearchResult from './SearchResult';
 
 const Search = () => {
     const theme = useTheme();
     const [inputValue, setInputValue] = useState<string>('');
     const [tags, setTags] = useState<ITag[]>();
     const navigate = useNavigate();
+    const queryParams = new URLSearchParams(location.search);
+    const keyword = queryParams.get('keyword');
+    const [searchMode, setSearchMode] = useState<boolean>(true);
 
     const handleInputKeyword = async () => {
         const { tags } = await getSearchTags(inputValue);
@@ -18,6 +22,13 @@ const Search = () => {
     const searchQuizAndMdm = (keyword: string) => {
         navigate(`/search?keyword=${keyword}`);
     };
+
+    useEffect(() => {
+        if (keyword) {
+            setInputValue(keyword);
+            setSearchMode(false);
+        }
+    }, [keyword]);
 
     return (
         <StyledSearch>
@@ -34,14 +45,18 @@ const Search = () => {
                 />
                 <CancelButton>취소</CancelButton>
             </Top>
-            <SearchTags>
-                {tags?.map(({ tag, cnt }, index) => (
-                    <SearchTag key={index} onClick={() => searchQuizAndMdm(tag)}>
-                        <span># {tag}</span>
-                        <TagPostCount>게시물 {cnt}개</TagPostCount>
-                    </SearchTag>
-                ))}
-            </SearchTags>
+            {!searchMode ? (
+                <SearchResult keyword={keyword as string} />
+            ) : (
+                <SearchTags>
+                    {tags?.map(({ tag, cnt }, index) => (
+                        <SearchTag key={index} onClick={() => searchQuizAndMdm(tag)}>
+                            <span># {tag}</span>
+                            <TagPostCount>게시물 {cnt}개</TagPostCount>
+                        </SearchTag>
+                    ))}
+                </SearchTags>
+            )}
         </StyledSearch>
     );
 };

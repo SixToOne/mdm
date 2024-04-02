@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const path = '/search/tag';
+const path = '/search';
 
 export interface ITag {
     tag: string;
@@ -8,6 +8,6 @@ export interface ITag {
 }
 
 export const getSearchTags = async (keyword: string) => {
-    const res = await axios.get<{ tags: ITag[] }>(`${path}?keyword=${keyword}`);
+    const res = await axios.get<{ tags: ITag[] }>(`${path}/tag?keyword=${keyword}`);
     return res.data;
 };
