@@ -19,7 +19,6 @@ import com.sto.mdm.domain.mdm.dto.HotMdmResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmFeedResponseDto;
 import com.sto.mdm.domain.mdm.dto.MdmRequestDto;
 import com.sto.mdm.domain.mdm.dto.MdmResponseDto;
-import com.sto.mdm.domain.mdm.dto.MdmSearchDto;
 import com.sto.mdm.domain.mdm.dto.MdmUpdateRequestDto;
 import com.sto.mdm.domain.mdm.dto.Opinion;
 import com.sto.mdm.domain.mdm.dto.VoteDto;
@@ -203,7 +202,7 @@ public class MdmService {
 
 	}
 
-	public List<MdmSearchDto> searchMdm(String keyword) {
+	public MdmFeedResponseDto searchMdm(String keyword, String ip) {
 		//태그명 찾기
 		List<Tag> tagList = tagRepository.findAllByName(keyword);
 		List<Long> mdmTagIds = null;
@@ -218,7 +217,7 @@ public class MdmService {
 		assert mdmTagIds != null;
 		ArrayList<Long> hashSetIds = new ArrayList<>(new HashSet<>(mdmTagIds));
 
-		return mdmRepository.findAllById(hashSetIds).stream()
+		return new MdmFeedResponseDto(mdmRepository.findAllById(hashSetIds).stream()
 			.map(mdm -> {
 				//mdm 관련 tag 찾기
 				List<String> tags = mdmTagRepository.findByMdmId(mdm.getId()).stream()
@@ -230,20 +229,29 @@ public class MdmService {
 					.map(MdmImage::getImage)
 					.toList();
 
-				return new MdmSearchDto(
-					mdm.getOpinion1(),
-					mdm.getOpinion2(),
-					mdm.getCount1(),
-					mdm.getCount2(),
+				Vote vote = voteIpRepository.findByMdmIdAndIp(mdm.getId(), ip)
+					.orElse(null);
+
+				return new MdmResponseDto(
+					mdm.getId(),
+					mdm.getTitle(),
+					mdm.getContent(),
+					new Opinion(mdm.getOpinion1(), mdm.getImage1(), mdm.getCount1(),
+						vote != null ? vote.getCount1() : null),
+					new Opinion(mdm.getOpinion2(), mdm.getImage2(), mdm.getCount2(),
+						vote != null ? vote.getCount2() : null),
 					mdm.getVote(),
+					mdm.getViews(),
 					mdm.getType(),
 					mdm.getNickname(),
 					tags,
-					mdm.getCreatedAt(),
-					images
+					images,
+					mdm.getCommentCount(),
+					mdm.getCreatedAt()
 				);
 			})
-			.toList();
+			.toList()
+		);
 	}
 
 	public HotMdmResponseDto getHotMdm() {
