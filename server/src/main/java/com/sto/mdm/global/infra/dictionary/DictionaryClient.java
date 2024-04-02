@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sto.mdm.domain.search.dto.DictionaryResponseDto;
+import com.sto.mdm.domain.search.dto.SenseResponseDto;
 import com.sto.mdm.global.infra.dictionary.model.Dictionary;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +52,16 @@ public class DictionaryClient {
 		int maxResults = Math.min(20, response.getItem().size());
 		for (int i = 0; i < maxResults; i++) {
 			String title = response.getItem().get(i).getWord();
-			String definition = response.getItem().get(i).getSense().getDefinition();
-			list.add(new DictionaryResponseDto(title, definition));
+			int supNo = response.getItem().get(i).getSupNo();
+
+			int cnt = response.getItem().get(i).getSense().size();
+			List<SenseResponseDto> senses = new ArrayList<>();
+			for (int j = 0; j < cnt; j++) {
+				int senseOrder = response.getItem().get(i).getSense().get(j).getSenseOrder();
+				String definition = response.getItem().get(i).getSense().get(j).getDefinition();
+				senses.add(new SenseResponseDto(senseOrder, definition));
+			}
+			list.add(new DictionaryResponseDto(title, supNo, senses));
 		}
 		return list;
 	}
