@@ -1,9 +1,13 @@
 package com.sto.mdm.global.config;
 
+import java.util.TimeZone;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import jakarta.annotation.PostConstruct;
 
 @Configuration
 public class CorsConfig {
@@ -19,5 +23,10 @@ public class CorsConfig {
 
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
+	}
+
+	@PostConstruct
+	public void setTimeZone() {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 	}
 }
