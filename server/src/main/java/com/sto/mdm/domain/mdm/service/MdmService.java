@@ -88,14 +88,15 @@ public class MdmService {
 		mdmRequestDto.addTags(Arrays.stream(
 				gptService.generateMdmKeyword(mdm.getContent(), mdm.getOpinion1(), mdm.getOpinion2()).split(","))
 			.map(String::trim)
-			.map(s -> s.replaceAll(" ", "_"))
 			.toList());
 
-		mdmRequestDto.tags().forEach(t -> {
-			Tag tag = tagRepository.findByName(t)
-				.orElseGet(() -> tagRepository.save(Tag.builder().name(t).build()));
-			mdmTagRepository.save(MdmTag.builder().mdm(mdm).tag(tag).build());
-		});
+		mdmRequestDto.tags().stream()
+			.map(s -> s.replaceAll(" ", "_"))
+			.forEach(t -> {
+				Tag tag = tagRepository.findByName(t)
+					.orElseGet(() -> tagRepository.save(Tag.builder().name(t).build()));
+				mdmTagRepository.save(MdmTag.builder().mdm(mdm).tag(tag).build());
+			});
 
 		return save.getId();
 
