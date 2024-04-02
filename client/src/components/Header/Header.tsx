@@ -42,6 +42,7 @@ const Header = () => {
 const StyledHeader = styled.div`
     position: sticky;
     width: 100%;
+    max-width: 480px;
     height: 56px;
     display: flex;
     align-items: center;
