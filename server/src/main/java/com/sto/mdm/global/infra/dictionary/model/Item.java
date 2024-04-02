@@ -1,5 +1,7 @@
 package com.sto.mdm.global.infra.dictionary.model;
 
+import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -32,6 +34,6 @@ public class Item {
 	@XmlElement(name = "link")
 	private String link;
 	@XmlElement(name = "sense")
-	private Sense sense;
+	private List<Sense> sense;
 
 }

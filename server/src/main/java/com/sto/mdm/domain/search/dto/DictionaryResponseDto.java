@@ -1,7 +1,10 @@
 package com.sto.mdm.domain.search.dto;
 
+import java.util.List;
+
 public record DictionaryResponseDto(
 	String title,
-	String description
+	Integer supNo,
+	List<SenseResponseDto> senses
 ) {
 }
