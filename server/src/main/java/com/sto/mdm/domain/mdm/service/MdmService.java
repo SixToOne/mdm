@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -340,7 +342,10 @@ public class MdmService {
 	}
 
 	public MdmFeedResponseDto getMdmFeed(String ip, Pageable pageable) {
-		List<Mdm> mdms = mdmRepository.findAll(pageable).getContent();
+
+		Pageable sortedByCreatedAt= PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+
+		List<Mdm> mdms = mdmRepository.findAll(sortedByCreatedAt).getContent();
 		List<MdmResponseDto> result = new ArrayList<>();
 
 		for (Mdm cur : mdms) {
