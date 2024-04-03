@@ -218,7 +218,10 @@ const ArticleWrite = () => {
                 <TagInput setTagList={setTagList} />
                 <Tags tags={tagList} isBlue setTagList={setTagList} />
 
-                <p className="font-bold mt-4 mb-2">몇대몇</p>
+                <p className="font-bold mt-4 mb-2">
+                    <span>몇대몇</span>
+                    <span className="text-sm text-DARK_RED"> (필수)</span>
+                </p>
                 <p className="text-LIGHT_BLACK text-xs mt-2">
                     몇대몇 두 가지 선택지를 입력해주세요
                 </p>
@@ -237,7 +240,10 @@ const ArticleWrite = () => {
 
             <section>
                 <div className="flex justify-between items-center mt-4 mb-2">
-                    <div className="font-bold text-LIGHT_BLACK mr-8">닉네임</div>
+                    <div className="font-bold text-LIGHT_BLACK mr-8">
+                        <span>닉네임</span>
+                        <span className="text-sm text-DARK_RED"> (필수)</span>
+                    </div>
                     <div className="w-3/5">
                         <TextInput
                             required
@@ -248,7 +254,10 @@ const ArticleWrite = () => {
                 </div>
 
                 <div className="flex justify-between items-center mt-2 mb-4">
-                    <div className="font-bold text-LIGHT_BLACK mr-8">비밀번호</div>
+                    <div className="font-bold text-LIGHT_BLACK mr-8">
+                        <span>비밀번호</span>
+                        <span className="text-sm text-DARK_RED"> (필수)</span>
+                    </div>
                     <div className="w-3/5">
                         <PasswordInput
                             required

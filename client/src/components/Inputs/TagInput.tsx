@@ -12,6 +12,13 @@ const TagInput = ({ placeholder, setTagList }: TagInputProps) => {
         setTagInput(e.target.value);
     };
 
+    const handleClick = () => {
+        if (tagInput.trim() !== '') {
+            setTagList((prevList) => [...prevList, tagInput.trim()]);
+            setTagInput('');
+        }
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && tagInput.trim() !== '') {
             setTagList((prevList) => [...prevList, tagInput.trim()]);
@@ -21,7 +28,7 @@ const TagInput = ({ placeholder, setTagList }: TagInputProps) => {
 
     return (
         <div className="py-2">
-            <span className="font-bold relative z-10 px-2"># </span>
+            <span className="text-LIGHT_BLACK font-bold relative z-10 px-2"># </span>
             <input
                 type="text"
                 placeholder={placeholder}
@@ -30,6 +37,13 @@ const TagInput = ({ placeholder, setTagList }: TagInputProps) => {
                 onKeyDown={handleKeyDown}
                 className="border-b-2 w-36 relative"
             />
+            <span
+                onClick={handleClick}
+                className="cursor-pointer text-xs font-bold relative px-2 text-LIGHT_BLACK"
+            >
+                {' '}
+                추가
+            </span>
         </div>
     );
 };
