@@ -2,6 +2,7 @@ package com.sto.mdm.domain.mdm.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,4 +15,7 @@ public interface MdmRepository extends JpaRepository<Mdm, Long> {
 
 	@Query("SELECT f FROM Mdm f WHERE f.id IN :ids AND f.type = :type ORDER BY f.vote desc")
 	List<Mdm> findAllByIdsAndTypeOrderByVote(List<Long> ids, MdmType type);
+
+	//@Query
+	//List<Mdm> findAll(Pageable pageable);
 }
