@@ -7,8 +7,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getRelatedMDM } from '@/apis/get-relatedMDM';
 import { IRelatedMDM } from '@/apis/types/quiz';
-import MoreTags from '@/components/icons/MoreTags';
-import FoldTags from '@/components/icons/FoldTags';
+import { MoreTags, FoldTags } from '../icons';
 
 const QuizRelatedArticle = ({ quizId }: QuizRelatedArticleProps) => {
     const [related, setRelated] = useState<IRelatedMDM[]>([]);

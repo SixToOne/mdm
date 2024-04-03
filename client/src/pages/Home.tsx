@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import MdmCard from '@/components/MdmCard';
@@ -64,11 +64,17 @@ const Home = () => {
         loadMore();
     });
 
+    const goToTop = () => {
+        focusRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const focusRef = useRef<HTMLDivElement>(null);
+
     if (!mdmData) return <>...loading</>;
 
     return (
         <StyledHome>
-            <TabWrapper>
+            <TabWrapper ref={focusRef}>
                 <TabButton onClick={() => setFeedType('mdm')} selected={feedType === 'mdm'}>
                     몇대몇
                 </TabButton>
@@ -90,6 +96,12 @@ const Home = () => {
                             </Link>
                         );
                     })}
+                    <button
+                        onClick={goToTop}
+                        className="text-LIGHT_BLACK font-bold bg-WHITE border-3 border-solid border-BORDER_LIGHT absolute rounded-full px-4 py-2 m-8 bottom-0 right-0"
+                    >
+                        ↑
+                    </button>
                 </FeedMain>
             ) : (
                 <FeedMain>
@@ -111,6 +123,12 @@ const Home = () => {
                             </div>
                         );
                     })}
+                    <button
+                        onClick={goToTop}
+                        className="text-LIGHT_BLACK font-bold bg-WHITE border-3 border-solid border-BORDER_LIGHT absolute rounded-full px-4 py-2 m-8 bottom-0 right-0"
+                    >
+                        ↑
+                    </button>
                 </FeedMain>
             )}
         </StyledHome>

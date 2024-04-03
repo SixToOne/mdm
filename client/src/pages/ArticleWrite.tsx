@@ -84,9 +84,13 @@ const ArticleWrite = () => {
         if (files && files.length > 0) {
             const file = files[0];
             if (type === 'first') {
-                setFirstImage(file);
+                if (file) {
+                    setFirstImage(file);
+                }
             } else {
-                setSecondImage(file);
+                if (file) {
+                    setSecondImage(file);
+                }
             }
         } else {
             setFirstImage(undefined);
