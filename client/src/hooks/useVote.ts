@@ -40,12 +40,15 @@ export const useVote = ({ data, handleDataChange }: IUseVote) => {
         [data]
     );
 
-    const changeMyMdmRatio = useCallback((count1: number, count2: number) => {
-        const newMyMdmRatio = { count1, count2 };
-        setMyMdmRatio(newMyMdmRatio);
-        setRangeInputValue(count2 * 10);
-        update(newMyMdmRatio);
-    }, []);
+    const changeMyMdmRatio = useCallback(
+        (count1: number, count2: number) => {
+            const newMyMdmRatio = { count1, count2 };
+            setMyMdmRatio(newMyMdmRatio);
+            setRangeInputValue(count2 * 10);
+            update(newMyMdmRatio);
+        },
+        [data]
+    );
 
     const handleProgress = (progressValue: number) => {
         const newMyMdmRatio = getMyMdmRatio(progressValue);
