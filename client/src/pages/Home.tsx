@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import MdmCard from '@/components/MdmCard';
@@ -12,27 +13,33 @@ import { useIntersect } from '@/hooks/useIntersect';
 export type IFeedType = 'mdm' | 'quiz';
 
 const Home = () => {
-    const [solved, setSolved] = useState<number[]>([]);
     const [feedType, setFeedType] = useState<IFeedType>('mdm');
+
     const [mdmData, setMdmData] = useState<IMdm[]>([]);
-    const [quizData, setQuizData] = useState<IQuiz[]>([]);
     const [page, setPage] = useState<number>(0);
-    const [pageSize] = useState<number>(10);
+    const [pageSize] = useState<number>(3);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+
+    const [quizData, setQuizData] = useState<IQuiz[]>([]);
+    const [solved, setSolved] = useState<number[]>([]);
 
     useEffect(() => {
-        const fetchMdmData = async () => {
-            const { mdmFeeds } = await getMdmFeed(page, pageSize);
-            if (mdmFeeds) setMdmData((prev) => [...prev, ...mdmFeeds]);
-        };
+        fetchMdmData();
+    }, [page]);
 
-        const getQuizFeedData = async () => {
-            const { quizFeeds } = await getQuizFeeds(page, pageSize);
-            if (quizFeeds) setQuizData((prev) => [...prev, ...quizFeeds]);
-        };
+    const fetchMdmData = useCallback(async () => {
+        const { mdmFeeds } = await getMdmFeed(page, pageSize);
+        if (mdmFeeds && mdmFeeds.length > 0) {
+            setMdmData((prev) => [...prev, ...mdmFeeds]);
+        } else {
+            setHasMore(false);
+        }
+    }, [page, pageSize]);
 
-        if (feedType === 'mdm') fetchMdmData();
-        else getQuizFeedData();
-    }, [feedType, page, pageSize]);
+    const fetchQuizData = useCallback(async () => {
+        const { quizFeeds } = await getQuizFeeds(page, pageSize);
+        if (quizFeeds) setQuizData((prev) => [...prev, ...quizFeeds]);
+    }, [page, pageSize]);
 
     const handleDataChange = (id: number, newData: IMdm) => {
         if (!mdmData) return;
@@ -45,11 +52,16 @@ const Home = () => {
         setMdmData(updatedData);
     };
 
-    const lastItemRef = useIntersect(async (entry, observer) => {
-        observer.unobserve(entry.target);
-        if (mdmData.length / pageSize === 0) {
+    const loadMore = () => {
+        if (hasMore) {
             setPage((prev) => prev + 1);
         }
+    };
+
+    const lastItemRef = useIntersect(async (entry, observer) => {
+        observer.unobserve(entry.target);
+        console.log(page);
+        loadMore();
     });
 
     if (!mdmData) return <>...loading</>;
