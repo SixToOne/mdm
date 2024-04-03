@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -17,15 +16,22 @@ const Home = () => {
 
     const [mdmData, setMdmData] = useState<IMdm[]>([]);
     const [page, setPage] = useState<number>(0);
-    const [pageSize] = useState<number>(3);
+    const [pageSize] = useState<number>(7);
     const [hasMore, setHasMore] = useState<boolean>(true);
 
     const [quizData, setQuizData] = useState<IQuiz[]>([]);
     const [solved, setSolved] = useState<number[]>([]);
+    const [_page, _setPage] = useState<number>(0);
+    const [_pageSize] = useState<number>(7);
+    const [_hasMore, _setHasMore] = useState<boolean>(true);
 
     useEffect(() => {
-        fetchMdmData();
-    }, [page]);
+        if (feedType === 'mdm') {
+            fetchMdmData();
+        } else {
+            fetchQuizData();
+        }
+    }, [feedType, page, _page]);
 
     const fetchMdmData = useCallback(async () => {
         const { mdmFeeds } = await getMdmFeed(page, pageSize);
@@ -37,9 +43,13 @@ const Home = () => {
     }, [page, pageSize]);
 
     const fetchQuizData = useCallback(async () => {
-        const { quizFeeds } = await getQuizFeeds(page, pageSize);
-        if (quizFeeds) setQuizData((prev) => [...prev, ...quizFeeds]);
-    }, [page, pageSize]);
+        const { quizFeeds } = await getQuizFeeds(_page, _pageSize);
+        if (quizFeeds && quizFeeds.length > 0) {
+            setQuizData((prev) => [...prev, ...quizFeeds]);
+        } else {
+            _setHasMore(false);
+        }
+    }, [_page, _pageSize]);
 
     const handleDataChange = (id: number, newData: IMdm) => {
         if (!mdmData) return;
@@ -53,15 +63,29 @@ const Home = () => {
     };
 
     const loadMore = () => {
-        if (hasMore) {
-            setPage((prev) => prev + 1);
-        }
+        setTimeout(() => {
+            if (hasMore) {
+                setPage((prev) => prev + 1);
+            }
+        }, 200);
     };
 
     const lastItemRef = useIntersect(async (entry, observer) => {
         observer.unobserve(entry.target);
-        console.log(page);
         loadMore();
+    });
+
+    const _loadMore = () => {
+        setTimeout(() => {
+            if (_hasMore) {
+                _setPage((prev) => prev + 1);
+            }
+        }, 200);
+    };
+
+    const _lastItemRef = useIntersect(async (entry, observer) => {
+        observer.unobserve(entry.target);
+        _loadMore();
     });
 
     const goToTop = () => {
@@ -120,6 +144,7 @@ const Home = () => {
                                         <span className="text-PRIMARY">자세히 보기</span>
                                     </Link>
                                 </div>
+                                {index === quizData.length - 1 && <LastItem ref={_lastItemRef} />}
                             </div>
                         );
                     })}
