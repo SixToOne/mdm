@@ -109,7 +109,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 				comment.createdAt))
 			.from(comment)
 			.leftJoin(comment.parent, comment1)
-			.where(comment.parent.isNull(), comment.likeCount.goe(3))
+			.where(comment.parent.isNull(), comment.likeCount.goe(3), comment.mdm.id.eq(mdmId))
 			.orderBy(comment.createdAt.desc())
 			.limit(3)
 			.fetch();
