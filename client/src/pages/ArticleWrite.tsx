@@ -9,7 +9,7 @@ export interface WriteForm {
     tags: string[];
 }
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CompareInput, ImageInput, TagInput } from '@/components/Inputs';
 import { PasswordInput, Tags, Textarea, TextInput, Toggle } from '@/components/commons';
 
@@ -31,16 +31,24 @@ const ArticleWrite = () => {
         password: '',
         tags: [],
     });
-    const [firstImage, setFirstImage] = useState<File>();
-    const [secondImage, setSecondImage] = useState<File>();
+    const [firstImage, setFirstImage] = useState<File | undefined>();
+    const [secondImage, setSecondImage] = useState<File | undefined>();
     const [images, setImages] = useState<File[]>([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const handleUploadArticle = () => {
+            uploadArticle(writtenData, firstImage, secondImage, images);
+        };
+        window.addEventListener('uploadArticle', handleUploadArticle, true);
+        return () => window.removeEventListener('uploadArticle', handleUploadArticle, true);
+    }, [writtenData, firstImage, secondImage, images]);
+
     const handleFinanceToggle = () => {
-        setIsFinance(!isFinance);
+        setIsFinance((isFinance) => !isFinance);
         setWrittenData((prevData) => ({
             ...prevData,
-            type: isFinance ? 'finance' : 'humor',
+            type: !isFinance ? 'finance' : 'humor',
         }));
     };
 
@@ -61,11 +69,13 @@ const ArticleWrite = () => {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-        if (files) {
+        if (files && files.length > 0) {
             const fileList = Array.from(files);
-            setImages(fileList);
+            setImages((prev) => [...prev, ...fileList]);
             const urls = fileList.map((file) => URL.createObjectURL(file));
             setPreviewList((prevList) => [...prevList, ...urls]);
+        } else {
+            setImages([]);
         }
     };
 
@@ -74,10 +84,17 @@ const ArticleWrite = () => {
         if (files && files.length > 0) {
             const file = files[0];
             if (type === 'first') {
-                setFirstImage(file);
+                if (file) {
+                    setFirstImage(file);
+                }
             } else {
-                setSecondImage(file);
+                if (file) {
+                    setSecondImage(file);
+                }
             }
+        } else {
+            setFirstImage(undefined);
+            setSecondImage(undefined);
         }
     };
 
@@ -88,39 +105,57 @@ const ArticleWrite = () => {
         secondImage: File | undefined,
         images: File[]
     ) => {
+        if (writtenData.type === 'finance') {
+            if (
+                !writtenData.title ||
+                !writtenData.content ||
+                !writtenData.opinion1 ||
+                !writtenData.opinion2 ||
+                !writtenData.nickname ||
+                !writtenData.password
+            ) {
+                alert('필수 입력란을 작성해주세요.');
+                return;
+            }
+        } else {
+            if (
+                !writtenData.opinion1 ||
+                !writtenData.opinion2 ||
+                !writtenData.nickname ||
+                !writtenData.password
+            ) {
+                alert('필수 입력란을 작성해주세요.');
+                return;
+            }
+        }
         const formData = new FormData();
         formData.append(
-            'req',
+            'mdmRequestDto',
             new Blob([JSON.stringify(writtenData)], { type: 'application/json' })
         );
+
         if (firstImage) {
             formData.append('image1', firstImage);
         }
         if (secondImage) {
             formData.append('image2', secondImage);
         }
-        images.forEach((image, index) => {
-            formData.append(`images[${index}]`, image);
-        });
 
-        console.log(formData);
-        const res = await postNewMDM(formData);
-        if (res) {
-            console.log(res);
+        if (images.length > 0) {
+            images.forEach((image) => {
+                formData.append('images', image);
+            });
         }
-        const id = res?.id;
+
+        const res = await postNewMDM(formData);
+        const id = res?.mdmId;
         if (id) {
             navigate(`/mdm/${id}`);
-        } else {
-            alert('필수 입력란을 모두 기입해주세요.');
         }
     };
 
     return (
-        <>
-            <button onClick={() => uploadArticle(writtenData, firstImage, secondImage, images)}>
-                등록
-            </button>
+        <div>
             <section className="mx-auto">
                 <Toggle
                     isContent={isFinance}
@@ -175,6 +210,7 @@ const ArticleWrite = () => {
                         onChange={handleImageChange}
                         previewList={previewList}
                         setPreviewList={setPreviewList}
+                        setImages={setImages}
                     />
                 </div>
 
@@ -192,6 +228,8 @@ const ArticleWrite = () => {
                     opinion2={writtenData.opinion2}
                     handleValueChange={handleValueChange}
                     onChange={handleCompareChange}
+                    setFirstImage={setFirstImage}
+                    setSecondImage={setSecondImage}
                 />
             </section>
 
@@ -220,7 +258,7 @@ const ArticleWrite = () => {
                     </div>
                 </div>
             </section>
-        </>
+        </div>
     );
 };
 

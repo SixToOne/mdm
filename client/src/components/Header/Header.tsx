@@ -1,51 +1,45 @@
 import { Link, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-// import { postNewMDM } from '@/apis/post-newMDM';
-// import { WriteRequest } from '@/apis/types/post-newMDM';
+import styled, { useTheme } from 'styled-components';
+import { Dictionary, SearchGlasses } from '@/components/icons';
+import { useState } from 'react';
 
-// interface HeaderProps {
-//     writtenData?: WriteRequest;
-// }
+const event = new Event('uploadArticle');
 
-// /mdm/1 -> mdm
-export const getPath = (location: string): string => {
-    return location.split('/')[1];
-};
-const RightButton = () => {
-    // const RightButton = ({ writtenData }: HeaderProps) => {
-    // console.log('작동??');
-    // console.log(writtenData);
-    const location = useLocation();
-
-    const uploadArticle = () => {
-        // if (writtenData) {
-        //     console.log('데이터 있네');
-        //     console.log(writtenData);
-        //     postNewMDM(writtenData);
-        // } else {
-        //     console.log('데이터 없네');
-        //     console.log(writtenData);
-        // }
-    };
-
-    if (getPath(location.pathname) !== 'write') {
-        return <Link to="/write">글쓰기</Link>;
-    } else {
-        return <button onClick={uploadArticle}>등록</button>;
-    }
-};
-
-// const Header = ({ writtenData }: HeaderProps) => {
 const Header = () => {
+    const theme = useTheme();
+    const location = useLocation();
+    const [block, setBlock] = useState<boolean>(false);
+
     return (
         <StyledHeader>
+            <SearchGroup>
+                <SearchKeyword to="/search">
+                    <SearchGlasses color={theme.DARK_BLACK} />
+                </SearchKeyword>
+                <SearchDic to="/financialdic">
+                    <Dictionary color={theme.DARK_BLACK} />
+                </SearchDic>
+            </SearchGroup>
             <AppName to="/">
                 <span>ㅁ</span>
-                <span style={{ color: '#0064FF' }}>ㄷ</span>
+                <span style={{ color: theme.PRIMARY }}>ㄷ</span>
                 <span>ㅁ</span>
             </AppName>
-            <RightButton />
-            {/* <RightButton writtenData={writtenData} /> */}
+            <WriteArticle>
+                {location.pathname !== '/write' ? (
+                    <Link to="/write">글쓰기</Link>
+                ) : (
+                    <button
+                        onClick={() => {
+                            setBlock(true);
+                            dispatchEvent(event);
+                        }}
+                        disabled={block}
+                    >
+                        등록
+                    </button>
+                )}
+            </WriteArticle>
         </StyledHeader>
     );
 };
@@ -53,7 +47,13 @@ const Header = () => {
 const StyledHeader = styled.div`
     position: sticky;
     width: 100%;
-    height: 48px;
+    max-width: 480px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    background-color: white;
 `;
 
 const AppName = styled(Link)`
@@ -63,6 +63,22 @@ const AppName = styled(Link)`
     transform: translate(-50%, -50%);
     font-size: 24px;
     font-weight: bold;
+`;
+
+const WriteArticle = styled.div``;
+
+const SearchGroup = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const SearchKeyword = styled(Link)`
+    display: inline-block;
+    padding-right: 20px;
+`;
+
+const SearchDic = styled(Link)`
+    display: inline-block;
 `;
 
 export default Header;

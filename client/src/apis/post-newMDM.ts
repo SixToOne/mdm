@@ -4,8 +4,7 @@ const path = '/mdms';
 
 export const postNewMDM = async (formData: FormData) => {
     try {
-        const res = await axios.post<{ id: number }>(`${path}`, formData);
-        console.log(res.data);
+        const res = await axios.post<{ mdmId: number }>(`${path}`, formData);
         return res.data;
     } catch (error) {
         console.log(error);

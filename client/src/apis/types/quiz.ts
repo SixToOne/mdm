@@ -9,3 +9,14 @@ export interface IQuiz {
     rate: number;
     tags: string[];
 }
+
+export interface IQuizSolution {
+    solution: string;
+}
+
+export interface IRelatedMDM {
+    id: number;
+    title: string;
+    vote: number;
+    tags: string[];
+}

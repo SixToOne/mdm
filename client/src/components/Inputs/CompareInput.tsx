@@ -4,9 +4,11 @@ interface CompareInputProps {
     opinion2: string;
     handleValueChange: (e: React.ChangeEvent<HTMLInputElement>, key: string) => void;
     onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+    setFirstImage: Dispatch<SetStateAction<File | undefined>>;
+    setSecondImage: Dispatch<SetStateAction<File | undefined>>;
 }
 
-import { useState, useRef } from 'react';
+import { useState, useRef, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { FileAdd, Delete } from '@/components/icons';
 
@@ -16,6 +18,8 @@ const CompareInput = ({
     opinion2,
     handleValueChange,
     onChange,
+    setFirstImage,
+    setSecondImage,
 }: CompareInputProps) => {
     const firstInputFile = useRef<HTMLInputElement>(null);
     const secondInputFile = useRef<HTMLInputElement>(null);
@@ -30,29 +34,52 @@ const CompareInput = ({
     };
 
     const handleFirstDeleteClick = () => {
+        if (firstFile) {
+            URL.revokeObjectURL(firstFile);
+        }
         setFirstFile('');
+        if (firstInputFile.current) {
+            firstInputFile.current.value = '';
+        }
+        setFirstImage(undefined);
     };
 
     const handleSecondDeleteClick = () => {
+        if (secondFile) {
+            URL.revokeObjectURL(secondFile);
+        }
         setSecondFile('');
+        if (secondInputFile.current) {
+            secondInputFile.current.value = '';
+        }
+        setSecondImage(undefined);
     };
 
     const handleFirstFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files;
         if (file) {
             const files = Array.from(file);
-            const url = URL.createObjectURL(files[0]);
-            setFirstFile(url);
-            onChange(e, 'first');
+            if (files[0]) {
+                const url = URL.createObjectURL(files[0]);
+                if (url) {
+                    setFirstFile(url);
+                }
+                onChange(e, 'first');
+            }
         }
     };
+
     const handleSecondFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files;
         if (file) {
             const files = Array.from(file);
-            const url = URL.createObjectURL(files[0]);
-            setSecondFile(url);
-            onChange(e, 'second');
+            if (files[0]) {
+                const url = URL.createObjectURL(files[0]);
+                if (url) {
+                    setSecondFile(url);
+                }
+                onChange(e, 'second');
+            }
         }
     };
 
