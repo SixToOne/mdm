@@ -1,11 +1,18 @@
 package com.sto.mdm.domain.quiz.entity;
 
+import java.util.List;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.sto.mdm.domain.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,10 +23,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE quiz SET deleted = true WHERE quiz_id = ?")
+@SQLRestriction("deleted = false")
 public class Quiz extends BaseEntity {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "quiz_id")
 	private Long id;
 
@@ -37,4 +46,10 @@ public class Quiz extends BaseEntity {
 
 	private String solution;
 
+	@OneToMany(mappedBy = "quiz")
+	private List<QuizTag> quizTags;
+
+	public void setSolution(String solution) {
+		this.solution = solution;
+	}
 }
